@@ -1,5 +1,7 @@
 ﻿using Modules.System;
 using Pokemon_3D_Server_Core;
+using Pokemon_3D_Server_Core.Server.Game.Server;
+using Pokemon_3D_Server_Core.Server.Game.World;
 using Pokemon_3D_Server_Launcher.View;
 using System;
 using System.Windows.Forms;
@@ -16,7 +18,7 @@ namespace Pokemon_3D_Server_Launcher
         [STAThread]
         public static void Main(string[] args)
         {
-            instance = new Core(args);
+            instance = new Core(args, new Listener(), new World());
 
             Application.ThreadException += (sender, ex) => { ex.Exception.CatchError(); };
             AppDomain.CurrentDomain.UnhandledException += (sender, ex) => { ((Exception)ex.ExceptionObject).CatchError(); };

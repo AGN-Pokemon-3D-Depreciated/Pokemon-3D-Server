@@ -37,13 +37,17 @@ namespace Pokemon_3D_Server_Core.Settings
         [YamlIgnore]
         public string Version { get { return "0.54"; } }
 
+        private string SettingPath;
+
         /// <summary>
         /// Start the module.
         /// </summary>
         public void Start()
         {
+            SettingPath = $"{Directories.ApplicationDirectory}/ApplicationSetting.yml".GetFullPath();
+
             Exception ex;
-            Settings NewSettings = DeserializerHelper.Deserialize<Settings>($"{Directories.ApplicationDirectory}/ApplicationSetting.yml".GetFullPath(), out ex);
+            Settings NewSettings = DeserializerHelper.Deserialize<Settings>(SettingPath, out ex);
 
             if (ex == null && NewSettings != null)
             {
@@ -52,8 +56,6 @@ namespace Pokemon_3D_Server_Core.Settings
                 OldSettings = NewSettings;
                 Core.Logger.Log("Settings loaded.");
             }
-            else if (ex != null)
-                ex.CatchError();
         }
 
         /// <summary>
@@ -62,7 +64,7 @@ namespace Pokemon_3D_Server_Core.Settings
         public void Stop()
         {
             Exception ex;
-            Core.Settings.Serialize($"{Directories.ApplicationDirectory}/ApplicationSetting.yml".GetFullPath(), out ex);
+            Core.Settings.Serialize(SettingPath, out ex);
 
             if (ex == null)
                 Core.Logger.Log("Settings saved.");

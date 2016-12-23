@@ -109,10 +109,10 @@ namespace Pokemon_3D_Server_Core.Settings.Server
         public bool OneYearLater3D { get; set; } = false;
 
         /// <summary>
-        /// Get/Set List of GameMode.
+        /// Get List of GameMode.
         /// </summary>
         [YamlMember(Alias = "Others", Order = 10)]
-        public List<string> Others { get; set; } = new List<string>();
+        public List<string> Others { get; private set; } = new List<string>();
 
         /// <summary>
         /// Get if offline mode is needed.

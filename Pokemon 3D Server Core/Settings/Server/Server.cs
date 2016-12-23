@@ -77,9 +77,9 @@ namespace Pokemon_3D_Server_Core.Settings.Server
         public string WelcomeMessage { get; set; } = "Welcome to P3D Server. If you need help configuring the server, ask jianmingyong for more details.";
 
         /// <summary>
-        /// Get/Set GameMode.
+        /// Get GameMode.
         /// </summary>
-        public GameModes GameMode { get; set; } = new GameModes();
+        public GameModes GameMode { get; private set; } = new GameModes();
 
         private int _MaxPlayers = 20;
         /// <summary>
@@ -103,23 +103,20 @@ namespace Pokemon_3D_Server_Core.Settings.Server
         public bool OfflineMode { get; set; } = false;
 
         /// <summary>
-        /// Get/Set World.
+        /// Get World.
         /// </summary>
-        //public World World { get; set; } = new World();
+        public World.World World { get; private set; } = new World.World();
 
         /// <summary>
-        /// Get/Set Network.
+        /// Get Network.
         /// </summary>
-        //public Network Network { get; set; } = new Network();
+        public Network Network { get; private set; } = new Network();
 
         /// <summary>
-        /// Get/Set Feature.
+        /// Get Features.
         /// </summary>
-        //public Feature Feature { get; set; } = new Feature();
+        public Features.Features Features { get; set; } = new Features.Features();
 
-        /// <summary>
-        /// New Server.
-        /// </summary>
         public Server()
         {
             IPAddress = IPAddressHelper.GetPublicIP();

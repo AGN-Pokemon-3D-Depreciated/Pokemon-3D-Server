@@ -45,11 +45,11 @@ Hardware:
         Cores: {osInfo.Hardware.CPUs.First().Cores}
 
     GPU:
-        Physical count: {osInfo.Hardware.GPUs.Count}
-        Name: {osInfo.Hardware.GPUs.First().Name}
-        Brand: {osInfo.Hardware.GPUs.First().Brand}
-        Resolution: {osInfo.Hardware.GPUs.First().Resolution} {osInfo.Hardware.GPUs.First().RefreshRate} Hz
-        Memory Total: {osInfo.Hardware.GPUs.First().MemoryTotal} KB
+        Physical count: {(Type.GetType("Mono.Runtime") != null ? "0" : osInfo.Hardware.GPUs.Count.ToString())}
+        Name: {(Type.GetType("Mono.Runtime") != null ? "" : osInfo.Hardware.GPUs.First().Name)}
+        Brand: {(Type.GetType("Mono.Runtime") != null ? "" : osInfo.Hardware.GPUs.First().Brand)}
+        Resolution: {(Type.GetType("Mono.Runtime") != null ?  "0x0" : osInfo.Hardware.GPUs.First().Resolution)} {(Type.GetType("Mono.Runtime") != null ? "0" : osInfo.Hardware.GPUs.First().RefreshRate.ToString())} Hz
+        Memory Total: {(Type.GetType("Mono.Runtime") != null ? "0" : osInfo.Hardware.GPUs.First().MemoryTotal.ToString())} KB
 
     RAM:
         Memory Total: {osInfo.Hardware.RAM.Total} KB
@@ -91,7 +91,7 @@ Go To: <INSERTURL> to report this crash.
             }
             catch (Exception ex2)
             {
-                Core.Logger.Log(ex2.Message, LogTypes.Error);
+                Core.Logger.Log(ex2.Message + Environment.NewLine + GenerateInnerExceptionStackTrace(ex2), LogTypes.Error);
             }
         }
 
