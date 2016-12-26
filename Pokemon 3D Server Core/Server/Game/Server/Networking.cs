@@ -8,28 +8,26 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
 {
     public class Networking : IDisposable
     {
-        private StreamReader Reader;
-        private StreamWriter Writer;
-
-        private ThreadHelper Thread = new ThreadHelper();
-
-        private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(Environment.ProcessorCount);
-        private IWorkItemsGroup ThreadPool2 = new SmartThreadPool().CreateWorkItemsGroup(1);
-
         /// <summary>
         /// Get TcpClient.
         /// </summary>
         public TcpClient TcpClient { get; private set; }
 
         /// <summary>
-        /// Get IsActive.
+        /// Get/Set Force remove session.
         /// </summary>
-        public bool IsActive { get; private set; }
+        public bool ForceRemove { get; set; } = false;
 
-        /// <summary>
-        /// New Networking.
-        /// </summary>
-        /// <param name="TcpClient"></param>
+        private StreamReader Reader;
+        private StreamWriter Writer;
+
+        private bool IsActive = false;
+
+        private ThreadHelper Thread = new ThreadHelper();
+
+        private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(Environment.ProcessorCount);
+        private IWorkItemsGroup ThreadPool2 = new SmartThreadPool().CreateWorkItemsGroup(1);
+
         public Networking(TcpClient TcpClient)
         {
             this.TcpClient = TcpClient;
@@ -121,12 +119,12 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
             ThreadPool2.WaitForIdle();
 
             if (TcpClient != null) TcpClient.Close();
-            Core.TcpClientCollection.Remove(TcpClient);
 
             if (Reader != null) Reader.Dispose();
             if (Writer != null) Writer.Dispose();
 
             Thread.Dispose();
+            if (!ForceRemove) Core.TcpClientCollection.Remove(TcpClient);
         }
     }
 }

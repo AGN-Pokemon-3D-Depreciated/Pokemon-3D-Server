@@ -11,20 +11,27 @@ namespace Pokemon_3D_Server_Launcher.View
     {
         private delegate void LogMessageSafe(string Message);
 
+        /// <summary>
+        /// Get Core instance.
+        /// </summary>
+        public static Core Core { get; private set; }
+
         public Main()
         {
             InitializeComponent();
-        }
 
-        private void Main_Load(object sender, EventArgs e)
-        {
-            Core.Logger.RegisterLog(this);
-            Program.instance.Start();
+            Core = new Core();
+
+            Application.ThreadException += (sender2, ex) => { ex.Exception.CatchError(); };
+            AppDomain.CurrentDomain.UnhandledException += (sender2, ex) => { ((Exception)ex.ExceptionObject).CatchError(); };
+
+            Core.Logger.instance = this;
+            Core.Start();
         }
 
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Program.instance.Stop();
+            Core.Stop();
         }
 
         /// <summary>

@@ -37,26 +37,6 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <NoWarn>CS0649</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>CS0649</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="SmartThreadPool, Version=2.2.4.0, Culture=neutral, PublicKeyToken=1126fe8b671e8a79, processorArchitecture=MSIL">
       <HintPath>..\packages\SmartThreadPool.dll.2.2.4\lib\net45\SmartThreadPool.dll</HintPath>
@@ -120,6 +100,7 @@
     <Compile Include="Server\Game\Server\Networking.cs" />
     <Compile Include="Server\Game\Server\Package\Package.cs" />
     <Compile Include="Server\Game\Server\Package\PackageHandler.cs" />
+    <Compile Include="Server\Game\Server\Player\Player.cs" />
     <Compile Include="Server\Game\Server\TcpClientCollection.cs" />
     <Compile Include="Server\Game\World\World.cs" />
     <Compile Include="Settings\Directories.cs" />
@@ -135,15 +116,15 @@
     <Compile Include="Settings\Server\World\WeatherSeason\WeatherSeason.cs" />
     <Compile Include="Settings\Server\World\World.cs" />
     <Compile Include="Settings\Settings.cs" />
-    <Compile Include="SQLite\Database.cs" />
-    <Compile Include="SQLite\Models\BlackList.cs" />
-    <Compile Include="SQLite\Models\ChatHistoryList.cs" />
-    <Compile Include="SQLite\Models\IPBlackList.cs" />
-    <Compile Include="SQLite\Models\MuteList.cs" />
-    <Compile Include="SQLite\Models\OperatorList.cs" />
-    <Compile Include="SQLite\Models\PlayerInfo.cs" />
-    <Compile Include="SQLite\Models\TradeHistoryList.cs" />
-    <Compile Include="SQLite\Models\WhiteList.cs" />
+    <Compile Include="Server\Game\SQLite\Database.cs" />
+    <Compile Include="Server\Game\SQLite\Models\BlackList.cs" />
+    <Compile Include="Server\Game\SQLite\Models\ChatHistoryList.cs" />
+    <Compile Include="Server\Game\SQLite\Models\IPBlackList.cs" />
+    <Compile Include="Server\Game\SQLite\Models\MuteList.cs" />
+    <Compile Include="Server\Game\SQLite\Models\OperatorList.cs" />
+    <Compile Include="Server\Game\SQLite\Models\PlayerInfo.cs" />
+    <Compile Include="Server\Game\SQLite\Models\TradeHistoryList.cs" />
+    <Compile Include="Server\Game\SQLite\Models\WhiteList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="libe_sqlite3.dylib">

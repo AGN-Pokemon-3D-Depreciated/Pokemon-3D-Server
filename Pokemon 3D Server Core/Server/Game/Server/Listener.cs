@@ -4,29 +4,32 @@ using Modules.System.Net;
 using Modules.System.Threading;
 using Pokemon_3D_Server_Core.Interface;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using static Pokemon_3D_Server_Core.Server.Game.Server.Package.Package;
 using static Pokemon_3D_Server_Core.Settings.Logger;
 
 namespace Pokemon_3D_Server_Core.Server.Game.Server
 {
     public class Listener : IModules
     {
-        private TcpListener TcpListener;
-        private ThreadHelper Thread = new ThreadHelper();
-        private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(Environment.ProcessorCount);
-        private bool IsActive = false;
-
         /// <summary>
         /// Get the name of the module.
         /// </summary>
-        public string Name { get { return "Server Listener"; } }
+        public string Name { get { return "Game Server Listener"; } }
 
         /// <summary>
         /// Get the version of the module.
         /// </summary>
         public string Version { get { return "0.54"; } }
+
+        private TcpListener TcpListener;
+        private ThreadHelper Thread = new ThreadHelper();
+        private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(Environment.ProcessorCount);
+        private bool IsActive = false;
 
         /// <summary>
         /// Start the module.
@@ -72,7 +75,45 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
 
                     string GameMode = string.Join(", ", Core.Settings.Server.GameMode.GameMode.ToArray());
 
-                    // Do some wonderful magic here.
+                    if (CheckPortOpen())
+                    {
+                        Core.Logger.Log($"Server started. Players can join using the following address: {Core.Settings.Server.IPAddress}:{Core.Settings.Server.Port.ToString()} (Global), {IPAddressHelper.GetPrivateIP()}:{Core.Settings.Server.Port.ToString()} (Local) and with the following GameMode: {GameMode}.");
+
+                        if (Core.Settings.Server.CheckPort)
+                        {
+                            Thread.Add(() =>
+                            {
+                                Stopwatch sw = new Stopwatch();
+                                sw.Start();
+
+                                Core.Logger.Log("Port check is now enabled.");
+
+                                do
+                                {
+                                    if (sw.Elapsed.TotalMinutes >= 15)
+                                    {
+                                        if (CheckPortOpen())
+                                        {
+                                            Core.Logger.Log("Port check cycle completed. Result: True.");
+                                            sw.Restart();
+                                        }
+                                        else
+                                        {
+                                            Core.Logger.Log("Port check cycle completed. Result: False.");
+                                            sw.Restart();
+                                        }
+                                    }
+                                    else
+                                        Thread.Sleep(1000);
+                                } while (IsActive);
+                            });
+                        }
+                    }
+                    else
+                    {
+                        Core.Logger.Log($"The specific port {Core.Settings.Server.Port.ToString()} is not opened. External/Global IP will not accept new players.");
+                        Core.Logger.Log($"Server started. Players can join using the following address: {IPAddressHelper.GetPrivateIP()}:{Core.Settings.Server.Port.ToString()} (Local) and with the following GameMode: {GameMode}.");
+                    }
                 }
             }
             catch (Exception ex)
@@ -91,7 +132,48 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
 
             if (TcpListener != null) TcpListener.Stop();
             if (Thread.Count > 0) Thread.Dispose();
-            //if (Core.PlayerCollection != null) Core.PlayerCollection.Dispose();
+            if (Core.TcpClientCollection.Count > 0) Core.TcpClientCollection.Dispose();
+        }
+
+        /// <summary>
+        /// Check if the port is open.
+        /// </summary>
+        private bool CheckPortOpen()
+        {
+            using (TcpClient TcpClient = new TcpClient())
+            {
+                try
+                {
+                    TcpClient.SendTimeout = 10000;
+                    TcpClient.ReceiveTimeout = 10000;
+
+                    // Pokemon 3D Port.
+                    TcpClient.ConnectAsync(Core.Settings.Server.IPAddress, Core.Settings.Server.Port).Wait(10000);
+
+                    if (TcpClient.GetStream() != null)
+                    {
+                        using (StreamWriter Writer = new StreamWriter(TcpClient.GetStream()))
+                        {
+                            using (StreamReader Reader = new StreamReader(TcpClient.GetStream()))
+                            {
+                                Writer.WriteLine(new Package.Package(PackageTypes.ServerDataRequest, "", TcpClient));
+                                Writer.Flush();
+
+                                if (string.IsNullOrWhiteSpace(Reader.ReadLine()))
+                                    return false;
+                                else
+                                    return true;
+                            }
+                        }
+                    }
+                    else
+                        return false;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
         }
     }
 }

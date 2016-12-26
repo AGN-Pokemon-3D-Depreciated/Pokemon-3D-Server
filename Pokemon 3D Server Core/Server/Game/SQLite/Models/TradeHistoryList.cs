@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pokemon_3D_Server_Core.SQLite.Models
+namespace Pokemon_3D_Server_Core.Server.Game.SQLite.Models
 {
     public class TradeHistoryList
     {

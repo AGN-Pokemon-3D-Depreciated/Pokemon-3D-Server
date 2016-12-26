@@ -1,41 +1,35 @@
 ﻿using SQLite;
 using System;
 
-namespace Pokemon_3D_Server_Core.SQLite.Models
+namespace Pokemon_3D_Server_Core.Server.Game.SQLite.Models
 {
-    public class MuteList
+    public class IPBlackList
     {
         /// <summary>
-        /// Get/Set MuteList ID.
+        /// Get/Set IPBlackList ID.
         /// </summary>
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
 
         /// <summary>
-        /// Get/Set MuteList Player ID.
+        /// Get/Set IPBlackList Player ID.
         /// </summary>
         [NotNull]
-        public int PlayerID { get; set; } = -1;
+        public int PlayerID { get; set; }
 
         /// <summary>
-        /// Get/Set MuteList Player ID.
-        /// </summary>
-        [NotNull]
-        public int MuteID { get; set; }
-
-        /// <summary>
-        /// Get/Set MuteList Reason.
+        /// Get/Set IPBlackList Reason.
         /// </summary>
         public string Reason { get; set; }
 
         /// <summary>
-        /// Get/Set MuteList StartTime.
+        /// Get/Set IPBlackList StartTime.
         /// </summary>
         [NotNull]
         public DateTime StartTime { get; set; }
 
         /// <summary>
-        /// Get/Set MuteList Duration.
+        /// Get/Set IPBlackList Duration.
         /// </summary>
         [NotNull]
         public long Duration { get; set; }

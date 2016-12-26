@@ -2,7 +2,7 @@
 using System;
 using static Pokemon_3D_Server_Core.Settings.Server.World.World;
 
-namespace Pokemon_3D_Server_Core.SQLite.Models
+namespace Pokemon_3D_Server_Core.Server.Game.SQLite.Models
 {
     public class PlayerInfo
     {

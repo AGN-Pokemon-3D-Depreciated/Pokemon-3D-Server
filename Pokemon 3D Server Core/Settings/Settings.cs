@@ -3,12 +3,25 @@ using Modules.System.IO;
 using Modules.YamlDotNet.Serialization;
 using Pokemon_3D_Server_Core.Interface;
 using System;
+using System.IO;
 using YamlDotNet.Serialization;
 
 namespace Pokemon_3D_Server_Core.Settings
 {
     public class Settings : IModules
     {
+        /// <summary>
+        /// Get the name of the module.
+        /// </summary>
+        [YamlIgnore]
+        public string Name { get { return "Application Settings"; } }
+
+        /// <summary>
+        /// Get the version of the module.
+        /// </summary>
+        [YamlIgnore]
+        public string Version { get { return "0.54"; } }
+
         /// <summary>
         /// Get Directories.
         /// </summary>
@@ -25,36 +38,30 @@ namespace Pokemon_3D_Server_Core.Settings
         /// </summary>
         public Server.Server Server { get; private set; } = new Server.Server();
 
-        /// <summary>
-        /// Get the name of the module.
-        /// </summary>
-        [YamlIgnore]
-        public string Name { get { return "Settings"; } }
-
-        /// <summary>
-        /// Get the version of the module.
-        /// </summary>
-        [YamlIgnore]
-        public string Version { get { return "0.54"; } }
-
         private string SettingPath;
+
+        public Settings()
+        {
+            SettingPath = $"{Directories.ApplicationDirectory}/ApplicationSetting.yml".GetFullPath();
+        }
 
         /// <summary>
         /// Start the module.
         /// </summary>
         public void Start()
         {
-            SettingPath = $"{Directories.ApplicationDirectory}/ApplicationSetting.yml".GetFullPath();
-
-            Exception ex;
-            Settings NewSettings = DeserializerHelper.Deserialize<Settings>(SettingPath, out ex);
-
-            if (ex == null && NewSettings != null)
+            if (File.Exists(SettingPath))
             {
-                Core.Settings = NewSettings;
-                IModules OldSettings = Core.ActiveModules.Find(a => a.Name == Name && a.Version == Version);
-                OldSettings = NewSettings;
-                Core.Logger.Log("Settings loaded.");
+                Exception ex;
+                Settings NewSettings = DeserializerHelper.Deserialize<Settings>(SettingPath, out ex);
+
+                if (ex == null && NewSettings != null)
+                {
+                    Core.Settings = NewSettings;
+                    Core.Logger.Log("Application Settings Loaded.");
+                }
+                else
+                    ex.CatchError();
             }
         }
 
@@ -67,7 +74,7 @@ namespace Pokemon_3D_Server_Core.Settings
             Core.Settings.Serialize(SettingPath, out ex);
 
             if (ex == null)
-                Core.Logger.Log("Settings saved.");
+                Core.Logger.Log("Application Settings Saved.");
             else
                 ex.CatchError();
         }

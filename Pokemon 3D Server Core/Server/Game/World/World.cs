@@ -12,6 +12,16 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
 {
     public class World : IModules
     {
+        /// <summary>
+        /// Get the name of the module.
+        /// </summary>
+        public string Name { get { return "Game World"; } }
+
+        /// <summary>
+        /// Get the version of the module.
+        /// </summary>
+        public string Version { get { return "0.54"; } }
+
         private int _Season;
         /// <summary>
         /// Get/Set Current World Season
@@ -48,25 +58,15 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
         /// <summary>
         /// Get/Set Current World Time Offset
         /// </summary>
-        public int TimeOffset { get; set; } = 0;
+        public int TimeOffset { get; internal set; } = 0;
 
         private DateTime LastWorldUpdate;
         private int WeekOfYear { get { return ((DateTime.Now.DayOfYear - (DateTime.Now.DayOfWeek - DayOfWeek.Monday)) / 7.0 + 1.0).Floor().ToString().ToInt(); } }
 
-        private bool CanUpdate { get; set; } = true;
-        private bool IsActive { get; set; } = false;
+        private bool CanUpdate = true;
+        private bool IsActive = false;
 
         private ThreadHelper Thread = new ThreadHelper();
-
-        /// <summary>
-        /// Get the name of the module.
-        /// </summary>
-        public string Name { get { return "Game World"; } }
-
-        /// <summary>
-        /// Get the version of the module.
-        /// </summary>
-        public string Version { get { return "0.54"; } }
 
         /// <summary>
         /// Start the module.

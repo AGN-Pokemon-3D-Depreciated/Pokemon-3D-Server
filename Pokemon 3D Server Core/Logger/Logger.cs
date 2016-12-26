@@ -13,35 +13,40 @@ namespace Pokemon_3D_Server_Core.Logger
 {
     public class Logger : IModules
     {
-        private FileStream FileStream;
-        private StreamWriter Writer;
-
-        private ILogger instance;
-
-        private bool IsActive = false;
-        private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(1);
-
         /// <summary>
         /// Get the name of the module.
         /// </summary>
-        public string Name { get { return "Logger"; } }
+        public string Name { get { return "Application Logger"; } }
 
         /// <summary>
         /// Get the version of the module.
         /// </summary>
         public string Version { get { return "0.54"; } }
 
+        /// <summary>
+        /// Get/Set Logger module.
+        /// </summary>
+        public ILogger instance { get; set; }
+
+        private FileStream FileStream;
+        private StreamWriter Writer;
+
+        private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(1);
+
+        private bool IsActive = false;
+
         public Logger()
         {
-            FileStream = new FileStream($"{Core.Settings.Directories.LoggerDirectory}/Logger_{DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss")}.dat".GetFullPath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
-            Writer = new StreamWriter(FileStream, Encoding.UTF8);
-            IsActive = true;
+            InitLogger();
         }
 
         /// <summary>
         /// Start the module.
         /// </summary>
-        public void Start() { }
+        public void Start()
+        {
+            InitLogger();
+        }
 
         /// <summary>
         /// Stop the module.
@@ -55,13 +60,11 @@ namespace Pokemon_3D_Server_Core.Logger
             FileStream.Dispose();
         }
 
-        /// <summary>
-        /// Register Logger.
-        /// </summary>
-        /// <param name="module"></param>
-        public void RegisterLog(ILogger module)
+        private void InitLogger()
         {
-            instance = module;
+            FileStream = new FileStream($"{Core.Settings.Directories.LoggerDirectory}/Logger_{DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss")}.dat".GetFullPath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
+            Writer = new StreamWriter(FileStream, Encoding.UTF8) { AutoFlush = true };
+            IsActive = true;
         }
 
         /// <summary>
@@ -86,10 +89,7 @@ namespace Pokemon_3D_Server_Core.Logger
                             instance.LogMessage(MessageToLog);
 
                         if (WriteToLog)
-                        {
                             Writer.WriteLine(MessageToLog);
-                            Writer.Flush();
-                        }
                     }
                 });
             }
@@ -116,10 +116,7 @@ namespace Pokemon_3D_Server_Core.Logger
                             instance.LogMessage(MessageToLog);
 
                         if (WriteToLog)
-                        {
                             Writer.WriteLine(MessageToLog);
-                            Writer.Flush();
-                        }
                     }
                 });
             }

@@ -1,13 +1,22 @@
-﻿using Pokemon_3D_Server_Core.Interface;
-using Pokemon_3D_Server_Core.SQLite.Models;
+﻿using Modules.System.IO;
+using Pokemon_3D_Server_Core.Interface;
+using Pokemon_3D_Server_Core.Server.Game.SQLite.Models;
 using SQLite;
 using System.Collections.Generic;
 
-namespace Pokemon_3D_Server_Core.SQLite
+namespace Pokemon_3D_Server_Core.Server.Game.SQLite
 {
     public class Database : IModules
     {
-        private SQLiteConnection Connection;
+        /// <summary>
+        /// Get the name of the module.
+        /// </summary>
+        public string Name { get { return "Game SQLite Database"; } }
+
+        /// <summary>
+        /// Get the version of the module.
+        /// </summary>
+        public string Version { get { return "0.54"; } }
 
         /// <summary>
         /// Get List of PlayerInfo.
@@ -49,19 +58,11 @@ namespace Pokemon_3D_Server_Core.SQLite
         /// </summary>
         public List<TradeHistoryList> TradeHistoryList { get; private set; } = new List<TradeHistoryList>();
 
-        /// <summary>
-        /// Get the name of the module.
-        /// </summary>
-        public string Name { get { return "SQLite Database"; } }
-
-        /// <summary>
-        /// Get the version of the module.
-        /// </summary>
-        public string Version { get { return "0.54"; } }
+        private SQLiteConnection Connection;
 
         public void Start()
         {
-            Connection = new SQLiteConnection($"{Core.Settings.Directories.DataDirectory}/{Core.Settings.Server.Features.Sqlite.Name}.db", true);
+            Connection = new SQLiteConnection($"{Core.Settings.Directories.DataDirectory}/{Core.Settings.Server.Features.Sqlite.Name}.db".GetFullPath(), true);
             Connection.CreateTable<PlayerInfo>(CreateFlags.AutoIncPK);
             Connection.CreateTable<BlackList>(CreateFlags.AutoIncPK);
             Connection.CreateTable<IPBlackList>(CreateFlags.AutoIncPK);

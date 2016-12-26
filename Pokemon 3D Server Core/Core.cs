@@ -1,86 +1,64 @@
-﻿using Amib.Threading;
-using Modules.System;
+﻿using Modules.System.Threading;
 using Pokemon_3D_Server_Core.Interface;
 using Pokemon_3D_Server_Core.Server.Game.Server;
+using Pokemon_3D_Server_Core.Server.Game.SQLite;
 using Pokemon_3D_Server_Core.Server.Game.World;
-using Pokemon_3D_Server_Core.SQLite;
-using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace Pokemon_3D_Server_Core
 {
     public class Core
     {
-        /// <summary>
-        /// Get all active modules.
-        /// </summary>
-        public static List<IModules> ActiveModules { get; private set; } = new List<IModules>();
-
+        #region Core
         /// <summary>
         /// Get Application Settings.
         /// </summary>
-        public static Settings.Settings Settings { get; set; }
+        public static Settings.Settings Settings { get; internal set; }
 
         /// <summary>
         /// Get Application Logger.
         /// </summary>
         public static Logger.Logger Logger { get; private set; }
-
-        /// <summary>
-        /// Get Application Database.
-        /// </summary>
-        public static Database Database { get; private set; }
+        #endregion Core
 
         #region Server
         #region Game
-        #region Server
         /// <summary>
-        /// Get Game Server Listener.
+        /// Get Game Database.
         /// </summary>
-        public static Listener Listener { get; private set; }
+        public static Database Database { get; private set; }
+
+        /// <summary>
+        /// Get Game World.
+        /// </summary>
+        public static World World { get; private set; }
 
         /// <summary>
         /// Get Game Server TcpClientCollection.
         /// </summary>
         public static TcpClientCollection TcpClientCollection { get; private set; }
-        #endregion Server
 
-        #region World
         /// <summary>
-        /// Get Game World.
+        /// Get Game Server Listener.
         /// </summary>
-        public static World World { get; private set; }
-        #endregion World
+        public static Listener Listener { get; private set; }
         #endregion Game
         #endregion Server
 
-        /// <summary>
-        /// Get Start Argument.
-        /// </summary>
-        public string[] StartArgument { get; private set; }
+        private List<IModules> IModules = new List<IModules>();
+        private ThreadHelper Thread = new ThreadHelper();
 
-        private bool isActive = false;
-        private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(1);
-
-        public Core(string[] args, params IModules[] modules)
+        public Core()
         {
-            StartArgument = args;
-
             Settings = new Settings.Settings();
-            Database = new Database();
             Logger = new Logger.Logger();
 
-            Listener = new Listener();
-            TcpClientCollection = new TcpClientCollection();
+            Database = new Database();
             World = new World();
+            TcpClientCollection = new TcpClientCollection();
+            Listener = new Listener();
 
-            ActiveModules.Add(Settings);
-            ActiveModules.Add(Database);
-            ActiveModules.AddRange(modules);
-            ActiveModules.Add(Logger);
-
-            isActive = true;
+            IModules.AddRange(new List<IModules> { Settings, Database, World, Listener, Logger });
         }
 
         /// <summary>
@@ -88,22 +66,11 @@ namespace Pokemon_3D_Server_Core
         /// </summary>
         public void Start()
         {
-            ThreadPool.QueueWorkItem(() =>
+            Thread.Add(() =>
             {
-                while (!isActive)
-                    Thread.Sleep(1000);
-
-                foreach (IModules item in ActiveModules)
+                foreach (IModules item in IModules)
                 {
-                    try
-                    {
-                        item.Start();
-                    }
-                    catch (Exception ex)
-                    {
-                        ex.CatchError();
-                    }
-
+                    item.Start();
                     Logger.Log($"Module: {item.Name} v{item.Version} is started.");
                 }
             });
@@ -114,27 +81,11 @@ namespace Pokemon_3D_Server_Core
         /// </summary>
         public void Stop()
         {
-            ThreadPool.QueueWorkItem(() =>
+            foreach (IModules item in IModules)
             {
-                while (!isActive)
-                    Thread.Sleep(1000);
-
-                foreach (IModules item in ActiveModules)
-                {
-                    try
-                    {
-                        item.Stop();
-                    }
-                    catch (Exception ex)
-                    {
-                        ex.CatchError();
-                    }
-
-                    Logger.Log($"Module: {item.Name} v{item.Version} is stopped.");
-                }
-            });
-
-            ThreadPool.WaitForIdle();
+                item.Stop();
+                Logger.Log($"Module: {item.Name} v{item.Version} is stopped.");
+            }
         }
     }
 }
