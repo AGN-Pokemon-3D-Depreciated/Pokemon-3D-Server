@@ -7,13 +7,11 @@ namespace Modules.System.IO
         /// <summary>
         /// Create directory if it is not exist.
         /// </summary>
-        /// <param name="Name">Name of the directory.</param>
-        public static void CreateDirectoryIfNotExists(string Name)
+        /// <param name="name">Name of the directory.</param>
+        public static void CreateDirectoryIfNotExists(string name)
         {
-            if (!Directory.Exists(PathHelper.GetFullPath(Name)))
-            {
-                Directory.CreateDirectory(PathHelper.GetFullPath(Name));
-            }
+            if (!Directory.Exists(PathHelper.GetFullPath(name)))
+                Directory.CreateDirectory(PathHelper.GetFullPath(name));
         }
     }
 }

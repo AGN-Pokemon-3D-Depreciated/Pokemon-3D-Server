@@ -33,8 +33,8 @@ namespace Pokemon_3D_Server_Core.Settings.Server
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    string TempIPAddress = IPAddressHelper.GetPublicIP();
-                    _IPAddress = GeneratePublicIP ? TempIPAddress == null ? null : System.Net.IPAddress.Parse(TempIPAddress) : null;
+                    string tempIPAddress = IPAddressHelper.GetPublicIP();
+                    _IPAddress = GeneratePublicIP ? tempIPAddress == null ? null : System.Net.IPAddress.Parse(tempIPAddress) : null;
                 }
                 else
                     _IPAddress = System.Net.IPAddress.Parse(value);
@@ -101,6 +101,11 @@ namespace Pokemon_3D_Server_Core.Settings.Server
         /// Get/Set Offline Mode.
         /// </summary>
         public bool OfflineMode { get; set; } = false;
+
+        /// <summary>
+        /// Get Token.
+        /// </summary>
+        public Token Token { get; private set; } = new Token();
 
         /// <summary>
         /// Get World.

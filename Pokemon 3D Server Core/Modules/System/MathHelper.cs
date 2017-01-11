@@ -705,330 +705,216 @@ namespace Modules.System
         /// Converts the string representation of a number to its <see cref="byte"/> equivalent.
         /// </summary>
         /// <param name="value">A string that contains a number to convert. The string is interpreted using the <see cref="NumberStyles.Integer"/> style.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static byte ToByte(this string value, byte DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static byte ToByte(this string value, byte defaultValue = 0)
         {
-            try
-            {
-                return byte.Parse(value.ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return byte.Parse(value.ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the string representation of a number to its <see cref="decimal"/> equivalent.
         /// </summary>
         /// <param name="value">The string representation of the number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static decimal ToDecimal(this string value, decimal DefaultValue = 0.0m)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static decimal ToDecimal(this string value, decimal defaultValue = 0.0m)
         {
-            try
-            {
-                return decimal.Parse(value.ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return decimal.Parse(value.ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the string representation of a number to its double-precision floating-point number equivalent.
         /// </summary>
         /// <param name="value">A string that contains a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static double ToDouble(this string value, double DefaultValue = 0.0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static double ToDouble(this string value, double defaultValue = 0.0)
         {
-            try
-            {
-                return double.Parse(value.ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return double.Parse(value.ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the single-precision floating-point representation of a number to its double-precision floating-point number equivalent.
         /// </summary>
         /// <param name="value">A string that contains a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static double ToDouble(this float value, double DefaultValue = 0.0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static double ToDouble(this float value, double defaultValue = 0.0)
         {
-            try
-            {
-                return double.Parse(value.ToString().ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return double.Parse(value.ToString().ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the string representation of a number to its single-precision floating-point number equivalent.
         /// </summary>
         /// <param name="value">A string that contains a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static float ToFloat(this string value, float DefaultValue = 0.0f)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static float ToFloat(this string value, float defaultValue = 0.0f)
         {
-            try
-            {
-                return float.Parse(value.ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return float.Parse(value.ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the double-precision floating-point representation of a number to its single-precision floating-point number equivalent.
         /// </summary>
         /// <param name="value">A string that contains a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static float ToFloat(this double value, float DefaultValue = 0.0f)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static float ToFloat(this double value, float defaultValue = 0.0f)
         {
-            try
-            {
-                return float.Parse(value > float.MaxValue ? float.MaxValue.ToString() : value.ToString().ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return float.Parse(value > float.MaxValue ? float.MaxValue.ToString() : value.ToString().ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the string representation of a number to its single-precision floating-point number equivalent.
         /// </summary>
         /// <param name="value">A string that contains a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static float ToSingle(this string value, float DefaultValue = 0.0f)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static float ToSingle(this string value, float defaultValue = 0.0f)
         {
-            try
-            {
-                return float.Parse(value.ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return float.Parse(value.ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the double-precision floating-point representation of a number to its single-precision floating-point number equivalent.
         /// </summary>
         /// <param name="value">A string that contains a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static float ToSingle(this double value, float DefaultValue = 0.0f)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static float ToSingle(this double value, float defaultValue = 0.0f)
         {
-            try
-            {
-                return float.Parse(value > float.MaxValue ? float.MaxValue.ToString() : value.ToString().ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return float.Parse(value > float.MaxValue ? float.MaxValue.ToString() : value.ToString().ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the string representation of a number to its 32-bit signed integer equivalent.
         /// </summary>
         /// <param name="value">A string containing a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static int ToInt(this string value, int DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static int ToInt(this string value, int defaultValue = 0)
         {
-            try
-            {
-                return int.Parse(value.ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return int.Parse(value.ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the single-precision floating-point representation of a number to its 32-bit signed integer equivalent.
         /// </summary>
         /// <param name="value">A string containing a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static int ToInt(this float value, int DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static int ToInt(this float value, int defaultValue = 0)
         {
-            try
-            {
-                return int.Parse(value > int.MaxValue ? int.MaxValue.ToString() : value.ToDouble().Round(0).ToString());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return int.Parse(value > int.MaxValue ? int.MaxValue.ToString() : value.ToDouble().Round(0).ToString()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the double-precision floating-point representation of a number to its 32-bit signed integer equivalent.
         /// </summary>
         /// <param name="value">A string containing a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static int ToInt(this double value, int DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static int ToInt(this double value, int defaultValue = 0)
         {
-            try
-            {
-                return int.Parse(value > int.MaxValue ? int.MaxValue.ToString() : value.Round(0).ToString());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return int.Parse(value > int.MaxValue ? int.MaxValue.ToString() : value.Round(0).ToString()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the 64-bit signed integer representation of a number to its 32-bit signed integer equivalent.
         /// </summary>
         /// <param name="value">A string containing a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static int ToInt(this long value, int DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static int ToInt(this long value, int defaultValue = 0)
         {
-            try
-            {
-                return int.Parse(value > int.MaxValue ? int.MaxValue.ToString() : value.ToString());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return int.Parse(value > int.MaxValue ? int.MaxValue.ToString() : value.ToString()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the string representation of a number to its 64-bit signed integer equivalent.
         /// </summary>
         /// <param name="value">A string containing a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static long ToLong(this string value, long DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static long ToLong(this string value, long defaultValue = 0)
         {
-            try
-            {
-                return long.Parse(value.ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return long.Parse(value.ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the 32-bit signed integer representation of a number to its 64-bit signed integer equivalent.
         /// </summary>
         /// <param name="value">A string containing a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static long ToLong(this int value, long DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static long ToLong(this int value, long defaultValue = 0)
         {
-            try
-            {
-                return long.Parse(value.ToString());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return long.Parse(value.ToString()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the string representation of a number to its 8-bit signed integer equivalent.
         /// </summary>
         /// <param name="value">A string that represents a number to convert. The string is interpreted using the <see cref="NumberStyles.Integer"/> style.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static sbyte ToSbyte(this string value, sbyte DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static sbyte ToSbyte(this string value, sbyte defaultValue = 0)
         {
-            try
-            {
-                return sbyte.Parse(value.ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return sbyte.Parse(value.ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the string representation of a number to its 16-bit signed integer equivalent.
         /// </summary>
         /// <param name="value">A string containing a number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static short ToShort(this string value, short DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static short ToShort(this string value, short defaultValue = 0)
         {
-            try
-            {
-                return short.Parse(value.ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return short.Parse(value.ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the string representation of a number to its 32-bit unsigned integer equivalent.
         /// </summary>
         /// <param name="value">A string representing the number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static uint ToUint(this string value, uint DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static uint ToUint(this string value, uint defaultValue = 0)
         {
-            try
-            {
-                return uint.Parse(value.ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return uint.Parse(value.ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the string representation of a number to its 64-bit unsigned integer equivalent.
         /// </summary>
         /// <param name="value">A string that represents the number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static ulong ToUlong(this string value, ulong DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static ulong ToUlong(this string value, ulong defaultValue = 0)
         {
-            try
-            {
-                return ulong.Parse(value.ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return ulong.Parse(value.ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Converts the string representation of a number to its 16-bit unsigned integer equivalent.
         /// </summary>
         /// <param name="value">A string that represents the number to convert.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static ushort ToUshort(this string value, ushort DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static ushort ToUshort(this string value, ushort defaultValue = 0)
         {
-            try
-            {
-                return ushort.Parse(value.ConvertStringCulture());
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return ushort.Parse(value.ConvertStringCulture()); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Convert string to bool type.
         /// </summary>
         /// <param name="value">The string value to convert.</param>
-        public static bool ToBool(this string value, bool DefaultValue = true)
+        public static bool ToBool(this string value, bool defaultValue = true)
         {
             try
             {
@@ -1044,7 +930,7 @@ namespace Modules.System
                 else if (string.Equals(value, "false", StringComparison.OrdinalIgnoreCase))
                     return false;
                 else
-                    return DefaultValue;
+                    return defaultValue;
             }
         }
 
@@ -1077,243 +963,237 @@ namespace Modules.System
         /// </summary>
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
         /// <param name="maxValue">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue.</param>
-        /// <param name="DefaultValue">The default value returned if the conversion fails.</param>
-        public static int Random(int minValue, int maxValue, int DefaultValue = 0)
+        /// <param name="defaultValue">The default value returned if the conversion fails.</param>
+        public static int Random(int minValue, int maxValue, int defaultValue = 0)
         {
-            try
-            {
-                return new Random().Next(minValue, maxValue);
-            }
-            catch (Exception)
-            {
-                return DefaultValue;
-            }
+            try { return new Random().Next(minValue, maxValue); }
+            catch (Exception) { return defaultValue; }
         }
 
         /// <summary>
         /// Clamp the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to clamp.</param>
+        /// <param name="value">The value to clamp.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static byte Clamp(this byte Value, byte minValue, byte maxValue)
+        public static byte Clamp(this byte value, byte minValue, byte maxValue)
         {
-            if (Value < minValue)
+            if (value < minValue)
                 return minValue;
-            else if (Value > maxValue)
+            else if (value > maxValue)
                 return maxValue;
             else
-                return Value;
+                return value;
         }
 
         /// <summary>
         /// Clamp the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to clamp.</param>
+        /// <param name="value">The value to clamp.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static decimal Clamp(this decimal Value, decimal minValue, decimal maxValue)
+        public static decimal Clamp(this decimal value, decimal minValue, decimal maxValue)
         {
-            if (Value < minValue)
+            if (value < minValue)
                 return minValue;
-            else if (Value > maxValue)
+            else if (value > maxValue)
                 return maxValue;
             else
-                return Value;
+                return value;
         }
 
         /// <summary>
         /// Clamp the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to clamp.</param>
+        /// <param name="value">The value to clamp.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static double Clamp(this double Value, double minValue, double maxValue)
+        public static double Clamp(this double value, double minValue, double maxValue)
         {
-            if (Value < minValue)
+            if (value < minValue)
                 return minValue;
-            else if (Value > maxValue)
+            else if (value > maxValue)
                 return maxValue;
             else
-                return Value;
+                return value;
         }
 
         /// <summary>
         /// Clamp the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to clamp.</param>
+        /// <param name="value">The value to clamp.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static float Clamp(this float Value, float minValue, float maxValue)
+        public static float Clamp(this float value, float minValue, float maxValue)
         {
-            if (Value < minValue)
+            if (value < minValue)
                 return minValue;
-            else if (Value > maxValue)
+            else if (value > maxValue)
                 return maxValue;
             else
-                return Value;
+                return value;
         }
 
         /// <summary>
         /// Clamp the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to clamp.</param>
+        /// <param name="value">The value to clamp.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static int Clamp(this int Value, int minValue, int maxValue)
+        public static int Clamp(this int value, int minValue, int maxValue)
         {
-            if (Value < minValue)
+            if (value < minValue)
                 return minValue;
-            else if (Value > maxValue)
+            else if (value > maxValue)
                 return maxValue;
             else
-                return Value;
+                return value;
         }
 
         /// <summary>
         /// Clamp the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to clamp.</param>
+        /// <param name="value">The value to clamp.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static long Clamp(this long Value, long minValue, long maxValue)
+        public static long Clamp(this long value, long minValue, long maxValue)
         {
-            if (Value < minValue)
+            if (value < minValue)
                 return minValue;
-            else if (Value > maxValue)
+            else if (value > maxValue)
                 return maxValue;
             else
-                return Value;
+                return value;
         }
 
         /// <summary>
         /// Clamp the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to clamp.</param>
+        /// <param name="value">The value to clamp.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static sbyte Clamp(this sbyte Value, sbyte minValue, sbyte maxValue)
+        public static sbyte Clamp(this sbyte value, sbyte minValue, sbyte maxValue)
         {
-            if (Value < minValue)
+            if (value < minValue)
                 return minValue;
-            else if (Value > maxValue)
+            else if (value > maxValue)
                 return maxValue;
             else
-                return Value;
+                return value;
         }
 
         /// <summary>
         /// Clamp the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to clamp.</param>
+        /// <param name="value">The value to clamp.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static short Clamp(this short Value, short minValue, short maxValue)
+        public static short Clamp(this short value, short minValue, short maxValue)
         {
-            if (Value < minValue)
+            if (value < minValue)
                 return minValue;
-            else if (Value > maxValue)
+            else if (value > maxValue)
                 return maxValue;
             else
-                return Value;
+                return value;
         }
 
         /// <summary>
         /// Clamp the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to clamp.</param>
+        /// <param name="value">The value to clamp.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static uint Clamp(this uint Value, uint minValue, uint maxValue)
+        public static uint Clamp(this uint value, uint minValue, uint maxValue)
         {
-            if (Value < minValue)
+            if (value < minValue)
                 return minValue;
-            else if (Value > maxValue)
+            else if (value > maxValue)
                 return maxValue;
             else
-                return Value;
+                return value;
         }
 
         /// <summary>
         /// Clamp the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to clamp.</param>
+        /// <param name="value">The value to clamp.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static ulong Clamp(this ulong Value, ulong minValue, ulong maxValue)
+        public static ulong Clamp(this ulong value, ulong minValue, ulong maxValue)
         {
-            if (Value < minValue)
+            if (value < minValue)
                 return minValue;
-            else if (Value > maxValue)
+            else if (value > maxValue)
                 return maxValue;
             else
-                return Value;
+                return value;
         }
 
         /// <summary>
         /// Clamp the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to clamp.</param>
+        /// <param name="value">The value to clamp.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static ushort Clamp(this ushort Value, ushort minValue, ushort maxValue)
+        public static ushort Clamp(this ushort value, ushort minValue, ushort maxValue)
         {
-            if (Value < minValue)
+            if (value < minValue)
                 return minValue;
-            else if (Value > maxValue)
+            else if (value > maxValue)
                 return maxValue;
             else
-                return Value;
+                return value;
         }
 
         /// <summary>
         /// RollOver the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to rollover.</param>
+        /// <param name="value">The value to rollover.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static int RollOver(this int Value, int minValue, int maxValue)
+        public static int RollOver(this int value, int minValue, int maxValue)
         {
-            int Diff = maxValue - minValue + 1;
-            int NewValue = Value;
+            int diff = maxValue - minValue + 1;
+            int newValue = value;
 
-            if (Value > maxValue)
+            if (value > maxValue)
             {
-                while (NewValue > maxValue)
-                    NewValue -= Diff;
+                while (newValue > maxValue)
+                    newValue -= diff;
             }
-            else if (Value < minValue)
+            else if (value < minValue)
             {
-                while (NewValue < maxValue)
-                    NewValue += Diff;
+                while (newValue < maxValue)
+                    newValue += diff;
             }
 
-            return NewValue;
+            return newValue;
         }
 
         /// <summary>
         /// RollOver the value between the minValue and the maxValue.
         /// </summary>
-        /// <param name="Value">The value to rollover.</param>
+        /// <param name="value">The value to rollover.</param>
         /// <param name="minValue">The minimum value.</param>
         /// <param name="maxValue">The maximum value.</param>
-        public static long RollOver(this long Value, long minValue, long maxValue)
+        public static long RollOver(this long value, long minValue, long maxValue)
         {
-            long Diff = maxValue - minValue + 1;
-            long NewValue = Value;
+            long diff = maxValue - minValue + 1;
+            long newValue = value;
 
-            if (Value > maxValue)
+            if (value > maxValue)
             {
-                while (NewValue > maxValue)
-                    NewValue -= Diff;
+                while (newValue > maxValue)
+                    newValue -= diff;
             }
-            else if (Value < minValue)
+            else if (value < minValue)
             {
-                while (NewValue < maxValue)
-                    NewValue += Diff;
+                while (newValue < maxValue)
+                    newValue += diff;
             }
 
-            return NewValue;
+            return newValue;
         }
     }
 }

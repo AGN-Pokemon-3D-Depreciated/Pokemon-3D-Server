@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using static Pokemon_3D_Server_Core.Server.Game.Server.Package.Package;
 
 namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
@@ -7,9 +8,9 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
     {
         private Package Package;
 
-        public PackageHandler(Package Package)
+        public PackageHandler(Package package)
         {
-            this.Package = Package;
+            Package = package;
             Handle();
         }
 
@@ -17,19 +18,19 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
         {
             switch (Package.PackageType)
             {
-                case (int)Package.PackageTypes.Unknown:
-                    Core.Logger.Debug("Unknown Package Data. Unable to proceed.", Package.TcpClient);
+                case (int)PackageTypes.Unknown:
+                    Core.Logger.Debug("Unknown Package Data. Unable to proceed.", Package.Network);
                     break;
 
-                case (int)Package.PackageTypes.GameData:
+                case (int)PackageTypes.GameData:
                     HandleGameData();
                     break;
 
-                case (int)Package.PackageTypes.Ping:
+                case (int)PackageTypes.Ping:
                     HandlePing();
                     break;
 
-                case (int)Package.PackageTypes.ServerDataRequest:
+                case (int)PackageTypes.ServerDataRequest:
                     HandleServerDataRequest();
                     break;
             }
@@ -37,6 +38,26 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
 
         private void HandleGameData()
         {
+            if (Package.Network.IsActive)
+            {
+                if (Package.Network.Player != null)
+                {
+                    // Player exist, just update :)
+                }
+                else
+                {
+                    // New Player - Pending to join.
+                    Package.Network.Player = new Player.Player(Core.TcpClientCollection.NextPlayerID(), Package.Network, Package);
+
+                    // 1. Check server space limit.
+                    if (Core.TcpClientCollection.ActivePlayerCount >= Core.Settings.Server.MaxPlayers)
+                    {
+                        Package.Network.SentToPlayer(new Package(PackageTypes.Kicked, Core.Settings.Server.Token.ToString("SERVER_FULL"), null));
+                        //Core.Logger.Log()
+                    }
+                }
+            }
+
             //if (Core.PlayerCollection.HasPlayer(Package.TcpClient))
             //    Core.PlayerCollection.GetPlayer(Package.TcpClient).Update(Package, true);
             //else
@@ -68,21 +89,22 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
         {
             List<string> DataItems = new List<string>
             {
-                "0", //Core.PlayerCollection.Count.ToString(),
+                Core.TcpClientCollection.ActivePlayerCount.ToString(),
                 Core.Settings.Server.MaxPlayers == -1 ? int.MaxValue.ToString() : Core.Settings.Server.MaxPlayers.ToString(),
                 Core.Settings.Server.ServerName,
                 string.IsNullOrWhiteSpace(Core.Settings.Server.ServerMessage) ? "" : Core.Settings.Server.ServerMessage
             };
 
-            //if (Core.PlayerCollection.Count > 0)
-            //{
-            //    for (int i = 0; i < Core.PlayerCollection.Count; i++)
-            //    {
-            //        DataItems.Add(Core.PlayerCollection[i].isGamejoltPlayer ? $"{Core.PlayerCollection[i].Name} ({Core.PlayerCollection[i].GamejoltID.ToString()})" : Core.PlayerCollection[i].Name);
-            //    }
-            //}
+            if (Core.TcpClientCollection.ActivePlayerCount > 0)
+            {
+                DataItems.AddRange(Core.TcpClientCollection.Where(a => a.Value.Player != null).Select(a =>
+                {
+                    return a.Value.Player.IsGameJoltPlayer ? $"{a.Value.Player.Name} ({a.Value.Player.GameJoltID.ToString()})" : a.Value.Player.Name;
+                }));
+            }
 
-            Core.TcpClientCollection[Package.TcpClient].SentToPlayer(new Package(PackageTypes.ServerInfoData, DataItems, Package.TcpClient));
+            Package.Network.SentToPlayer(new Package(PackageTypes.ServerInfoData, DataItems, Package.Network));
+            Package.Network.Dispose();
         }
     }
 }

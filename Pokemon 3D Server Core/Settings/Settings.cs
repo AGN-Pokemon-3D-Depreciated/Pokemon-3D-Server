@@ -53,11 +53,11 @@ namespace Pokemon_3D_Server_Core.Settings
             if (File.Exists(SettingPath))
             {
                 Exception ex;
-                Settings NewSettings = DeserializerHelper.Deserialize<Settings>(SettingPath, out ex);
+                Settings newSettings = DeserializerHelper.Deserialize<Settings>(SettingPath, out ex);
 
-                if (ex == null && NewSettings != null)
+                if (ex == null && newSettings != null)
                 {
-                    Core.Settings = NewSettings;
+                    Core.Settings = newSettings;
                     Core.Logger.Log("Application Settings Loaded.");
                 }
                 else

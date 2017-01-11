@@ -1,8 +1,10 @@
-﻿using Modules.System.Threading;
+﻿using Modules.System;
+using Modules.System.Threading;
 using Pokemon_3D_Server_Core.Interface;
 using Pokemon_3D_Server_Core.Server.Game.Server;
 using Pokemon_3D_Server_Core.Server.Game.SQLite;
 using Pokemon_3D_Server_Core.Server.Game.World;
+using System;
 using System.Collections.Generic;
 
 namespace Pokemon_3D_Server_Core
@@ -50,15 +52,22 @@ namespace Pokemon_3D_Server_Core
 
         public Core()
         {
-            Settings = new Settings.Settings();
-            Logger = new Logger.Logger();
+            try
+            {
+                Settings = new Settings.Settings();
+                Logger = new Logger.Logger();
 
-            Database = new Database();
-            World = new World();
-            TcpClientCollection = new TcpClientCollection();
-            Listener = new Listener();
+                Database = new Database();
+                World = new World();
+                TcpClientCollection = new TcpClientCollection();
+                Listener = new Listener();
 
-            IModules.AddRange(new List<IModules> { Settings, Database, World, Listener, Logger });
+                IModules.AddRange(new List<IModules> { Settings, Database, World, Listener, Logger });
+            }
+            catch (Exception ex)
+            {
+                ex.CatchError();
+            }
         }
 
         /// <summary>
@@ -70,8 +79,15 @@ namespace Pokemon_3D_Server_Core
             {
                 foreach (IModules item in IModules)
                 {
-                    item.Start();
-                    Logger.Log($"Module: {item.Name} v{item.Version} is started.");
+                    try
+                    {
+                        item.Start();
+                        Logger.Log($"Module: {item.Name} v{item.Version} is started.");
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.CatchError();
+                    }
                 }
             });
         }
@@ -83,8 +99,15 @@ namespace Pokemon_3D_Server_Core
         {
             foreach (IModules item in IModules)
             {
-                item.Stop();
-                Logger.Log($"Module: {item.Name} v{item.Version} is stopped.");
+                try
+                {
+                    item.Stop();
+                    Logger.Log($"Module: {item.Name} v{item.Version} is stopped.");
+                }
+                catch (Exception ex)
+                {
+                    ex.CatchError();
+                }
             }
         }
     }

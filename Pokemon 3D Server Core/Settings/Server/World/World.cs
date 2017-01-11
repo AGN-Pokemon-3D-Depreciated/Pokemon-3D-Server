@@ -174,10 +174,10 @@ namespace Pokemon_3D_Server_Core.Settings.Server.World
         /// <summary>
         /// Get Season Name
         /// </summary>
-        /// <param name="Season">Season ID</param>
-        public string GetSeasonName(int Season)
+        /// <param name="season">Season ID</param>
+        public string GetSeasonName(int season)
         {
-            switch (Season)
+            switch (season)
             {
                 case (int)SeasonType.Winter:
                     return "Winter";
@@ -195,10 +195,10 @@ namespace Pokemon_3D_Server_Core.Settings.Server.World
         /// <summary>
         /// Get Weather Name
         /// </summary>
-        /// <param name="Weather">Weather ID</param>
-        public string GetWeatherName(int Weather)
+        /// <param name="weather">Weather ID</param>
+        public string GetWeatherName(int weather)
         {
-            switch (Weather)
+            switch (weather)
             {
                 case (int)WeatherType.Ash:
                     return "Ash";

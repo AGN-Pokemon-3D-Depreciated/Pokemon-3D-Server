@@ -1,13 +1,13 @@
 ﻿using Amib.Threading;
 using Modules.System.IO;
+using Modules.System.Net;
 using Pokemon_3D_Server_Core.Interface;
+using Pokemon_3D_Server_Core.Server.Game.Server;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
-using static Pokemon_3D_Server_Core.Settings.Logger;
+using static Pokemon_3D_Server_Core.Collections.LogTypeCollection;
 
 namespace Pokemon_3D_Server_Core.Logger
 {
@@ -30,9 +30,7 @@ namespace Pokemon_3D_Server_Core.Logger
 
         private FileStream FileStream;
         private StreamWriter Writer;
-
         private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(1);
-
         private bool IsActive = false;
 
         public Logger()
@@ -55,7 +53,6 @@ namespace Pokemon_3D_Server_Core.Logger
         {
             IsActive = false;
             ThreadPool.WaitForIdle();
-
             Writer.Dispose();
             FileStream.Dispose();
         }
@@ -70,26 +67,26 @@ namespace Pokemon_3D_Server_Core.Logger
         /// <summary>
         /// Log server message.
         /// </summary>
-        /// <param name="Message">Message to log.</param>
-        /// <param name="LogType">Log type.</param>
-        /// <param name="TcpClient">TcpClient.</param>
-        /// <param name="Console">Print to console?</param>
-        /// <param name="WriteToLog">Write to log file?</param>
-        public void Log(string Message, LogTypes LogType = LogTypes.Info, TcpClient TcpClient = null, bool Console = true, bool WriteToLog = true)
+        /// <param name="message">Message to log.</param>
+        /// <param name="logType">Log type.</param>
+        /// <param name="network">Network.</param>
+        /// <param name="printToConsole">Print to console?</param>
+        /// <param name="writeToLog">Write to log file?</param>
+        public void Log(string message, LogTypes logType = LogTypes.Info, Networking network = null, bool printToConsole = true, bool writeToLog = true)
         {
             if (IsActive)
             {
                 ThreadPool.QueueWorkItem(() =>
                 {
-                    if (CanLog(LogType))
+                    if (CanLog(logType))
                     {
-                        string MessageToLog = $"{DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt") + (TcpClient == null ? "" : " " + ((IPEndPoint)TcpClient.Client.RemoteEndPoint).Address.ToString())} [{LogType.ToString()}] {Message}";
+                        string messageToLog = $"{DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt") + (network == null ? "" : " " + network.GetPublicIPFromClient())} [{logType.ToString()}] {message}";
 
-                        if (Console && instance != null)
-                            instance.LogMessage(MessageToLog);
+                        if (printToConsole && instance != null)
+                            instance.LogMessage(messageToLog);
 
-                        if (WriteToLog)
-                            Writer.WriteLine(MessageToLog);
+                        if (writeToLog)
+                            Writer.WriteLine(messageToLog);
                     }
                 });
             }
@@ -98,11 +95,12 @@ namespace Pokemon_3D_Server_Core.Logger
         /// <summary>
         /// Log debug message.
         /// </summary>
-        /// <param name="Message">Message to log.</param>
-        /// <param name="TcpClient">TcpClient.</param>
-        /// <param name="Console">Print to console?</param>
-        /// <param name="WriteToLog">Write to log file?</param>
-        public void Debug(string Message, TcpClient TcpClient = null, bool Console = true, bool WriteToLog = true)
+        /// <param name="message">Message to log.</param>
+        /// <param name="logType">Log type.</param>
+        /// <param name="network">Network.</param>
+        /// <param name="printToConsole">Print to console?</param>
+        /// <param name="writeToLog">Write to log file?</param>
+        public void Debug(string message, Networking network = null, bool printToConsole = true, bool writeToLog = true)
         {
             if (IsActive)
             {
@@ -110,41 +108,41 @@ namespace Pokemon_3D_Server_Core.Logger
                 {
                     if (CanLog(LogTypes.Debug))
                     {
-                        string MessageToLog = $"{DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt") + (TcpClient == null ? "" : " " + ((IPEndPoint)TcpClient.Client.RemoteEndPoint).Address.ToString())} [{LogTypes.Debug.ToString()}] {Message}";
+                        string messageToLog = $"{DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt") + (network == null ? "" : " " + network.GetPublicIPFromClient())} [{LogTypes.Debug.ToString()}] {message}";
 
-                        if (Console && instance != null)
-                            instance.LogMessage(MessageToLog);
+                        if (printToConsole && instance != null)
+                            instance.LogMessage(messageToLog);
 
-                        if (WriteToLog)
-                            Writer.WriteLine(MessageToLog);
+                        if (writeToLog)
+                            Writer.WriteLine(messageToLog);
                     }
                 });
             }
         }
 
-        private bool CanLog(LogTypes LogType)
+        private bool CanLog(LogTypes logType)
         {
-            if (LogType == LogTypes.Chat && Core.Settings.Logger.LoggerChat)
+            if (logType == LogTypes.Chat && Core.Settings.Logger.LoggerChat)
                 return true;
-            else if (LogType == LogTypes.Command && Core.Settings.Logger.LoggerCommand)
+            else if (logType == LogTypes.Command && Core.Settings.Logger.LoggerCommand)
                 return true;
-            else if ((LogType == LogTypes.Debug && Core.Settings.Logger.LoggerDebug) || Debugger.IsAttached)
+            else if ((logType == LogTypes.Debug && Core.Settings.Logger.LoggerDebug) || Debugger.IsAttached)
                 return true;
-            else if (LogType == LogTypes.Info && Core.Settings.Logger.LoggerInfo)
+            else if (logType == LogTypes.Info && Core.Settings.Logger.LoggerInfo)
                 return true;
-            else if (LogType == LogTypes.PM && Core.Settings.Logger.LoggerPM)
+            else if (logType == LogTypes.PM && Core.Settings.Logger.LoggerPM)
                 return true;
-            else if (LogType == LogTypes.PvP && Core.Settings.Logger.LoggerPvP)
+            else if (logType == LogTypes.PvP && Core.Settings.Logger.LoggerPvP)
                 return true;
-            else if (LogType == LogTypes.Server && Core.Settings.Logger.LoggerServer)
+            else if (logType == LogTypes.Server && Core.Settings.Logger.LoggerServer)
                 return true;
-            else if (LogType == LogTypes.Trade && Core.Settings.Logger.LoggerTrade)
+            else if (logType == LogTypes.Trade && Core.Settings.Logger.LoggerTrade)
                 return true;
-            else if (LogType == LogTypes.Warning && Core.Settings.Logger.LoggerWarning)
+            else if (logType == LogTypes.Warning && Core.Settings.Logger.LoggerWarning)
                 return true;
-            else if (LogType == LogTypes.Error && Core.Settings.Logger.LoggerError)
+            else if (logType == LogTypes.Error && Core.Settings.Logger.LoggerError)
                 return true;
-            else if (LogType == LogTypes.Rcon && Core.Settings.Logger.LoggerRcon)
+            else if (logType == LogTypes.Rcon && Core.Settings.Logger.LoggerRcon)
                 return true;
             else
                 return false;

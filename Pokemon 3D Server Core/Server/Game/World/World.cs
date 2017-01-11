@@ -224,76 +224,76 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
         {
             try
             {
-                List<Season> SeasonMonthRef;
-                double TotalChance = 0;
+                List<Season> seasonMonthRef;
+                double totalChance = 0;
 
                 switch (DateTime.Now.Month)
                 {
                     case 1:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.January;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.January;
                         break;
 
                     case 2:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.February;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.February;
                         break;
 
                     case 3:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.March;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.March;
                         break;
 
                     case 4:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.April;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.April;
                         break;
 
                     case 5:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.May;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.May;
                         break;
 
                     case 6:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.June;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.June;
                         break;
 
                     case 7:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.July;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.July;
                         break;
 
                     case 8:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.August;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.August;
                         break;
 
                     case 9:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.September;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.September;
                         break;
 
                     case 10:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.October;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.October;
                         break;
 
                     case 11:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.November;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.November;
                         break;
 
                     case 12:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.December;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.December;
                         break;
 
                     default:
-                        SeasonMonthRef = Core.Settings.Server.World.SeasonMonth.January;
+                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.January;
                         break;
                 }
 
-                foreach (Season Season in SeasonMonthRef)
-                    TotalChance += Season.Chance;
+                foreach (Season Season in seasonMonthRef)
+                    totalChance += Season.Chance;
 
-                double CurrentChance = 0;
-                int RandomChance = MathHelper.Random(1, TotalChance.Floor().ToString().ToInt());
+                double currentChance = 0;
+                int randomChance = MathHelper.Random(1, totalChance.Floor().ToString().ToInt());
 
-                foreach (Season Season in SeasonMonthRef)
+                foreach (Season season in seasonMonthRef)
                 {
-                    CurrentChance += Season.Chance;
+                    currentChance += season.Chance;
 
-                    if (RandomChance <= CurrentChance)
-                        return Season.Value.Clamp(0, 3);
+                    if (randomChance <= currentChance)
+                        return season.Value.Clamp(0, 3);
                 }
 
                 return (int)SeasonType.Winter;
@@ -308,46 +308,46 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
         {
             try
             {
-                List<Weather> WeatherSeasonRef;
-                double TotalChance = 0;
+                List<Weather> weatherSeasonRef;
+                double totalChance = 0;
 
                 switch (Season)
                 {
                     case (int)SeasonType.Winter:
-                        WeatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Winter;
+                        weatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Winter;
                         break;
 
                     case (int)SeasonType.Spring:
-                        WeatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Spring;
+                        weatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Spring;
                         break;
 
                     case (int)SeasonType.Summer:
-                        WeatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Summer;
+                        weatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Summer;
                         break;
 
                     case (int)SeasonType.Fall:
-                        WeatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Fall;
+                        weatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Fall;
                         break;
 
                     default:
-                        WeatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Winter;
+                        weatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Winter;
                         break;
                 }
 
-                foreach (Weather Weather in WeatherSeasonRef)
+                foreach (Weather weather in weatherSeasonRef)
                 {
-                    TotalChance += Weather.Chance;
+                    totalChance += weather.Chance;
                 }
 
-                double CurrentChance = 0;
-                int RandomChance = MathHelper.Random(1, TotalChance.Floor().ToString().ToInt());
+                double currentChance = 0;
+                int randomChance = MathHelper.Random(1, totalChance.Floor().ToString().ToInt());
 
-                foreach (Weather Weather in WeatherSeasonRef)
+                foreach (Weather weather in weatherSeasonRef)
                 {
-                    CurrentChance += Weather.Chance;
+                    currentChance += weather.Chance;
 
-                    if (RandomChance <= CurrentChance)
-                        return Weather.Value.Clamp(0, 9);
+                    if (randomChance <= currentChance)
+                        return weather.Value.Clamp(0, 9);
                 }
 
                 return (int)WeatherType.Clear;

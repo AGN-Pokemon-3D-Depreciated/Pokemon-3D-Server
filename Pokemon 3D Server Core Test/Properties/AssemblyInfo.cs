@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Pokemon 3D Server Core")]
-[assembly: AssemblyDescription("Pokemon 3D Server Core")]
+[assembly: AssemblyTitle("Pokemon 3D Server Core Test")]
+[assembly: AssemblyDescription("Pokemon 3D Server Core Test")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Dialga Team")]
-[assembly: AssemblyProduct("Pokemon 3D Server Core")]
-[assembly: AssemblyCopyright("Copyright © jianmingyong 2016")]
+[assembly: AssemblyProduct("Pokemon 3D Server Core Test")]
+[assembly: AssemblyCopyright("Copyright © jianmingyong 2017")]
 [assembly: AssemblyTrademark("The Dialga Team")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5cb70e97-a84f-4a7a-b525-853539de21b2")]
+[assembly: Guid("9e6dea7b-a61a-4397-8b12-0c03d3cb0d93")]
 
 // Version information for an assembly consists of the following four values:
 //

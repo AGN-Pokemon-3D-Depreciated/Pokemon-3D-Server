@@ -5,6 +5,6 @@
         /// <summary>
         /// Print stuff to console.
         /// </summary>
-        void LogMessage(string Message);
+        void LogMessage(string message);
     }
 }

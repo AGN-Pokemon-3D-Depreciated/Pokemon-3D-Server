@@ -80,10 +80,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\BusyTypeCollection.cs" />
+    <Compile Include="Collections\LogTypeCollection.cs" />
+    <Compile Include="Collections\OperatorTypeCollection.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Interface\IModules.cs" />
     <Compile Include="Logger\ILogger.cs" />
     <Compile Include="Logger\Logger.cs" />
+    <Compile Include="Modules\System\Collections\Generic\DictionaryHelper.cs" />
     <Compile Include="Modules\System\DateTimeHelper.cs" />
     <Compile Include="Modules\System\ExceptionHelper.cs" />
     <Compile Include="Modules\System\IO\DirectoryHelper.cs" />
@@ -110,6 +114,7 @@
     <Compile Include="Settings\Server\Network.cs" />
     <Compile Include="Settings\Server\Server.cs" />
     <Compile Include="Settings\Server\GameModes.cs" />
+    <Compile Include="Settings\Server\Token.cs" />
     <Compile Include="Settings\Server\World\SeasonMonth\SeasonMonth.cs" />
     <Compile Include="Settings\Server\World\SeasonMonth\Season.cs" />
     <Compile Include="Settings\Server\World\WeatherSeason\Weather.cs" />

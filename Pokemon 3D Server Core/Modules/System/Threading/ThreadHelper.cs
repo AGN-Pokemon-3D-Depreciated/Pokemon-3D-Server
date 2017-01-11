@@ -12,12 +12,12 @@ namespace Modules.System.Threading
         /// <summary>
         /// Add a new thread into the collection.
         /// </summary>
-        /// <param name="ThreadStart">Thread to add.</param>
-        public void Add(ThreadStart ThreadStart)
+        /// <param name="threadStart">Thread to add.</param>
+        public void Add(ThreadStart threadStart)
         {
-            Thread Thread = new Thread(ThreadStart) { IsBackground = true };
-            Thread.Start();
-            Add(Thread);
+            Thread thread = new Thread(threadStart) { IsBackground = true };
+            thread.Start();
+            Add(thread);
         }
 
         /// <summary>

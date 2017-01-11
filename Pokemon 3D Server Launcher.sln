@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pokemon 3D Server Launcher"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pokemon 3D Server Core", "Pokemon 3D Server Core\Pokemon 3D Server Core.csproj", "{5CB70E97-A84F-4A7A-B525-853539DE21B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pokemon 3D Server Core Test", "Pokemon 3D Server Core Test\Pokemon 3D Server Core Test.csproj", "{9E6DEA7B-A61A-4397-8B12-0C03D3CB0D93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -21,6 +23,10 @@ Global
 		{5CB70E97-A84F-4A7A-B525-853539DE21B2}.Debug|x86.Build.0 = Debug|x86
 		{5CB70E97-A84F-4A7A-B525-853539DE21B2}.Release|x86.ActiveCfg = Release|x86
 		{5CB70E97-A84F-4A7A-B525-853539DE21B2}.Release|x86.Build.0 = Release|x86
+		{9E6DEA7B-A61A-4397-8B12-0C03D3CB0D93}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9E6DEA7B-A61A-4397-8B12-0C03D3CB0D93}.Debug|x86.Build.0 = Debug|Any CPU
+		{9E6DEA7B-A61A-4397-8B12-0C03D3CB0D93}.Release|x86.ActiveCfg = Release|Any CPU
+		{9E6DEA7B-A61A-4397-8B12-0C03D3CB0D93}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

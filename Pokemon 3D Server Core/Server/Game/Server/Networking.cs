@@ -1,6 +1,8 @@
 ﻿using Amib.Threading;
+using Modules.System;
 using Modules.System.Threading;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 
@@ -14,69 +16,70 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
         public TcpClient TcpClient { get; private set; }
 
         /// <summary>
-        /// Get/Set Force remove session.
+        /// Get/Set Player.
         /// </summary>
-        public bool ForceRemove { get; set; } = false;
+        public Player.Player Player { get; set; }
+
+        /// <summary>
+        /// Get Network activity.
+        /// </summary>
+        public bool IsActive { get; private set; } = false;
 
         private StreamReader Reader;
         private StreamWriter Writer;
-
-        private bool IsActive = false;
-
         private ThreadHelper Thread = new ThreadHelper();
-
         private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(Environment.ProcessorCount);
         private IWorkItemsGroup ThreadPool2 = new SmartThreadPool().CreateWorkItemsGroup(1);
 
-        public Networking(TcpClient TcpClient)
+        public Networking(TcpClient tcpClient)
         {
-            this.TcpClient = TcpClient;
+            TcpClient = tcpClient;
 
-            Reader = new StreamReader(TcpClient.GetStream());
-            Writer = new StreamWriter(TcpClient.GetStream());
+            Reader = new StreamReader(tcpClient.GetStream());
+            Writer = new StreamWriter(tcpClient.GetStream());
 
             IsActive = true;
 
             Thread.Add(() =>
             {
-                int ErrorCount = 0;
+                int errorCount = 0;
 
                 do
                 {
                     try
                     {
-                        if (TcpClient.Available > -1)
+                        if (tcpClient.Available > -1)
                         {
-                            string PackageString = Reader.ReadLine();
+                            string packageString = Reader.ReadLine();
 
-                            if (!string.IsNullOrWhiteSpace(PackageString))
+                            if (!string.IsNullOrWhiteSpace(packageString))
                             {
                                 ThreadPool.QueueWorkItem(() =>
                                 {
-                                    Package.Package Package = new Package.Package(PackageString, TcpClient);
+                                    Package.Package package = new Package.Package(packageString, this);
 
-                                    if (Package.IsValid)
-                                        Package.Handle();
+                                    if (package.IsValid)
+                                        package.Handle();
 
-                                    Core.Logger.Debug($"Receive: {PackageString}", TcpClient);
+                                    Core.Logger.Debug($"Receive: {packageString}", this);
                                 });
 
-                                ErrorCount = 0;
+                                errorCount = 0;
                             }
                             else
                             {
-                                ErrorCount++;
+                                errorCount++;
 
-                                if (ErrorCount > 10)
+                                if (errorCount > 10)
                                 {
-                                    Core.Logger.Debug("Too much error received from the client.", TcpClient);
+                                    Core.Logger.Debug("Too much error received from the client.", this);
                                     throw new Exception("Too much error received from the client.");
                                 }
                             }
                         }
                         else
                         {
-                            Core.Logger.Debug("Unexpected error occured.", TcpClient);
+                            Core.Logger.Debug("Unexpected error occured.", this);
                             throw new Exception("Unexpected error occured.");
                         }
                     }
@@ -104,7 +107,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
                 {
                     Writer.WriteLine(p.ToString());
                     Writer.Flush();
-                    Core.Logger.Debug($"Sent: {p.ToString()}", TcpClient);
+                    Core.Logger.Debug($"Sent: {p.ToString()}", this);
                 }
                 catch (Exception) { }
             });
@@ -118,13 +121,16 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
             IsActive = false;
             ThreadPool2.WaitForIdle();
 
+            Core.TcpClientCollection.Remove(TcpClient);
+
             if (TcpClient != null) TcpClient.Close();
 
             if (Reader != null) Reader.Dispose();
             if (Writer != null) Writer.Dispose();
 
             Thread.Dispose();
-            if (!ForceRemove) Core.TcpClientCollection.Remove(TcpClient);
+
+            Core.Logger.Debug($"Connection Disposed. Active connection left: " + Core.TcpClientCollection.Count);
         }
     }
 }

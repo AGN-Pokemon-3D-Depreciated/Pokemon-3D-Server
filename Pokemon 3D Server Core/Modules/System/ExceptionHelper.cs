@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using SystemInfoLibrary.OperatingSystem;
-using static Pokemon_3D_Server_Core.Settings.Logger;
+using static Pokemon_3D_Server_Core.Collections.LogTypeCollection;
 
 namespace Modules.System
 {
@@ -23,7 +23,7 @@ namespace Modules.System
             {
                 OperatingSystemInfo osInfo = OperatingSystemInfo.GetOperatingSystemInfo();
 
-                string ErrorLog = $@"[CODE]
+                string errorLog = $@"[CODE]
 Pokemon 3D Server Application Crash Log v{Core.Settings.Version}
 --------------------------------------------------
 
@@ -77,14 +77,14 @@ You should report this error if it is reproduceable or you could not solve it by
 Go To: <INSERTURL> to report this crash.
 [/CODE]";
 
-                DateTime ErrorTime = DateTime.Now;
-                int RandomIndetifier = MathHelper.Random(0, int.MaxValue);
-                string Path = $"{Core.Settings.Directories.CrashLogDirectory}/Crash_{ErrorTime.ToString("yyyy-MM-dd_HH.mm.ss")}.{RandomIndetifier.ToString("0000000000")}.dat".GetFullPath();
+                DateTime errorTime = DateTime.Now;
+                int randomIndetifier = MathHelper.Random(0, int.MaxValue);
+                string Path = $"{Core.Settings.Directories.CrashLogDirectory}/Crash_{errorTime.ToString("yyyy-MM-dd_HH.mm.ss")}.{randomIndetifier.ToString("0000000000")}.dat".GetFullPath();
 
-                using (FileStream FileStream = new FileStream(Path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+                using (FileStream fileStream = new FileStream(Path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
                 {
-                    using (StreamWriter Writer = new StreamWriter(FileStream, Encoding.UTF8) { AutoFlush = true })
-                        Writer.Write(ErrorLog);
+                    using (StreamWriter writer = new StreamWriter(fileStream, Encoding.UTF8) { AutoFlush = true })
+                        writer.Write(errorLog);
                 }
 
                 Core.Logger.Log(ex.Message + Environment.NewLine + $"Error Log saved at: {Path}", LogTypes.Error);
@@ -97,51 +97,51 @@ Go To: <INSERTURL> to report this crash.
 
         private static string GenerateInnerExceptionMessage(Exception ex)
         {
-            Exception ExceptionRef = ex;
-            int InnerExceptionCount = 1;
-            string ReturnString = "";
+            Exception exceptionRef = ex;
+            int innerExceptionCount = 1;
+            string returnString = "";
 
             if (ex.InnerException == null)
-                ReturnString = "Nothing";
+                returnString = "Nothing";
             else
             {
                 do
                 {
-                    if (InnerExceptionCount == 1)
-                        ReturnString += ExceptionRef.InnerException.Message;
+                    if (innerExceptionCount == 1)
+                        returnString += exceptionRef.InnerException.Message;
                     else
-                        ReturnString += Environment.NewLine + $"InnerException {InnerExceptionCount.ToString()}: {ExceptionRef.InnerException.Message}";
+                        returnString += Environment.NewLine + $"InnerException {innerExceptionCount.ToString()}: {exceptionRef.InnerException.Message}";
 
-                    InnerExceptionCount++;
-                    ExceptionRef = ExceptionRef.InnerException;
-                } while (ExceptionRef.InnerException != null);
+                    innerExceptionCount++;
+                    exceptionRef = exceptionRef.InnerException;
+                } while (exceptionRef.InnerException != null);
             }
 
-            return ReturnString;
+            return returnString;
         }
 
         private static string GenerateInnerExceptionStackTrace(Exception ex)
         {
-            Exception ExceptionRef = ex;
-            List<string> ExceptionStackTrace = new List<string>();
-            string ReturnString;
+            Exception exceptionRef = ex;
+            List<string> exceptionStackTrace = new List<string>();
+            string returnString;
 
             if (string.IsNullOrEmpty(ex.StackTrace))
-                ExceptionStackTrace.Add(string.Join(Environment.NewLine, Environment.StackTrace.Split('\n').Skip(3).ToArray()));
+                exceptionStackTrace.Add(string.Join(Environment.NewLine, Environment.StackTrace.Split('\n').Skip(3).ToArray()));
             else
-                ExceptionStackTrace.Add(ex.StackTrace);
+                exceptionStackTrace.Add(ex.StackTrace);
 
-            while (ExceptionRef.InnerException != null)
+            while (exceptionRef.InnerException != null)
             {
-                ExceptionStackTrace.Add(ExceptionRef.InnerException.StackTrace);
-                ExceptionRef = ExceptionRef.InnerException;
+                exceptionStackTrace.Add(exceptionRef.InnerException.StackTrace);
+                exceptionRef = exceptionRef.InnerException;
             }
 
-            ExceptionStackTrace.Reverse();
+            exceptionStackTrace.Reverse();
 
-            ReturnString = string.Join(Environment.NewLine, ExceptionStackTrace.ToArray());
+            returnString = string.Join(Environment.NewLine, exceptionStackTrace.ToArray());
 
-            return ReturnString;
+            return returnString;
         }
     }
 }

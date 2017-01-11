@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pokemon_3D_Server_Core.Server.Game.Server;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Cache;
@@ -6,7 +7,7 @@ using System.Net.Sockets;
 
 namespace Modules.System.Net
 {
-    public class IPAddressHelper
+    public static class IPAddressHelper
     {
         /// <summary>
         /// Get the public IP of the hosting computer.
@@ -25,6 +26,15 @@ namespace Modules.System.Net
                     return null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Get the public IP of the client.
+        /// </summary>
+        /// <param name="network">Network.</param>
+        public static string GetPublicIPFromClient(this Networking network)
+        {
+            return ((IPEndPoint)network.TcpClient.Client.RemoteEndPoint).Address.ToString();
         }
 
         /// <summary>

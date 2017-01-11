@@ -10,19 +10,19 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// </summary>
         public string GameMode { get; set; }
 
-        private int _isGameJoltPlayer;
+        private int _IsGameJoltPlayer;
         /// <summary>
         /// Get/Set Player DataItem[1]
         /// </summary>
-        public bool isGameJoltPlayer
+        public bool IsGameJoltPlayer
         {
             get
             {
-                return _isGameJoltPlayer.ToBool();
+                return _IsGameJoltPlayer.ToBool();
             }
             set
             {
-                _isGameJoltPlayer = value.ToInt();
+                _IsGameJoltPlayer = value.ToInt();
             }
         }
 
@@ -206,7 +206,23 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// <summary>
         /// Get/Set Player Last Valid Game Data
         /// </summary>
-        public Player LastValidGameData { get; set; } = new Player();
+        public Player LastValidGameData { get; set; }
         #endregion Player Data
+
+        /// <summary>
+        /// Get/Set Player ID
+        /// </summary>
+        public int ID { get; set; }
+
+        /// <summary>
+        /// Get Network
+        /// </summary>
+        public Networking Network { get; private set; }
+
+        public Player(int id, Networking network, Package.Package p)
+        {
+            ID = id;
+            Network = network;
+        }
     }
 }

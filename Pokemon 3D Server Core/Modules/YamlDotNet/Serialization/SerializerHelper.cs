@@ -10,18 +10,18 @@ namespace Modules.YamlDotNet.Serialization
         /// <summary>
         /// Serializes the specified object.
         /// </summary>
-        /// <param name="Object">The object to serialize.</param>
-        /// <param name="File">A relative or absolute path for the file to save.</param>
-        public static bool Serialize(this object Object, string File)
+        /// <param name="obj">The object to serialize.</param>
+        /// <param name="file">A relative or absolute path for the file to save.</param>
+        public static bool Serialize(this object obj, string file)
         {
             try
             {
-                using (FileStream FileStream = new FileStream(File, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+                using (FileStream fileStream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
                 {
-                    using (StreamWriter Writer = new StreamWriter(FileStream, Encoding.UTF8))
+                    using (StreamWriter writer = new StreamWriter(fileStream, Encoding.UTF8))
                     {
-                        SerializerBuilder Serializer = new SerializerBuilder();
-                        Serializer.EmitDefaults().Build().Serialize(Writer, Object);
+                        SerializerBuilder serializer = new SerializerBuilder();
+                        serializer.EmitDefaults().Build().Serialize(writer, obj);
                         return true;
                     }
                 }
@@ -35,19 +35,19 @@ namespace Modules.YamlDotNet.Serialization
         /// <summary>
         /// Serializes the specified object.
         /// </summary>
-        /// <param name="Object">The object to serialize.</param>
-        /// <param name="File">A relative or absolute path for the file to save.</param>
+        /// <param name="obj">The object to serialize.</param>
+        /// <param name="file">A relative or absolute path for the file to save.</param>
         /// <param name="ex">Represents errors that occur during application execution.</param>
-        public static bool Serialize(this object Object, string File, out Exception ex)
+        public static bool Serialize(this object obj, string file, out Exception ex)
         {
             try
             {
-                using (FileStream FileStream = new FileStream(File, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+                using (FileStream fileStream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
                 {
-                    using (StreamWriter Writer = new StreamWriter(FileStream, Encoding.UTF8))
+                    using (StreamWriter writer = new StreamWriter(fileStream, Encoding.UTF8))
                     {
-                        SerializerBuilder Serializer = new SerializerBuilder();
-                        Serializer.EmitDefaults().Build().Serialize(Writer, Object);
+                        SerializerBuilder serializer = new SerializerBuilder();
+                        serializer.EmitDefaults().Build().Serialize(writer, obj);
                         ex = null;
                         return true;
                     }

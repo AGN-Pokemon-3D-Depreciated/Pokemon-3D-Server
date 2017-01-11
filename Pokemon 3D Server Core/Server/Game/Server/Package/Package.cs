@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 
 namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
 {
@@ -37,9 +36,9 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
         public bool IsValid { get; private set; }
 
         /// <summary>
-        /// Get Client.
+        /// Get Network.
         /// </summary>
-        public TcpClient TcpClient { get; private set; }
+        public Networking Network { get; private set; }
 
         /// <summary>
         /// A collection of Package Type.
@@ -218,29 +217,29 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
         /// <summary>
         /// Full Package Data
         /// </summary>
-        /// <param name="FullData">Full Package Data</param>
-        /// <param name="TcpClient">TcpClient of the player</param>
-        public Package(string FullData, TcpClient TcpClient)
+        /// <param name="fullData">Full Package Data</param>
+        /// <param name="network">Network</param>
+        public Package(string fullData, Networking network)
         {
             try
             {
-                this.TcpClient = TcpClient;
+                Network = network;
 
-                if (FullData == null || !FullData.Contains("|"))
+                if (fullData == null || !fullData.Contains("|"))
                 {
-                    Core.Logger.Debug($"Package is incomplete.", TcpClient);
+                    Core.Logger.Debug($"Package is incomplete.", network);
                     IsValid = false;
                     return;
                 }
 
-                List<string> bits = FullData.Split('|').ToList();
+                List<string> bits = fullData.Split('|').ToList();
 
                 if (bits.Count >= 5)
                 {
                     // Protocol Version
                     if (!string.Equals(Core.Settings.Server.ProtocolVersion, bits[0], StringComparison.OrdinalIgnoreCase))
                     {
-                        Core.Logger.Debug($"Package does not contains valid Protocol Version.", TcpClient);
+                        Core.Logger.Debug($"Package does not contains valid Protocol Version.", network);
                         IsValid = false;
                         return;
                     }
@@ -252,7 +251,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
                     }
                     catch (Exception)
                     {
-                        Core.Logger.Debug($"Package does not contains valid Package Type.", TcpClient);
+                        Core.Logger.Debug($"Package does not contains valid Package Type.", network);
                         IsValid = false;
                         return;
                     }
@@ -264,7 +263,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
                     }
                     catch (Exception)
                     {
-                        Core.Logger.Debug($"Package does not contains valid Origin.", TcpClient);
+                        Core.Logger.Debug($"Package does not contains valid Origin.", network);
                         IsValid = false;
                         return;
                     }
@@ -278,23 +277,23 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
                     }
                     catch (Exception)
                     {
-                        Core.Logger.Debug($"Package does not contains valid DataItemsCount.", TcpClient);
+                        Core.Logger.Debug($"Package does not contains valid DataItemsCount.", network);
                         IsValid = false;
                         return;
                     }
 
-                    List<int> OffsetList = new List<int>();
+                    List<int> offsetList = new List<int>();
 
                     // Count from 4th item to second last item. Those are the offsets.
                     for (int i = 4; i < DataItemsCount + 4; i++)
                     {
                         try
                         {
-                            OffsetList.Add(bits[i].ToInt());
+                            offsetList.Add(bits[i].ToInt());
                         }
                         catch (Exception)
                         {
-                            Core.Logger.Debug($"Package does not contains valid Offset.", TcpClient);
+                            Core.Logger.Debug($"Package does not contains valid Offset.", network);
                             IsValid = false;
                             return;
                         }
@@ -312,13 +311,13 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
                     }
 
                     // Cutting the data:
-                    for (int i = 0; i < OffsetList.Count; i++)
+                    for (int i = 0; i < offsetList.Count; i++)
                     {
-                        int cOffset = OffsetList[i];
+                        int cOffset = offsetList[i];
                         int length = dataString.Length - cOffset;
 
-                        if (i < OffsetList.Count - 1)
-                            length = OffsetList[i + 1] - cOffset;
+                        if (i < offsetList.Count - 1)
+                            length = offsetList[i + 1] - cOffset;
 
                         DataItems.Add(dataString.Substring(cOffset, length));
                     }
@@ -327,13 +326,13 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
                 }
                 else
                 {
-                    Core.Logger.Debug($"Package is incomplete.", TcpClient);
+                    Core.Logger.Debug($"Package is incomplete.", network);
                     IsValid = false;
                 }
             }
             catch (Exception ex)
             {
-                Core.Logger.Debug(ex.Message, TcpClient);
+                Core.Logger.Debug(ex.Message, network);
                 IsValid = false;
             }
         }
@@ -341,60 +340,60 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
         /// <summary>
         /// Creating a new Package
         /// </summary>
-        /// <param name="PackageType">Package Type</param>
-        /// <param name="Origin">Origin</param>
-        /// <param name="DataItems">DataItems</param>
-        /// <param name="TcpClient">TcpClient</param>
-        public Package(PackageTypes PackageType, int Origin, List<string> DataItems, TcpClient TcpClient)
+        /// <param name="packageType">Package Type</param>
+        /// <param name="origin">Origin</param>
+        /// <param name="dataItems">DataItems</param>
+        /// <param name="network">Network</param>
+        public Package(PackageTypes packageType, int origin, List<string> dataItems, Networking network)
         {
-            this.PackageType = (int)PackageType;
-            this.Origin = Origin;
-            this.DataItems = DataItems;
-            this.TcpClient = TcpClient;
+            PackageType = (int)packageType;
+            Origin = origin;
+            DataItems = dataItems;
+            Network = network;
             IsValid = true;
         }
 
         /// <summary>
         /// Creating a new Package
         /// </summary>
-        /// <param name="PackageType">Package Type</param>
-        /// <param name="DataItems">DataItems</param>
-        /// <param name="TcpClient">TcpClient</param>
-        public Package(PackageTypes PackageType, List<string> DataItems, TcpClient TcpClient)
+        /// <param name="packageType">Package Type</param>
+        /// <param name="dataItems">DataItems</param>
+        /// <param name="network">Network</param>
+        public Package(PackageTypes packageType, List<string> dataItems, Networking network)
         {
-            this.PackageType = (int)PackageType;
-            this.DataItems = DataItems;
-            this.TcpClient = TcpClient;
+            PackageType = (int)packageType;
+            DataItems = dataItems;
+            Network = network;
             IsValid = true;
         }
 
         /// <summary>
         /// Creating a new Package
         /// </summary>
-        /// <param name="PackageType">Package Type</param>
-        /// <param name="Origin">Origin</param>
-        /// <param name="DataItems">DataItems</param>
-        /// <param name="TcpClient">TcpClient</param>
-        public Package(PackageTypes PackageType, int Origin, string DataItems, TcpClient TcpClient)
+        /// <param name="packageType">Package Type</param>
+        /// <param name="origin">Origin</param>
+        /// <param name="dataItems">DataItems</param>
+        /// <param name="network">Network</param>
+        public Package(PackageTypes packageType, int origin, string dataItems, Networking network)
         {
-            this.PackageType = (int)PackageType;
-            this.Origin = Origin;
-            this.DataItems = new List<string> { DataItems };
-            this.TcpClient = TcpClient;
+            PackageType = (int)packageType;
+            Origin = origin;
+            DataItems = new List<string> { dataItems };
+            Network = network;
             IsValid = true;
         }
 
         /// <summary>
         /// Creating a new Package
         /// </summary>
-        /// <param name="PackageType">Package Type</param>
-        /// <param name="DataItems">DataItems</param>
-        /// <param name="TcpClient">TcpClient</param>
-        public Package(PackageTypes PackageType, string DataItems, TcpClient TcpClient)
+        /// <param name="packageType">Package Type</param>
+        /// <param name="dataItems">DataItems</param>
+        /// <param name="network">Network</param>
+        public Package(PackageTypes packageType, string dataItems, Networking network)
         {
-            this.PackageType = (int)PackageType;
-            this.DataItems = new List<string> { DataItems };
-            this.TcpClient = TcpClient;
+            PackageType = (int)packageType;
+            DataItems = new List<string> { dataItems };
+            Network = network;
             IsValid = true;
         }
 
@@ -424,14 +423,14 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
         {
             string outputStr = ProtocolVersion + "|" + PackageType.ToString() + "|" + Origin.ToString() + "|" + DataItemsCount.ToString();
 
-            int CurrentIndex = 0;
+            int currentIndex = 0;
             string data = null;
 
             foreach (string dataItem in DataItems)
             {
-                outputStr += "|" + CurrentIndex.ToString();
+                outputStr += "|" + currentIndex.ToString();
                 data += dataItem;
-                CurrentIndex += dataItem.Length;
+                currentIndex += dataItem.Length;
             }
 
             outputStr += "|" + data;

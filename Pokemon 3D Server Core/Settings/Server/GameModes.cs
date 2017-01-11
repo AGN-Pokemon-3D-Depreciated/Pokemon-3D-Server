@@ -43,10 +43,10 @@ namespace Pokemon_3D_Server_Core.Settings.Server
 
                 if (Others.Count > 0)
                 {
-                    foreach (string Item in Others)
+                    foreach (string item in Others)
                     {
-                        if (!_GameMode.Contains(Item))
-                            _GameMode.Add(Item);
+                        if (!_GameMode.Contains(item))
+                            _GameMode.Add(item);
                     }
                 }
 
@@ -123,6 +123,14 @@ namespace Pokemon_3D_Server_Core.Settings.Server
                 return true;
             else
                 return false;
+        }
+
+        /// <summary>
+        /// GameMode List.
+        /// </summary>
+        public override string ToString()
+        {
+            return string.Join(", ", GameMode);
         }
     }
 }
