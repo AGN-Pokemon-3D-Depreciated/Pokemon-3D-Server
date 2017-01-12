@@ -16,24 +16,14 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
 {
     public class Listener : IModules
     {
-        /// <summary>
-        /// Get the name of the module.
-        /// </summary>
-        public string Name { get { return "Game Server Listener"; } }
+        public string Name { get; } = "Game Server Listener";
+        public string Version { get; } = "0.54";
 
-        /// <summary>
-        /// Get the version of the module.
-        /// </summary>
-        public string Version { get { return "0.54"; } }
-
-        private TcpListener TcpListener;
         private ThreadHelper Thread = new ThreadHelper();
         private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(Environment.ProcessorCount);
+        private TcpListener TcpListener;
         private bool IsActive = false;
 
-        /// <summary>
-        /// Start the module.
-        /// </summary>
         public void Start()
         {
             try
@@ -45,73 +35,26 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
                 }
                 else
                 {
-                    TcpListener = new TcpListener(new IPEndPoint(IPAddress.Any, Core.Settings.Server.Port));
+                    TcpListener = new TcpListener(new IPEndPoint(IPAddress.Any, Core.Settings.Server.Game.Network.Port));
                     TcpListener.AllowNatTraversal(true);
                     TcpListener.Start();
 
-                    Thread.Add(() =>
-                    {
-                        Core.Logger.Log("Pokemon 3D Listener initialized.");
-                        IsActive = true;
+                    StartListening();
 
-                        do
-                        {
-                            try
-                            {
-                                TcpClient client = TcpListener.AcceptTcpClient();
-
-                                ThreadPool.QueueWorkItem(() =>
-                                {
-                                    if (client != null)
-                                        Core.TcpClientCollection.Add(client);
-                                });
-                            }
-                            catch (ThreadAbortException) { return; }
-                            catch (Exception) { }
-                        } while (IsActive);
-                    });
-
-                    if (Core.Settings.Server.OfflineMode || Core.Settings.Server.GameMode.NeedOfflineMode())
+                    if (Core.Settings.Server.Game.Server.GameModes.OfflineMode)
                         Core.Logger.Log("Players with offline profile can join the server.");
 
                     if (CheckPortOpen())
                     {
-                        Core.Logger.Log($"Server started. Players can join using the following address: {Core.Settings.Server.IPAddress}:{Core.Settings.Server.Port.ToString()} (Global), {IPAddressHelper.GetPrivateIP()}:{Core.Settings.Server.Port.ToString()} (Local) and with the following GameMode: {Core.Settings.Server.GameMode}.");
+                        Core.Logger.Log($"Server started. Players can join using the following address: {Core.Settings.Server.Game.Network.IPAddress}:{Core.Settings.Server.Game.Network.Port.ToString()} (Global), {IPAddressHelper.GetPrivateIP()}:{Core.Settings.Server.Game.Network.Port.ToString()} (Local) and with the following GameMode: {Core.Settings.Server.Game.Server.GameModes.ToString()}.");
 
-                        if (Core.Settings.Server.CheckPort)
-                        {
-                            Thread.Add(() =>
-                            {
-                                Stopwatch sw = new Stopwatch();
-                                sw.Start();
-
-                                Core.Logger.Log("Port check is now enabled.");
-
-                                do
-                                {
-                                    if (sw.Elapsed.TotalMinutes >= 15)
-                                    {
-                                        if (CheckPortOpen())
-                                        {
-                                            Core.Logger.Log("Port check cycle completed. Result: True.");
-                                            sw.Restart();
-                                        }
-                                        else
-                                        {
-                                            Core.Logger.Log("Port check cycle completed. Result: False.");
-                                            sw.Restart();
-                                        }
-                                    }
-                                    else
-                                        Thread.Sleep(1000);
-                                } while (IsActive);
-                            });
-                        }
+                        if (Core.Settings.Server.Game.Network.CheckPort)
+                            StartPortCheck();
                     }
                     else
                     {
-                        Core.Logger.Log($"The specific port {Core.Settings.Server.Port.ToString()} is not opened. External/Global IP will not accept new players.");
-                        Core.Logger.Log($"Server started. Players can join using the following address: {IPAddressHelper.GetPrivateIP()}:{Core.Settings.Server.Port.ToString()} (Local) and with the following GameMode: {Core.Settings.Server.GameMode}.");
+                        Core.Logger.Log($"The specific port {Core.Settings.Server.Game.Network.Port.ToString()} is not opened. External/Global IP will not accept new players.");
+                        Core.Logger.Log($"Server started. Players can join using the following address: {IPAddressHelper.GetPrivateIP()}:{Core.Settings.Server.Game.Network.Port.ToString()} (Local) and with the following GameMode: {Core.Settings.Server.Game.Server.GameModes.ToString()}.");
                     }
                 }
             }
@@ -122,9 +65,6 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
             }
         }
 
-        /// <summary>
-        /// Stop the module.
-        /// </summary>
         public void Stop()
         {
             IsActive = false;
@@ -134,9 +74,66 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
             if (Core.TcpClientCollection.Count > 0) Core.TcpClientCollection.Dispose();
         }
 
-        /// <summary>
-        /// Check if the port is open.
-        /// </summary>
+        private void StartListening()
+        {
+            Thread.Add(() =>
+            {
+                Core.Logger.Log("Pokemon 3D Listener initialized.");
+                IsActive = true;
+
+                do
+                {
+                    try
+                    {
+                        TcpClient client = TcpListener.AcceptTcpClient();
+
+                        ThreadPool.QueueWorkItem(() =>
+                        {
+                            if (client != null)
+                                Core.TcpClientCollection.Add(client);
+                        });
+                    }
+                    catch (ThreadAbortException) { return; }
+                    catch (Exception) { }
+                } while (IsActive);
+            });
+        }
+
+        private void StartPortCheck()
+        {
+            Thread.Add(() =>
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+
+                Core.Logger.Log("Port check is now enabled.");
+
+                do
+                {
+                    try
+                    {
+                        if (sw.Elapsed.TotalMinutes >= 15)
+                        {
+                            if (CheckPortOpen())
+                            {
+                                Core.Logger.Log("Port check cycle completed. Result: True.");
+                                sw.Restart();
+                            }
+                            else
+                            {
+                                Core.Logger.Log("Port check cycle completed. Result: False.");
+                                sw.Restart();
+                            }
+                        }
+                        else
+                            Thread.Sleep(1000);
+                    }
+                    catch (ThreadAbortException) { return; }
+                    catch (Exception) { }
+                } while (IsActive);
+            });
+        }
+
         private bool CheckPortOpen()
         {
             using (TcpClient tcpClient = new TcpClient())
@@ -145,9 +142,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
                 {
                     tcpClient.SendTimeout = 10000;
                     tcpClient.ReceiveTimeout = 10000;
-
-                    // Pokemon 3D Port.
-                    tcpClient.ConnectAsync(Core.Settings.Server.IPAddress, Core.Settings.Server.Port).Wait(10000);
+                    tcpClient.ConnectAsync(Core.Settings.Server.Game.Network.IPAddress, Core.Settings.Server.Game.Network.Port).Wait(10000);
 
                     if (tcpClient.GetStream() != null)
                     {

@@ -141,6 +141,18 @@ namespace Pokemon_3D_Server_Core.Modules.System.Collections.Generic
                 Dictionary.Clear();
         }
 
+        public virtual bool ContainsKey(TKey key)
+        {
+            lock (Collection.SyncRoot)
+                return Dictionary.ContainsKey(key);
+        }
+
+        public virtual bool ContainsValue(TValue value)
+        {
+            lock (Collection.SyncRoot)
+                return Dictionary.ContainsValue(value);
+        }
+
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             lock (Collection.SyncRoot)

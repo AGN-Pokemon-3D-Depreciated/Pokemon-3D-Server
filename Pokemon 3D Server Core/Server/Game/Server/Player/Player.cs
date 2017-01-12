@@ -16,20 +16,14 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// </summary>
         public bool IsGameJoltPlayer
         {
-            get
-            {
-                return _IsGameJoltPlayer.ToBool();
-            }
-            set
-            {
-                _IsGameJoltPlayer = value.ToInt();
-            }
+            get { return _IsGameJoltPlayer.ToBool(); }
+            set { _IsGameJoltPlayer = value.ToInt(); }
         }
 
         /// <summary>
         /// Get/Set Player DataItem[2]
         /// </summary>
-        public int GameJoltID { get; set; }
+        public string GameJoltID { get; set; }
 
         /// <summary>
         /// Get/Set Player DataItem[3]
@@ -56,14 +50,8 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// </summary>
         public double Position_X
         {
-            get
-            {
-                return Position.GetSplit(0).ToDouble();
-            }
-            set
-            {
-                Position = value.ToString().ConvertStringCulture(DecimalSeparator) + "|" + Position_Y.ToString().ConvertStringCulture(DecimalSeparator) + "|" + Position_Z.ToString().ConvertStringCulture(DecimalSeparator);
-            }
+            get { return Position.GetSplit(0).ToDouble(); }
+            set { Position = value.ToString().ConvertStringCulture(DecimalSeparator) + "|" + Position_Y.ToString().ConvertStringCulture(DecimalSeparator) + "|" + Position_Z.ToString().ConvertStringCulture(DecimalSeparator); }
         }
 
         /// <summary>
@@ -71,14 +59,8 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// </summary>
         public double Position_Y
         {
-            get
-            {
-                return Position.GetSplit(1).ToDouble();
-            }
-            set
-            {
-                Position = Position_X.ToString().ConvertStringCulture(DecimalSeparator) + "|" + value.ToString().ConvertStringCulture(DecimalSeparator) + "|" + Position_Z.ToString().ConvertStringCulture(DecimalSeparator);
-            }
+            get { return Position.GetSplit(1).ToDouble(); }
+            set { Position = Position_X.ToString().ConvertStringCulture(DecimalSeparator) + "|" + value.ToString().ConvertStringCulture(DecimalSeparator) + "|" + Position_Z.ToString().ConvertStringCulture(DecimalSeparator); }
         }
 
         /// <summary>
@@ -86,14 +68,8 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// </summary>
         public double Position_Z
         {
-            get
-            {
-                return Position.GetSplit(2).ToDouble();
-            }
-            set
-            {
-                Position = Position_X.ToString().ConvertStringCulture(DecimalSeparator) + "|" + Position_Y.ToString().ConvertStringCulture(DecimalSeparator) + "|" + value.ToString().ConvertStringCulture(DecimalSeparator);
-            }
+            get { return Position.GetSplit(2).ToDouble(); }
+            set { Position = Position_X.ToString().ConvertStringCulture(DecimalSeparator) + "|" + Position_Y.ToString().ConvertStringCulture(DecimalSeparator) + "|" + value.ToString().ConvertStringCulture(DecimalSeparator); }
         }
 
         /// <summary>
@@ -107,14 +83,8 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// </summary>
         public bool Moving
         {
-            get
-            {
-                return _Moving.ToBool();
-            }
-            set
-            {
-                _Moving = value.ToInt();
-            }
+            get { return _Moving.ToBool(); }
+            set { _Moving = value.ToInt(); }
         }
 
         /// <summary>
@@ -133,14 +103,8 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// </summary>
         public bool PokemonVisible
         {
-            get
-            {
-                return _PokemonVisible.ToBool();
-            }
-            set
-            {
-                _PokemonVisible = value.ToInt();
-            }
+            get { return _PokemonVisible.ToBool(); }
+            set { _PokemonVisible = value.ToInt(); }
         }
 
         /// <summary>
@@ -153,14 +117,8 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// </summary>
         public double PokemonPosition_X
         {
-            get
-            {
-                return PokemonPosition.GetSplit(0).ToDouble();
-            }
-            set
-            {
-                PokemonPosition = value.ToString().ConvertStringCulture(DecimalSeparator) + "|" + PokemonPosition_Y.ToString().ConvertStringCulture(DecimalSeparator) + "|" + PokemonPosition_Z.ToString().ConvertStringCulture(DecimalSeparator);
-            }
+            get { return PokemonPosition.GetSplit(0).ToDouble(); }
+            set { PokemonPosition = value.ToString().ConvertStringCulture(DecimalSeparator) + "|" + PokemonPosition_Y.ToString().ConvertStringCulture(DecimalSeparator) + "|" + PokemonPosition_Z.ToString().ConvertStringCulture(DecimalSeparator); }
         }
 
         /// <summary>
@@ -168,14 +126,8 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// </summary>
         public double PokemonPosition_Y
         {
-            get
-            {
-                return PokemonPosition.GetSplit(1).ToDouble();
-            }
-            set
-            {
-                PokemonPosition = PokemonPosition_X.ToString().ConvertStringCulture(DecimalSeparator) + "|" + value.ToString().ConvertStringCulture(DecimalSeparator) + "|" + PokemonPosition_Z.ToString().ConvertStringCulture(DecimalSeparator);
-            }
+            get { return PokemonPosition.GetSplit(1).ToDouble(); }
+            set { PokemonPosition = PokemonPosition_X.ToString().ConvertStringCulture(DecimalSeparator) + "|" + value.ToString().ConvertStringCulture(DecimalSeparator) + "|" + PokemonPosition_Z.ToString().ConvertStringCulture(DecimalSeparator); }
         }
 
         /// <summary>
@@ -183,14 +135,8 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// </summary>
         public double PokemonPosition_Z
         {
-            get
-            {
-                return PokemonPosition.GetSplit(2).ToDouble();
-            }
-            set
-            {
-                PokemonPosition = PokemonPosition_X.ToString().ConvertStringCulture(DecimalSeparator) + "|" + PokemonPosition_Y.ToString().ConvertStringCulture(DecimalSeparator) + "|" + value.ToString().ConvertStringCulture(DecimalSeparator);
-            }
+            get { return PokemonPosition.GetSplit(2).ToDouble(); }
+            set { PokemonPosition = PokemonPosition_X.ToString().ConvertStringCulture(DecimalSeparator) + "|" + PokemonPosition_Y.ToString().ConvertStringCulture(DecimalSeparator) + "|" + value.ToString().ConvertStringCulture(DecimalSeparator); }
         }
 
         /// <summary>
@@ -209,14 +155,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         public Player LastValidGameData { get; set; }
         #endregion Player Data
 
-        /// <summary>
-        /// Get/Set Player ID
-        /// </summary>
         public int ID { get; set; }
-
-        /// <summary>
-        /// Get Network
-        /// </summary>
         public Networking Network { get; private set; }
 
         public Player(int id, Networking network, Package.Package p)

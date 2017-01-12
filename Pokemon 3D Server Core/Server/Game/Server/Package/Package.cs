@@ -7,47 +7,18 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
 {
     public class Package
     {
-        private string ProtocolVersion = Core.Settings.Server.ProtocolVersion;
+        private string ProtocolVersion = Core.Settings.Server.Game.Network.ProtocolVersion;
         private PackageHandler PackageHandler;
 
-        /// <summary>
-        /// Get Package Type.
-        /// </summary>
         public int PackageType { get; private set; } = (int)PackageTypes.Unknown;
-
-        /// <summary>
-        /// Get Origin.
-        /// </summary>
         public int Origin { get; private set; } = -1;
-
-        /// <summary>
-        /// Get DataItems Count.
-        /// </summary>
         public int DataItemsCount { get { return DataItems.Count; } }
-
-        /// <summary>
-        /// Get DataItems.
-        /// </summary>
         public List<string> DataItems { get; private set; } = new List<string>();
-
-        /// <summary>
-        /// Get Is Valid?
-        /// </summary>
         public bool IsValid { get; private set; }
-
-        /// <summary>
-        /// Get Network.
-        /// </summary>
         public Networking Network { get; private set; }
 
-        /// <summary>
-        /// A collection of Package Type.
-        /// </summary>
         public enum PackageTypes
         {
-            /// <summary>
-            /// Package Type: Unknown Data
-            /// </summary>
             Unknown = -1,
 
             /// <summary>
@@ -214,11 +185,6 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
             ServerDataRequest = 99,
         }
 
-        /// <summary>
-        /// Full Package Data
-        /// </summary>
-        /// <param name="fullData">Full Package Data</param>
-        /// <param name="network">Network</param>
         public Package(string fullData, Networking network)
         {
             try
@@ -237,7 +203,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
                 if (bits.Count >= 5)
                 {
                     // Protocol Version
-                    if (!string.Equals(Core.Settings.Server.ProtocolVersion, bits[0], StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(Core.Settings.Server.Game.Network.ProtocolVersion, bits[0], StringComparison.OrdinalIgnoreCase))
                     {
                         Core.Logger.Debug($"Package does not contains valid Protocol Version.", network);
                         IsValid = false;
@@ -337,14 +303,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
             }
         }
 
-        /// <summary>
-        /// Creating a new Package
-        /// </summary>
-        /// <param name="packageType">Package Type</param>
-        /// <param name="origin">Origin</param>
-        /// <param name="dataItems">DataItems</param>
-        /// <param name="network">Network</param>
-        public Package(PackageTypes packageType, int origin, List<string> dataItems, Networking network)
+        public Package(PackageTypes packageType, int origin, List<string> dataItems, Networking network = null)
         {
             PackageType = (int)packageType;
             Origin = origin;
@@ -353,13 +312,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
             IsValid = true;
         }
 
-        /// <summary>
-        /// Creating a new Package
-        /// </summary>
-        /// <param name="packageType">Package Type</param>
-        /// <param name="dataItems">DataItems</param>
-        /// <param name="network">Network</param>
-        public Package(PackageTypes packageType, List<string> dataItems, Networking network)
+        public Package(PackageTypes packageType, List<string> dataItems, Networking network = null)
         {
             PackageType = (int)packageType;
             DataItems = dataItems;
@@ -367,14 +320,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
             IsValid = true;
         }
 
-        /// <summary>
-        /// Creating a new Package
-        /// </summary>
-        /// <param name="packageType">Package Type</param>
-        /// <param name="origin">Origin</param>
-        /// <param name="dataItems">DataItems</param>
-        /// <param name="network">Network</param>
-        public Package(PackageTypes packageType, int origin, string dataItems, Networking network)
+        public Package(PackageTypes packageType, int origin, string dataItems, Networking network = null)
         {
             PackageType = (int)packageType;
             Origin = origin;
@@ -383,13 +329,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
             IsValid = true;
         }
 
-        /// <summary>
-        /// Creating a new Package
-        /// </summary>
-        /// <param name="packageType">Package Type</param>
-        /// <param name="dataItems">DataItems</param>
-        /// <param name="network">Network</param>
-        public Package(PackageTypes packageType, string dataItems, Networking network)
+        public Package(PackageTypes packageType, string dataItems, Networking network = null)
         {
             PackageType = (int)packageType;
             DataItems = new List<string> { dataItems };
@@ -397,17 +337,11 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
             IsValid = true;
         }
 
-        /// <summary>
-        /// Handle the package
-        /// </summary>
         public void Handle()
         {
             PackageHandler = new PackageHandler(this);
         }
 
-        /// <summary>
-        /// Check if the package data is full or partial data.
-        /// </summary>
         public bool IsFullPackageData()
         {
             if (DataItems.Count == 15 && !string.IsNullOrWhiteSpace(DataItems[4]))
@@ -416,9 +350,6 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
                 return false;
         }
 
-        /// <summary>
-        /// Get Full Package Data
-        /// </summary>
         public override string ToString()
         {
             string outputStr = ProtocolVersion + "|" + PackageType.ToString() + "|" + Origin.ToString() + "|" + DataItemsCount.ToString();

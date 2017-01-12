@@ -13,19 +13,8 @@ namespace Pokemon_3D_Server_Core.Logger
 {
     public class Logger : IModules
     {
-        /// <summary>
-        /// Get the name of the module.
-        /// </summary>
-        public string Name { get { return "Application Logger"; } }
-
-        /// <summary>
-        /// Get the version of the module.
-        /// </summary>
-        public string Version { get { return "0.54"; } }
-
-        /// <summary>
-        /// Get/Set Logger module.
-        /// </summary>
+        public string Name { get; } = "Application Logger";
+        public string Version { get; } = "0.54";
         public ILogger instance { get; set; }
 
         private FileStream FileStream;
@@ -38,17 +27,11 @@ namespace Pokemon_3D_Server_Core.Logger
             InitLogger();
         }
 
-        /// <summary>
-        /// Start the module.
-        /// </summary>
         public void Start()
         {
             InitLogger();
         }
 
-        /// <summary>
-        /// Stop the module.
-        /// </summary>
         public void Stop()
         {
             IsActive = false;
@@ -64,14 +47,6 @@ namespace Pokemon_3D_Server_Core.Logger
             IsActive = true;
         }
 
-        /// <summary>
-        /// Log server message.
-        /// </summary>
-        /// <param name="message">Message to log.</param>
-        /// <param name="logType">Log type.</param>
-        /// <param name="network">Network.</param>
-        /// <param name="printToConsole">Print to console?</param>
-        /// <param name="writeToLog">Write to log file?</param>
         public void Log(string message, LogTypes logType = LogTypes.Info, Networking network = null, bool printToConsole = true, bool writeToLog = true)
         {
             if (IsActive)
@@ -92,14 +67,6 @@ namespace Pokemon_3D_Server_Core.Logger
             }
         }
 
-        /// <summary>
-        /// Log debug message.
-        /// </summary>
-        /// <param name="message">Message to log.</param>
-        /// <param name="logType">Log type.</param>
-        /// <param name="network">Network.</param>
-        /// <param name="printToConsole">Print to console?</param>
-        /// <param name="writeToLog">Write to log file?</param>
         public void Debug(string message, Networking network = null, bool printToConsole = true, bool writeToLog = true)
         {
             if (IsActive)
@@ -122,27 +89,25 @@ namespace Pokemon_3D_Server_Core.Logger
 
         private bool CanLog(LogTypes logType)
         {
-            if (logType == LogTypes.Chat && Core.Settings.Logger.LoggerChat)
-                return true;
-            else if (logType == LogTypes.Command && Core.Settings.Logger.LoggerCommand)
-                return true;
-            else if ((logType == LogTypes.Debug && Core.Settings.Logger.LoggerDebug) || Debugger.IsAttached)
-                return true;
-            else if (logType == LogTypes.Info && Core.Settings.Logger.LoggerInfo)
-                return true;
-            else if (logType == LogTypes.PM && Core.Settings.Logger.LoggerPM)
-                return true;
-            else if (logType == LogTypes.PvP && Core.Settings.Logger.LoggerPvP)
-                return true;
-            else if (logType == LogTypes.Server && Core.Settings.Logger.LoggerServer)
-                return true;
-            else if (logType == LogTypes.Trade && Core.Settings.Logger.LoggerTrade)
+            if (logType == LogTypes.Info && Core.Settings.Logger.LoggerInfo)
                 return true;
             else if (logType == LogTypes.Warning && Core.Settings.Logger.LoggerWarning)
                 return true;
             else if (logType == LogTypes.Error && Core.Settings.Logger.LoggerError)
                 return true;
-            else if (logType == LogTypes.Rcon && Core.Settings.Logger.LoggerRcon)
+            else if ((logType == LogTypes.Debug && Core.Settings.Logger.LoggerDebug) || Debugger.IsAttached)
+                return true;
+            else if (logType == LogTypes.Chat && Core.Settings.Server.Game.Logger.LoggerChat)
+                return true;
+            else if (logType == LogTypes.PM && Core.Settings.Server.Game.Logger.LoggerPM)
+                return true;
+            else if (logType == LogTypes.Server && Core.Settings.Server.Game.Logger.LoggerServer)
+                return true;
+            else if (logType == LogTypes.Trade && Core.Settings.Server.Game.Logger.LoggerTrade)
+                return true;
+            else if (logType == LogTypes.PvP && Core.Settings.Server.Game.Logger.LoggerPvP)
+                return true;
+            else if (logType == LogTypes.Command && Core.Settings.Server.Game.Logger.LoggerCommand)
                 return true;
             else
                 return false;

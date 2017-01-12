@@ -2,9 +2,6 @@
 {
     public interface ILogger
     {
-        /// <summary>
-        /// Print stuff to console.
-        /// </summary>
         void LogMessage(string message);
     }
 }

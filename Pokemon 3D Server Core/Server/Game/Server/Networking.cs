@@ -1,28 +1,16 @@
 ﻿using Amib.Threading;
-using Modules.System;
 using Modules.System.Threading;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Pokemon_3D_Server_Core.Server.Game.Server
 {
     public class Networking : IDisposable
     {
-        /// <summary>
-        /// Get TcpClient.
-        /// </summary>
         public TcpClient TcpClient { get; private set; }
-
-        /// <summary>
-        /// Get/Set Player.
-        /// </summary>
         public Player.Player Player { get; set; }
-
-        /// <summary>
-        /// Get Network activity.
-        /// </summary>
         public bool IsActive { get; private set; } = false;
 
         private StreamReader Reader;
@@ -36,7 +24,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
             TcpClient = tcpClient;
 
             Reader = new StreamReader(tcpClient.GetStream());
-            Writer = new StreamWriter(tcpClient.GetStream());
+            Writer = new StreamWriter(tcpClient.GetStream()) { AutoFlush = true };
 
             IsActive = true;
 
@@ -71,34 +59,22 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
                                 errorCount++;
 
                                 if (errorCount > 10)
-                                {
-                                    Core.Logger.Debug("Too much error received from the client.", this);
-                                    throw new Exception("Too much error received from the client.");
-                                }
+                                    Dispose();
                             }
                         }
                         else
-                        {
-                            Core.Logger.Debug("Unexpected error occured.", this);
-                            throw new Exception("Unexpected error occured.");
-                        }
+                            Dispose();
                     }
+                    catch (ThreadAbortException) { return; }
                     catch (Exception)
                     {
                         if (IsActive)
-                        {
-                            IsActive = false;
                             Dispose();
-                        }
                     }
                 } while (IsActive);
             });
         }
 
-        /// <summary>
-        /// Sent To Player
-        /// </summary>
-        /// <param name="p">Package to send.</param>
         public void SentToPlayer(Package.Package p)
         {
             ThreadPool2.QueueWorkItem(() =>
@@ -106,16 +82,12 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
                 try
                 {
                     Writer.WriteLine(p.ToString());
-                    Writer.Flush();
                     Core.Logger.Debug($"Sent: {p.ToString()}", this);
                 }
                 catch (Exception) { }
             });
         }
 
-        /// <summary>
-        /// Dispose Network.
-        /// </summary>
         public void Dispose()
         {
             IsActive = false;
@@ -124,7 +96,6 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
             Core.TcpClientCollection.Remove(TcpClient);
 
             if (TcpClient != null) TcpClient.Close();
-
             if (Reader != null) Reader.Dispose();
             if (Writer != null) Writer.Dispose();
 

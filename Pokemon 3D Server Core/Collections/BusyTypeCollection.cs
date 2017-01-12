@@ -4,24 +4,9 @@
     {
         public enum BusyTypes
         {
-            /// <summary>
-            /// Not Busy
-            /// </summary>
             NotBusy,
-
-            /// <summary>
-            /// Battling
-            /// </summary>
             Battling,
-
-            /// <summary>
-            /// Chatting
-            /// </summary>
             Chatting,
-
-            /// <summary>
-            /// Inactive - AFK
-            /// </summary>
             Inactive,
         }
     }

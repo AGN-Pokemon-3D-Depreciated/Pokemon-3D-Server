@@ -10,32 +10,15 @@ namespace Pokemon_3D_Server_Core.Settings
 {
     public class Settings : IModules
     {
-        /// <summary>
-        /// Get the name of the module.
-        /// </summary>
         [YamlIgnore]
-        public string Name { get { return "Application Settings"; } }
-
-        /// <summary>
-        /// Get the version of the module.
-        /// </summary>
+        public string Name { get; } = "Application Settings";
         [YamlIgnore]
-        public string Version { get { return "0.54"; } }
+        public string Version { get; } = "0.54";
 
-        /// <summary>
-        /// Get Directories.
-        /// </summary>
         [YamlIgnore]
-        public Directories Directories { get; private set; } = new Directories();
+        public Directories.Directories Directories { get; } = new Directories.Directories();
 
-        /// <summary>
-        /// Get Logger.
-        /// </summary>
-        public Logger Logger { get; private set; } = new Logger();
-
-        /// <summary>
-        /// Get Server.
-        /// </summary>
+        public Logger.Logger Logger { get; private set; } = new Logger.Logger();
         public Server.Server Server { get; private set; } = new Server.Server();
 
         private string SettingPath;
@@ -45,10 +28,25 @@ namespace Pokemon_3D_Server_Core.Settings
             SettingPath = $"{Directories.ApplicationDirectory}/ApplicationSetting.yml".GetFullPath();
         }
 
-        /// <summary>
-        /// Start the module.
-        /// </summary>
         public void Start()
+        {
+            if (Load())
+                Core.Logger.Log("Application Settings Loaded.");
+        }
+
+        public void Refresh()
+        {
+            if (Load())
+                Core.Logger.Log("Application Settings Refreshed.");
+        }
+
+        public void Stop()
+        {
+            if (Save())
+                Core.Logger.Log("Application Settings Saved.");
+        }
+
+        private bool Load()
         {
             if (File.Exists(SettingPath))
             {
@@ -58,25 +56,30 @@ namespace Pokemon_3D_Server_Core.Settings
                 if (ex == null && newSettings != null)
                 {
                     Core.Settings = newSettings;
-                    Core.Logger.Log("Application Settings Loaded.");
+                    return true;
                 }
                 else
+                {
                     ex.CatchError();
+                    return false;
+                }
             }
+            else
+                return true;
         }
 
-        /// <summary>
-        /// Stop the module.
-        /// </summary>
-        public void Stop()
+        private bool Save()
         {
             Exception ex;
             Core.Settings.Serialize(SettingPath, out ex);
 
             if (ex == null)
-                Core.Logger.Log("Application Settings Saved.");
+                return true;
             else
+            {
                 ex.CatchError();
+                return false;
+            }
         }
     }
 }

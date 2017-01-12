@@ -1,76 +1,45 @@
 ﻿using Modules.System;
 using Modules.System.Threading;
 using Pokemon_3D_Server_Core.Interface;
-using Pokemon_3D_Server_Core.Settings.Server.World.SeasonMonth;
-using Pokemon_3D_Server_Core.Settings.Server.World.WeatherSeason;
+using Pokemon_3D_Server_Core.Settings.Server.Game.World.SeasonMonth;
+using Pokemon_3D_Server_Core.Settings.Server.Game.World.WeatherSeason;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using static Pokemon_3D_Server_Core.Settings.Server.World.World;
+using static Pokemon_3D_Server_Core.Collections.SeasonTypeCollection;
+using static Pokemon_3D_Server_Core.Collections.WeatherTypeCollection;
 
 namespace Pokemon_3D_Server_Core.Server.Game.World
 {
     public class World : IModules
     {
-        /// <summary>
-        /// Get the name of the module.
-        /// </summary>
-        public string Name { get { return "Game World"; } }
-
-        /// <summary>
-        /// Get the version of the module.
-        /// </summary>
-        public string Version { get { return "0.54"; } }
+        public string Name { get; } = "Game World";
+        public string Version { get; } = "0.54";
 
         private int _Season;
-        /// <summary>
-        /// Get/Set Current World Season
-        /// </summary>
         public int Season
         {
-            get
-            {
-                return _Season;
-            }
-            set
-            {
-                _Season = value.RollOver(0, 3);
-
-            }
+            get { return _Season; }
+            set { _Season = value.RollOver(0, 3); }
         }
 
         private int _Weather;
-        /// <summary>
-        /// Get/Set Current World Weather
-        /// </summary>
         public int Weather
         {
-            get
-            {
-                return _Weather;
-            }
-            set
-            {
-                _Weather = value.RollOver(0, 9);
-            }
+            get { return _Weather; }
+            set { _Weather = value.RollOver(0, 9); }
         }
 
-        /// <summary>
-        /// Get/Set Current World Time Offset
-        /// </summary>
-        public int TimeOffset { get; internal set; } = 0;
+        public int TimeOffset { get; set; } = 0;
 
         private DateTime LastWorldUpdate;
-        private int WeekOfYear { get { return ((DateTime.Now.DayOfYear - (DateTime.Now.DayOfWeek - DayOfWeek.Monday)) / 7.0 + 1.0).Floor().ToString().ToInt(); } }
+        private int WeekOfYear { get { return ((DateTime.Now.DayOfYear - (DateTime.Now.DayOfWeek - DayOfWeek.Monday)) / 7.0 + 1.0).Floor().ToInt(); } }
 
         private bool CanUpdate = true;
         private bool IsActive = false;
 
         private ThreadHelper Thread = new ThreadHelper();
 
-        /// <summary>
-        /// Start the module.
-        /// </summary>
         public void Start()
         {
             Thread.Add(() =>
@@ -89,8 +58,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
                         {
                             sw.Restart();
 
-                            // Get Setting Season
-                            switch (Core.Settings.Server.World.Season)
+                            switch (Core.Settings.Server.Game.World.Season)
                             {
                                 case (int)SeasonType.DefaultSeason:
                                     switch (WeekOfYear % 4)
@@ -126,12 +94,11 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
                                     break;
 
                                 default:
-                                    Season = Core.Settings.Server.World.Season;
+                                    Season = Core.Settings.Server.Game.World.Season;
                                     break;
                             }
 
-                            // Get Setting Weather
-                            switch (Core.Settings.Server.World.Weather)
+                            switch (Core.Settings.Server.Game.World.Weather)
                             {
                                 case (int)WeatherType.DefaultWeather:
                                     int Random = MathHelper.Random(1, 100);
@@ -187,23 +154,21 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
                                     break;
 
                                 default:
-                                    Weather = Core.Settings.Server.World.Weather;
+                                    Weather = Core.Settings.Server.Game.World.Weather;
                                     break;
                             }
 
                             IsActive = true;
-                            TimeOffset = Core.Settings.Server.World.TimeOffset;
+                            TimeOffset = Core.Settings.Server.Game.World.TimeOffset;
                             LastWorldUpdate = DateTime.Now;
 
-                            Core.Logger.Log($"Current Season: {Core.Settings.Server.World.GetSeasonName(Season)} | Current Weather: {Core.Settings.Server.World.GetWeatherName(Weather)} | Current Time: {DateTime.Now.AddSeconds(TimeOffset).ToString("dd/MM/yyyy hh:mm:ss tt")}");
+                            Core.Logger.Log(ToString());
                         }
                         else
                         {
                             sw2.Stop();
                             if (sw2.ElapsedMilliseconds < 1000)
-                            {
                                 Thread.Sleep(1000 - sw2.ElapsedMilliseconds.ToString().ToInt());
-                            }
                             sw2.Restart();
                         }
                     }
@@ -212,9 +177,6 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
             });
         }
 
-        /// <summary>
-        /// Stop the module.
-        /// </summary>
         public void Stop()
         {
             IsActive = false;
@@ -230,55 +192,55 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
                 switch (DateTime.Now.Month)
                 {
                     case 1:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.January;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.January;
                         break;
 
                     case 2:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.February;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.February;
                         break;
 
                     case 3:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.March;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.March;
                         break;
 
                     case 4:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.April;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.April;
                         break;
 
                     case 5:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.May;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.May;
                         break;
 
                     case 6:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.June;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.June;
                         break;
 
                     case 7:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.July;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.July;
                         break;
 
                     case 8:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.August;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.August;
                         break;
 
                     case 9:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.September;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.September;
                         break;
 
                     case 10:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.October;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.October;
                         break;
 
                     case 11:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.November;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.November;
                         break;
 
                     case 12:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.December;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.December;
                         break;
 
                     default:
-                        seasonMonthRef = Core.Settings.Server.World.SeasonMonth.January;
+                        seasonMonthRef = Core.Settings.Server.Game.World.SeasonMonth.January;
                         break;
                 }
 
@@ -314,23 +276,23 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
                 switch (Season)
                 {
                     case (int)SeasonType.Winter:
-                        weatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Winter;
+                        weatherSeasonRef = Core.Settings.Server.Game.World.WeatherSeason.Winter;
                         break;
 
                     case (int)SeasonType.Spring:
-                        weatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Spring;
+                        weatherSeasonRef = Core.Settings.Server.Game.World.WeatherSeason.Spring;
                         break;
 
                     case (int)SeasonType.Summer:
-                        weatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Summer;
+                        weatherSeasonRef = Core.Settings.Server.Game.World.WeatherSeason.Summer;
                         break;
 
                     case (int)SeasonType.Fall:
-                        weatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Fall;
+                        weatherSeasonRef = Core.Settings.Server.Game.World.WeatherSeason.Fall;
                         break;
 
                     default:
-                        weatherSeasonRef = Core.Settings.Server.World.WeatherSeason.Winter;
+                        weatherSeasonRef = Core.Settings.Server.Game.World.WeatherSeason.Winter;
                         break;
                 }
 
@@ -358,25 +320,19 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
             }
         }
 
-        /// <summary>
-        /// Generate Global World Data
-        /// </summary>
         public List<string> GenerateWorld()
         {
             return new List<string>
             {
                 Season.ToString(),
                 Weather.ToString(),
-                Core.Settings.Server.World.DoDayCycle ? DateTime.Now.AddSeconds(TimeOffset).ToString("H,m,s") : "12,0,0"
+                Core.Settings.Server.Game.World.DoDayCycle ? DateTime.Now.AddSeconds(TimeOffset).ToString("H,m,s") : "12,0,0"
             };
         }
 
-        /// <summary>
-        /// Get current World
-        /// </summary>
         public override string ToString()
         {
-            return string.Format(@"Current Season: {0} | Current Weather: {1} | Current Time: {2}", Core.Settings.Server.World.GetSeasonName(Season), Core.Settings.Server.World.GetWeatherName(Weather), DateTime.Now.AddSeconds(TimeOffset).ToString());
+            return $"Current Season: {Core.Settings.Server.Game.World.GetSeasonName(Season)} | Current Weather: {Core.Settings.Server.Game.World.GetWeatherName(Weather)} | Current Time: {DateTime.Now.AddSeconds(TimeOffset).ToString("dd/MM/yyyy hh:mm:ss tt")}";
         }
     }
 }
