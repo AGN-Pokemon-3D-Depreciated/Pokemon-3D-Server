@@ -29,7 +29,8 @@ namespace Pokemon_3D_Server_Core.Logger
 
         public void Start()
         {
-            InitLogger();
+            if (!IsActive)
+                InitLogger();
         }
 
         public void Stop()

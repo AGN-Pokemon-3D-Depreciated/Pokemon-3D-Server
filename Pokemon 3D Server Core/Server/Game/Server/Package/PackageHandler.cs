@@ -1,5 +1,9 @@
-﻿using Pokemon_3D_Server_Core.Settings.Server.Game.Features;
+﻿using Modules.System.Net;
+using Pokemon_3D_Server_Core.Modules.System.Collections.Generic;
+using Pokemon_3D_Server_Core.Server.Game.SQLite.Tables;
+using Pokemon_3D_Server_Core.Settings.Server.Game.Tokens;
 using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Pokemon_3D_Server_Core.Server.Game.Server.Package.Package;
@@ -49,26 +53,87 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
                 else
                 {
                     // New Player - Pending to join.
-                    Package.Network.Player = new Player.Player(Core.TcpClientCollection.NextPlayerID(), Package.Network, Package);
+                    Player.Player player = new Player.Player(Core.TcpClientCollection.NextPlayerID(), Package.Network, Package);
+                    Package.Network.Player = player;
 
-                    // 1. Check server space limit.
-                    if (Core.TcpClientCollection.ActivePlayerCount >= Core.Settings.Server.Game.Server.MaxPlayers)
+                    Tokens token = Core.Settings.Server.Game.Tokens;
+
+                    if (Core.TcpClientCollection.ActivePlayer.Count() >= Core.Settings.Server.Game.Server.MaxPlayers)
+                        KickUserJoin(player, "SERVER_FULL");
+                    else if (!Core.Settings.Server.Game.Server.GameModes.GameMode.Contains(player.GameMode, new NonCaseSensitiveHelper()))
+                        KickUserJoin(player, "SERVER_WRONGGAMEMODE", Core.Settings.Server.Game.Server.GameModes.ToString());
+                    else if (!Core.Settings.Server.Game.Server.GameModes.OfflineMode && !player.IsGameJoltPlayer)
+                        KickUserJoin(player, "SERVER_OFFLINEMODE");
+                    else if (Core.Settings.Server.Game.Features.WhiteList)
                     {
-                        Package.Network.SentToPlayer(new Package(PackageTypes.Kicked, Core.Settings.Server.Game.Tokens.ToString("SERVER_FULL"), Package.Network));
-                        Core.Logger.Log(Package.Network.Player.IsGameJoltPlayer ?
-                            Core.Settings.Server.Game.Tokens.ToString("SERVER_GAMEJOLT", Package.Network.Player.Name, Package.Network.Player.GameJoltID.ToString(), "is unable to join the server with the following reason: " + Core.Settings.Server.Game.Tokens.ToString("SERVER_FULL")) :
-                            Core.Settings.Server.Game.Tokens.ToString("SERVER_NOGAMEJOLT", Package.Network.Player.Name, "is unable to join the server with the following reason: " + Core.Settings.Server.Game.Tokens.ToString("SERVER_FULL")));
-
-                        return;
+                        lock (Core.SQLite.Connection)
+                        {
+                            TableQuery<WhiteList> stm = Core.SQLite.Connection.Table<WhiteList>().Where(a => a.PlayerID == player.PlayerInfo.ID);
+                            if (stm.Count() == 0)
+                                KickUserJoin(player, "SERVER_DISALLOW");
+                        }
+                    }
+                    else if (Core.TcpClientCollection.ActivePlayer.Where(a => a.Player.Name == player.Name && a.Player.GameJoltID == player.GameJoltID).Count() > 1)
+                        KickUserJoin(player, "SERVER_CLONE");
+                    else if (Core.Settings.Server.Game.Features.BlackList)
+                    {
+                        lock (Core.SQLite.Connection)
+                        {
+                            TableQuery<BlackList> stm = Core.SQLite.Connection.Table<BlackList>().Where(a => a.PlayerID == player.PlayerInfo.ID);
+                            if (stm.Count() > 0)
+                            {
+                                BlackList blacklist = stm.First();
+                                if (blacklist.Duration != -1)
+                                {
+                                    if (DateTime.Now < blacklist.StartTime.AddSeconds(blacklist.Duration))
+                                    {
+                                        TimeSpan duration = blacklist.StartTime.AddSeconds(blacklist.Duration) - DateTime.Now;
+                                        KickUserJoin(player, "SERVER_BLACKLISTED", blacklist.Reason, duration.ToString());
+                                    }
+                                    else
+                                        Core.SQLite.Connection.Delete(blacklist);
+                                }
+                                else
+                                    KickUserJoin(player, "SERVER_BLACKLISTED", blacklist.Reason, "Permanent");
+                            }
+                        }
+                    }
+                    else if (Core.Settings.Server.Game.Features.IPBlackList)
+                    {
+                        lock (Core.SQLite.Connection)
+                        {
+                            TableQuery<IPBlackList> stm = Core.SQLite.Connection.Table<IPBlackList>().Where(a => a.IPAddress == Package.Network.GetPublicIPFromClient());
+                            if (stm.Count() > 0)
+                            {
+                                IPBlackList blacklist = stm.First();
+                                if (blacklist.Duration != -1)
+                                {
+                                    if (DateTime.Now < blacklist.StartTime.AddSeconds(blacklist.Duration))
+                                    {
+                                        TimeSpan duration = blacklist.StartTime.AddSeconds(blacklist.Duration) - DateTime.Now;
+                                        KickUserJoin(player, "SERVER_IPBLACKLISTED", blacklist.Reason, duration.ToString());
+                                    }
+                                    else
+                                        Core.SQLite.Connection.Delete(blacklist);
+                                }
+                                else
+                                    KickUserJoin(player, "SERVER_IPBLACKLISTED", blacklist.Reason, "Permanent");
+                            }
+                        }
                     }
 
-                    // 2. Check blacklist.
-                    if (Core.Settings.Server.Game.Features.BlackList)
-                    {
-                        
-                    }
+                    player.Welcome();
                 }
             }
+        }
+
+        private void KickUserJoin(Player.Player player, string tokenKey, params string[] tokenValue)
+        {
+            Tokens token = Core.Settings.Server.Game.Tokens;
+            player.Network.SentToPlayer(new Package(PackageTypes.Kicked, token.ToString(tokenKey, tokenValue), Package.Network));
+            Core.Logger.Log(player.IsGameJoltPlayer ?
+                token.ToString("SERVER_GAMEJOLT", player.Name, player.GameJoltID, "is unable to join the server with the following reason: " + token.ToString(tokenKey, tokenValue)) :
+                token.ToString("SERVER_NOGAMEJOLT", player.Name, "is unable to join the server with the following reason: " + token.ToString(tokenKey, tokenValue)));
         }
 
         private void HandlePing()
@@ -80,17 +145,17 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
         {
             List<string> DataItems = new List<string>
             {
-                Core.TcpClientCollection.ActivePlayerCount.ToString(),
+                Core.TcpClientCollection.ActivePlayer.Count().ToString(),
                 Core.Settings.Server.Game.Server.MaxPlayers == -1 ? int.MaxValue.ToString() : Core.Settings.Server.Game.Server.MaxPlayers.ToString(),
                 Core.Settings.Server.Game.Server.ServerName,
                 string.IsNullOrWhiteSpace(Core.Settings.Server.Game.Server.ServerMessage) ? "" : Core.Settings.Server.Game.Server.ServerMessage
             };
 
-            if (Core.TcpClientCollection.ActivePlayerCount > 0)
+            if (Core.TcpClientCollection.ActivePlayer.Count() > 0)
             {
-                DataItems.AddRange(Core.TcpClientCollection.Where(a => a.Value.Player != null).Select(a =>
+                DataItems.AddRange(Core.TcpClientCollection.ActivePlayer.Select(a =>
                 {
-                    return a.Value.Player.IsGameJoltPlayer ? $"{a.Value.Player.Name} ({a.Value.Player.GameJoltID.ToString()})" : a.Value.Player.Name;
+                    return a.Player.IsGameJoltPlayer ? $"{a.Player.Name} ({a.Player.GameJoltID.ToString()})" : a.Player.Name;
                 }));
             }
 

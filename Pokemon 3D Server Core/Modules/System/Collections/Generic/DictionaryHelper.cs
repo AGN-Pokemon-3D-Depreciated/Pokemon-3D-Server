@@ -115,6 +115,8 @@ namespace Pokemon_3D_Server_Core.Modules.System.Collections.Generic
         {
             lock (Collection.SyncRoot)
                 Dictionary.Remove(obj);
+
+            Core.Logger.Debug($"Connection Disposed. Active connection left: " + Core.TcpClientCollection.Count);
         }
 
         public virtual void RemoveAll(IEnumerable<TKey> obj)

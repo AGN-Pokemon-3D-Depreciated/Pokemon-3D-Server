@@ -1,7 +1,7 @@
 ﻿using SQLite;
 using System;
 
-namespace Pokemon_3D_Server_Core.Settings.Server.Game.Features
+namespace Pokemon_3D_Server_Core.Server.Game.SQLite.Tables
 {
     public class TradeHistoryList
     {

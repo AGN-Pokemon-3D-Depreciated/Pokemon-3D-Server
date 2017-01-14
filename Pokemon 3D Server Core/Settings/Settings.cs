@@ -21,13 +21,6 @@ namespace Pokemon_3D_Server_Core.Settings
         public Logger.Logger Logger { get; private set; } = new Logger.Logger();
         public Server.Server Server { get; private set; } = new Server.Server();
 
-        private string SettingPath;
-
-        public Settings()
-        {
-            SettingPath = $"{Directories.ApplicationDirectory}/ApplicationSetting.yml".GetFullPath();
-        }
-
         public void Start()
         {
             if (Load())
@@ -48,10 +41,10 @@ namespace Pokemon_3D_Server_Core.Settings
 
         private bool Load()
         {
-            if (File.Exists(SettingPath))
+            if (File.Exists($"{Directories.ApplicationDirectory}/ApplicationSetting.yml".GetFullPath()))
             {
                 Exception ex;
-                Settings newSettings = DeserializerHelper.Deserialize<Settings>(SettingPath, out ex);
+                Settings newSettings = DeserializerHelper.Deserialize<Settings>($"{Directories.ApplicationDirectory}/ApplicationSetting.yml".GetFullPath(), out ex);
 
                 if (ex == null && newSettings != null)
                 {
@@ -71,7 +64,7 @@ namespace Pokemon_3D_Server_Core.Settings
         private bool Save()
         {
             Exception ex;
-            Core.Settings.Serialize(SettingPath, out ex);
+            Core.Settings.Serialize($"{Directories.ApplicationDirectory}/ApplicationSetting.yml".GetFullPath(), out ex);
 
             if (ex == null)
                 return true;

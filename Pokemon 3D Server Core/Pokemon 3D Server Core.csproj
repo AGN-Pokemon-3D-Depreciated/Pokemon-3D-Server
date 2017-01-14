@@ -34,8 +34,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>The Dialga Team.pfx</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SmartThreadPool, Version=2.2.4.0, Culture=neutral, PublicKeyToken=1126fe8b671e8a79, processorArchitecture=MSIL">
@@ -90,6 +94,7 @@
     <Compile Include="Logger\ILogger.cs" />
     <Compile Include="Logger\Logger.cs" />
     <Compile Include="Modules\System\Collections\Generic\DictionaryHelper.cs" />
+    <Compile Include="Modules\System\Collections\Generic\NonCaseSensitiveHelper.cs" />
     <Compile Include="Modules\System\DateTimeHelper.cs" />
     <Compile Include="Modules\System\ExceptionHelper.cs" />
     <Compile Include="Modules\System\IO\DirectoryHelper.cs" />
@@ -107,12 +112,14 @@
     <Compile Include="Server\Game\Server\Package\Package.cs" />
     <Compile Include="Server\Game\Server\Package\PackageHandler.cs" />
     <Compile Include="Server\Game\Server\Player\Player.cs" />
+    <Compile Include="Server\Game\Server\Player\World.cs" />
     <Compile Include="Server\Game\Server\TcpClientCollection.cs" />
+    <Compile Include="Server\Game\SQLite\SQLite.cs" />
     <Compile Include="Server\Game\World\World.cs" />
     <Compile Include="Settings\Directories\Directories.cs" />
     <Compile Include="Settings\Logger\Logger.cs" />
     <Compile Include="Settings\Server\Game\Features\Features.cs" />
-    <Compile Include="Settings\Server\Game\Features\Sqlite\Sqlite.cs" />
+    <Compile Include="Settings\Server\Game\Features\SQLite\SQLite.cs" />
     <Compile Include="Settings\Server\Game\Game.cs" />
     <Compile Include="Settings\Server\Game\Logger\Logger.cs" />
     <Compile Include="Settings\Server\Game\Network\Network.cs" />
@@ -126,14 +133,13 @@
     <Compile Include="Settings\Server\Game\World\WeatherSeason\Weather.cs" />
     <Compile Include="Settings\Server\Game\World\WeatherSeason\WeatherSeason.cs" />
     <Compile Include="Settings\Settings.cs" />
-    <Compile Include="Settings\Server\Game\Features\BlackList.cs" />
-    <Compile Include="Settings\Server\Game\Features\ChatHistoryList.cs" />
-    <Compile Include="Settings\Server\Game\Features\IPBlackList.cs" />
-    <Compile Include="Settings\Server\Game\Features\MuteList.cs" />
-    <Compile Include="Settings\Server\Game\Features\OperatorList.cs" />
-    <Compile Include="Settings\Server\Game\Features\PlayerInfo.cs" />
-    <Compile Include="Settings\Server\Game\Features\TradeHistoryList.cs" />
-    <Compile Include="Settings\Server\Game\Features\WhiteList.cs" />
+    <Compile Include="Server\Game\SQLite\Tables\BlackList.cs" />
+    <Compile Include="Server\Game\SQLite\Tables\IPBlackList.cs" />
+    <Compile Include="Server\Game\SQLite\Tables\MuteList.cs" />
+    <Compile Include="Server\Game\SQLite\Tables\OperatorList.cs" />
+    <Compile Include="Server\Game\SQLite\Tables\PlayerInfo.cs" />
+    <Compile Include="Server\Game\SQLite\Tables\TradeHistoryList.cs" />
+    <Compile Include="Server\Game\SQLite\Tables\WhiteList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="libe_sqlite3.dylib">
@@ -143,7 +149,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="The Dialga Team.pfx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -158,4 +163,8 @@
   </Target>
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.2\build\SQLitePCLRaw.lib.e_sqlite3.osx.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.2\build\SQLitePCLRaw.lib.e_sqlite3.osx.targets')" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.v110_xp.1.1.2\build\SQLitePCLRaw.lib.e_sqlite3.v110_xp.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.v110_xp.1.1.2\build\SQLitePCLRaw.lib.e_sqlite3.v110_xp.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

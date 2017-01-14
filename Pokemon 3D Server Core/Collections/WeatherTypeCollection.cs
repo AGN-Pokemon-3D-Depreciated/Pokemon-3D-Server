@@ -18,8 +18,7 @@
             Random = -1,
             DefaultWeather = -2,
             Custom = -3,
-            Real = -4,
-            Nothing = -5,
+            Nothing = -4,
         }
     }
 }

@@ -21,7 +21,5 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.Server
                     _MaxPlayers = value.Clamp(1, int.MaxValue);
             }
         }
-
-        
     }
 }

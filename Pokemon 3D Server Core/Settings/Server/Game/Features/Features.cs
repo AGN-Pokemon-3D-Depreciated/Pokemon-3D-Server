@@ -50,6 +50,6 @@
             }
         }
 
-        public Sqlite.Sqlite Sqlite { get; private set; } = new Sqlite.Sqlite();
+        public SQLite.SQLite SQLite { get; private set; } = new SQLite.SQLite();
     }
 }

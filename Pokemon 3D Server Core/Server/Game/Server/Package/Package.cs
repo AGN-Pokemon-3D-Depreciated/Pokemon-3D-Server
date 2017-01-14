@@ -339,7 +339,14 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
 
         public void Handle()
         {
-            PackageHandler = new PackageHandler(this);
+            try
+            {
+                PackageHandler = new PackageHandler(this);
+            }
+            catch (Exception ex)
+            {
+                ex.CatchError();
+            }
         }
 
         public bool IsFullPackageData()

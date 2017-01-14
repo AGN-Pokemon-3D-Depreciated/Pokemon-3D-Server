@@ -11,9 +11,6 @@ namespace Pokemon_3D_Server_Launcher.View
     {
         private delegate void LogMessageSafe(string Message);
 
-        /// <summary>
-        /// Get Core instance.
-        /// </summary>
         public static Core Core { get; private set; }
 
         public Main()
@@ -34,9 +31,6 @@ namespace Pokemon_3D_Server_Launcher.View
             Core.Stop();
         }
 
-        /// <summary>
-        /// Print stuff to console.
-        /// </summary>
         public void LogMessage(string Message)
         {
             try

@@ -3,7 +3,7 @@ using System;
 using static Pokemon_3D_Server_Core.Collections.SeasonTypeCollection;
 using static Pokemon_3D_Server_Core.Collections.WeatherTypeCollection;
 
-namespace Pokemon_3D_Server_Core.Settings.Server.Game.Features
+namespace Pokemon_3D_Server_Core.Server.Game.SQLite.Tables
 {
     public class PlayerInfo
     {
@@ -20,7 +20,7 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.Features
         public string IPAddress { get; set; }
 
         [NotNull]
-        public DateTime LastActivity { get; set; }
+        public DateTime LastActivity { get; set; } = DateTime.Now;
 
         [NotNull]
         public SeasonType Season { get; set; } = SeasonType.Nothing;
@@ -29,9 +29,15 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.Features
         public WeatherType Weather { get; set; } = WeatherType.Nothing;
 
         [NotNull]
+        public bool DefaultTimeOffset { get; set; } = true;
+
+        [NotNull]
         public int TimeOffset { get; set; } = 0;
 
         [NotNull]
-        public bool DoDayCycle { get; set; }
+        public bool DefaultDoDayCycle { get; set; } = true;
+
+        [NotNull]
+        public bool DoDayCycle { get; set; } = true;
     }
 }

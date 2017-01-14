@@ -17,6 +17,7 @@ namespace Pokemon_3D_Server_Core
 
         #region Server
         #region Game
+        public static Server.Game.SQLite.SQLite SQLite { get; private set; }
         public static World World { get; private set; }
         public static TcpClientCollection TcpClientCollection { get; private set; }
         public static Listener Listener { get; private set; }
@@ -33,11 +34,12 @@ namespace Pokemon_3D_Server_Core
                 Settings = new Settings.Settings();
                 Logger = new Logger.Logger();
 
+                SQLite = new Server.Game.SQLite.SQLite();
                 World = new World();
                 TcpClientCollection = new TcpClientCollection();
                 Listener = new Listener();
 
-                IModules.AddRange(new List<IModules> { Settings, World, Listener, Logger });
+                IModules.AddRange(new List<IModules> { Settings, SQLite, World, Listener, Logger });
             }
             catch (Exception ex)
             {

@@ -1,5 +1,6 @@
 ﻿using Pokemon_3D_Server_Core.Modules.System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 
@@ -7,7 +8,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
 {
     public class TcpClientCollection : DictionaryHelper<TcpClient, Networking>, IDisposable
     {
-        public int ActivePlayerCount { get { return this.Where(a => a.Value.Player != null).Count(); } }
+        public List<Networking> ActivePlayer { get { return this.Where(a => a.Value.Player != null).Select(a => a.Value).ToList(); } }
 
         public void Add(TcpClient tcpClient)
         {
@@ -17,22 +18,32 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
 
         public int NextPlayerID()
         {
-            if (ActivePlayerCount == 0)
-                return 0;
-            else
+            lock (Collection.SyncRoot)
             {
-                int index = 0;
-                Networking[] activePlayerList = Values.Where(a => a.Player != null).OrderBy(a => a.Player.ID).ToArray();
-
-                for (int i = 0; i < activePlayerList.Count(); i++)
+                if (ActivePlayer.Count() == 0)
+                    return 0;
+                else
                 {
-                    if (activePlayerList[i].Player.ID == index)
-                        index++;
-                    else
-                        return index;
-                }
+                    int index = 0;
+                    for (int i = 0; i < ActivePlayer.Count(); i++)
+                    {
+                        if (ActivePlayer[i].Player.ID == index)
+                            index++;
+                        else
+                            return index;
+                    }
 
-                return ActivePlayerCount;
+                    return ActivePlayer.Count();
+                }
+            }
+        }
+
+        public void UpdateWorld()
+        {
+            lock (Collection.SyncRoot)
+            {
+                foreach (Networking network in ActivePlayer)
+                    network.Player.CanUpdateWorld = true;
             }
         }
 

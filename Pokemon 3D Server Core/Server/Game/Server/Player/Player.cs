@@ -1,8 +1,18 @@
 ﻿using Modules.System;
+using Modules.System.Net;
+using Modules.System.Threading;
+using Pokemon_3D_Server_Core.Server.Game.SQLite.Tables;
+using Pokemon_3D_Server_Core.Settings.Server.Game.Tokens;
+using SQLite;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using static Pokemon_3D_Server_Core.Collections.BusyTypeCollection;
+using static Pokemon_3D_Server_Core.Server.Game.Server.Package.Package;
 
 namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
 {
-    public class Player
+    public partial class Player
     {
         #region Player Data
         /// <summary>
@@ -152,16 +162,218 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// <summary>
         /// Get/Set Player Last Valid Game Data
         /// </summary>
-        public Player LastValidGameData { get; set; }
+        public List<string> LastValidGameData { get; set; } = new List<string>();
         #endregion Player Data
 
         public int ID { get; set; }
+        public PlayerInfo PlayerInfo { get; private set; }
         public Networking Network { get; private set; }
 
-        public Player(int id, Networking network, Package.Package p)
+        public DateTime LastActivity = DateTime.Now;
+        public DateTime LastValidPing = DateTime.Now;
+
+        public ThreadHelper Thread = new ThreadHelper();
+
+        public Player() { }
+
+        public Player(int id, Networking network, Package.Package package)
         {
             ID = id;
             Network = network;
+            Update(package, false);
+
+            lock (Core.SQLite.Connection)
+            {
+                TableQuery<PlayerInfo> stm = Core.SQLite.Connection.Table<PlayerInfo>().Where(a => a.Name == Name && a.GameJoltID == GameJoltID);
+                if (stm.Count() > 0)
+                    PlayerInfo = stm.First();
+                else
+                {
+                    Core.SQLite.Connection.Insert(new PlayerInfo()
+                    {
+                        Name = Name,
+                        GameJoltID = GameJoltID,
+                        IPAddress = Network.GetPublicIPFromClient()
+                    });
+                }
+            }
+        }
+
+        public void Welcome()
+        {
+            Network.SentToPlayer(new Package.Package(PackageTypes.ID, ID.ToString(), Network));
+            UpdateWorld();
+
+            List<Networking> activePlayer = Core.TcpClientCollection.ActivePlayer;
+            Tokens token = Core.Settings.Server.Game.Tokens;
+
+            foreach (Networking network in activePlayer)
+            {
+                if (network.Player.ID != ID)
+                {
+                    Network.SentToPlayer(new Package.Package(PackageTypes.CreatePlayer, network.Player.ID.ToString(), Network));
+                    Network.SentToPlayer(new Package.Package(PackageTypes.GameData, network.Player.ID, network.Player.GenerateGameData(true), Network));
+                }
+
+                network.SentToPlayer(new Package.Package(PackageTypes.CreatePlayer, ID.ToString(), Network));
+                network.SentToPlayer(new Package.Package(PackageTypes.GameData, GenerateGameData(true), Network));
+                network.SentToPlayer(new Package.Package(PackageTypes.ChatMessage, -1, IsGameJoltPlayer ?
+                    token.ToString("SERVER_GAMEJOLT", Name, GameJoltID, "join the game!") :
+                    token.ToString("SERVER_NOGAMEJOLT", Name, "join the game!"), Network));
+            }
+
+            Core.Logger.Log(IsGameJoltPlayer ?
+                token.ToString("SERVER_GAMEJOLT", Name, GameJoltID, "join the game!") :
+                token.ToString("SERVER_NOGAMEJOLT", Name, "join the game!"));
+
+            if (!string.IsNullOrWhiteSpace(Core.Settings.Server.Game.Server.WelcomeMessage))
+            {
+                List<string> welcomeMessage = Core.Settings.Server.Game.Server.WelcomeMessage.Split('\n').ToList();
+
+                foreach (string message in welcomeMessage)
+                    Network.SentToPlayer(new Package.Package(PackageTypes.ChatMessage, -1, message, Network));
+            }
+        }
+
+        public string GetPlayerBusyType()
+        {
+            switch (BusyType)
+            {
+                case (int)BusyTypes.NotBusy:
+                    return "";
+                case (int)BusyTypes.Battling:
+                    return "- Battling";
+                case (int)BusyTypes.Chatting:
+                    return "- Chatting";
+                case (int)BusyTypes.Inactive:
+                    return "- Inactive";
+                default:
+                    return "";
+            }
+        }
+
+        public void Update(Package.Package package, bool sentToAllPlayer)
+        {
+            if (package.IsFullPackageData())
+            {
+                GameMode = package.DataItems[0];
+                IsGameJoltPlayer = package.DataItems[1].ToInt().ToBool();
+                GameJoltID = IsGameJoltPlayer ? package.DataItems[2] : "-1";
+                DecimalSeparator = package.DataItems[3];
+                Name = package.DataItems[4];
+                LevelFile = package.DataItems[5];
+                Position = package.DataItems[6];
+                Facing = package.DataItems[7].ToInt();
+                Moving = package.DataItems[8].ToBool();
+                Skin = package.DataItems[9];
+                BusyType = package.DataItems[10].ToInt();
+                PokemonVisible = package.DataItems[11].ToBool();
+                PokemonPosition = package.DataItems[12];
+                PokemonSkin = package.DataItems[13];
+                PokemonFacing = package.DataItems[14].ToInt();
+
+                LastValidGameData = new List<string> { LevelFile, Position, Facing.ToString(), Moving.ToString(), Skin, BusyType.ToString(), PokemonVisible.ToString(), PokemonPosition, PokemonSkin, PokemonFacing.ToString() };
+            }
+            else
+            {
+                LastValidGameData = new List<string> { LevelFile, Position, Facing.ToString(), Moving.ToString(), Skin, BusyType.ToString(), PokemonVisible.ToString(), PokemonPosition, PokemonSkin, PokemonFacing.ToString() };
+
+                if (!string.IsNullOrWhiteSpace(package.DataItems[5]) && package.DataItems[5].SplitCount() == 1)
+                {
+                    LevelFile = package.DataItems[5];
+                }
+                if (!string.IsNullOrWhiteSpace(package.DataItems[6]) && package.DataItems[6].SplitCount() == 3)
+                {
+                    Position = package.DataItems[6];
+                }
+                if (!string.IsNullOrWhiteSpace(package.DataItems[7]) && package.DataItems[7].SplitCount() == 1)
+                {
+                    Facing = package.DataItems[7].ToInt();
+                }
+                if (!string.IsNullOrWhiteSpace(package.DataItems[8]) && package.DataItems[8].SplitCount() == 1)
+                {
+                    Moving = package.DataItems[8].ToBool();
+                }
+                if (!string.IsNullOrWhiteSpace(package.DataItems[9]) && package.DataItems[9].SplitCount() <= 2)
+                {
+                    Skin = package.DataItems[9];
+                }
+                if (!string.IsNullOrWhiteSpace(package.DataItems[10]) && package.DataItems[10].SplitCount() == 1)
+                {
+                    BusyType = package.DataItems[10].ToInt();
+                }
+                if (!string.IsNullOrWhiteSpace(package.DataItems[11]) && package.DataItems[11].SplitCount() == 1)
+                {
+                    PokemonVisible = package.DataItems[11].ToBool();
+                }
+                if (!string.IsNullOrWhiteSpace(package.DataItems[12]) && package.DataItems[12].SplitCount() == 3)
+                {
+                    PokemonPosition = package.DataItems[12];
+                }
+                if (!string.IsNullOrWhiteSpace(package.DataItems[13]) && package.DataItems[13].SplitCount() <= 2)
+                {
+                    PokemonSkin = package.DataItems[13];
+                }
+                if (!string.IsNullOrWhiteSpace(package.DataItems[14]) && package.DataItems[14].SplitCount() == 1)
+                {
+                    PokemonFacing = package.DataItems[14].ToInt();
+                }
+            }
+        }
+
+        private List<string> GenerateGameData(bool fullPackageData)
+        {
+            List<string> ReturnList;
+
+            if (fullPackageData)
+            {
+                ReturnList = new List<string>
+                {
+                    GameMode,
+                    IsGameJoltPlayer.ToInt().ToString(),
+                    IsGameJoltPlayer ? GameJoltID : "",
+                    DecimalSeparator,
+                    Name,
+                    LevelFile,
+                    Position.ConvertStringCulture(DecimalSeparator),
+                    Facing.ToString(),
+                    Moving.ToInt().ToString(),
+                    Skin,
+                    BusyType.ToString(),
+                    PokemonVisible.ToInt().ToString(),
+                    PokemonPosition.ConvertStringCulture(DecimalSeparator),
+                    PokemonSkin,
+                    PokemonFacing.ToString()
+                };
+            }
+            else
+            {
+                ReturnList = new List<string>
+                {
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    LastValidGameData[0] == LevelFile ? "" : LevelFile,
+                    LastValidGameData[1] == Position ? "" : Position.ConvertStringCulture(DecimalSeparator),
+                    LastValidGameData[2] == Facing.ToString() ? "" : Facing.ToString(),
+                    LastValidGameData[3] == Moving.ToString() ? "" : Moving.ToInt().ToString(),
+                    LastValidGameData[4] == Skin ? "" : Skin,
+                    LastValidGameData[5] == BusyType.ToString() ? "" : BusyType.ToString(),
+                    LastValidGameData[6] == PokemonVisible.ToString() ? "" : PokemonVisible.ToInt().ToString(),
+                    LastValidGameData[7] == PokemonPosition ? "" : PokemonPosition.ConvertStringCulture(DecimalSeparator),
+                    LastValidGameData[8] == PokemonSkin ? "" : PokemonSkin,
+                    LastValidGameData[9] == PokemonFacing.ToString() ? "" : PokemonFacing.ToString()
+                };
+            }
+
+            return ReturnList;
+        }
+
+        public override string ToString()
+        {
+            return $"ID: {ID.ToString()} | {(IsGameJoltPlayer ? $"{Name} ({GameJoltID})" : Name)} {GetPlayerBusyType()}";
         }
     }
 }

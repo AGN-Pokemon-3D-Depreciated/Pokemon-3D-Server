@@ -1,7 +1,7 @@
 ﻿using SQLite;
 using System;
 
-namespace Pokemon_3D_Server_Core.Settings.Server.Game.Features
+namespace Pokemon_3D_Server_Core.Server.Game.SQLite.Tables
 {
     public class MuteList
     {
@@ -17,9 +17,9 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.Features
         public string Reason { get; set; }
 
         [NotNull]
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; set; } = DateTime.Now;
 
         [NotNull]
-        public long Duration { get; set; }
+        public long Duration { get; set; } = -1;
     }
 }

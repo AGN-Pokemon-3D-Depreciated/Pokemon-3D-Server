@@ -100,8 +100,6 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
             if (Writer != null) Writer.Dispose();
 
             Thread.Dispose();
-
-            Core.Logger.Debug($"Connection Disposed. Active connection left: " + Core.TcpClientCollection.Count);
         }
     }
 }
