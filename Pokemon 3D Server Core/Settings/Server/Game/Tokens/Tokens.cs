@@ -30,7 +30,6 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.Tokens
 
             #region Player Left Messages
             TokenDefination.Add("SERVER_AFK", "You have been afking for too long.");
-            TokenDefination.Add("SERVER_PLAYERLEFT", "You have left the server.");
             TokenDefination.Add("SERVER_NOPING", "You have a slow connection or the server is not responding.");
             TokenDefination.Add("SERVER_KICKED", "You have been kicked from the server with the following reason: {0}");
             #endregion Player Left Messages

@@ -24,9 +24,6 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
-                Stopwatch sw2 = new Stopwatch();
-                sw2.Start();
-
                 do
                 {
                     if (sw.Elapsed.TotalSeconds >= 1)
@@ -63,13 +60,9 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
 
                         Network.SentToPlayer(new Package.Package(PackageTypes.WorldData, GenerateWorld(), Network));
                     }
-                    else
-                    {
-                        sw2.Stop();
-                        if (sw2.ElapsedMilliseconds < 1000)
-                            Thread.Sleep(1000 - sw2.ElapsedMilliseconds.ToInt());
-                        sw2.Restart();
-                    }
+
+                    if (sw.ElapsedMilliseconds < 1000)
+                        Thread.Sleep(1000 - sw.ElapsedMilliseconds.ToInt());
                 } while (Network.IsActive);
             });
         }

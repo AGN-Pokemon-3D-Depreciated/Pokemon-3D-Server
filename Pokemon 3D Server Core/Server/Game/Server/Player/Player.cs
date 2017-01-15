@@ -6,13 +6,14 @@ using Pokemon_3D_Server_Core.Settings.Server.Game.Tokens;
 using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using static Pokemon_3D_Server_Core.Collections.BusyTypeCollection;
 using static Pokemon_3D_Server_Core.Server.Game.Server.Package.Package;
 
 namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
 {
-    public partial class Player
+    public partial class Player : IDisposable
     {
         #region Player Data
         /// <summary>
@@ -168,11 +169,11 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         public int ID { get; set; }
         public PlayerInfo PlayerInfo { get; private set; }
         public Networking Network { get; private set; }
+        public DateTime LastValidMovement { get; set; } = DateTime.Now;
+        public DateTime LastValidPing { get; set; } = DateTime.Now;
 
-        public DateTime LastActivity = DateTime.Now;
-        public DateTime LastValidPing = DateTime.Now;
-
-        public ThreadHelper Thread = new ThreadHelper();
+        private ThreadHelper Thread = new ThreadHelper();
+        private DateTime JoinTime = DateTime.Now;
 
         public Player() { }
 
@@ -189,12 +190,14 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
                     PlayerInfo = stm.First();
                 else
                 {
-                    Core.SQLite.Connection.Insert(new PlayerInfo()
+                    PlayerInfo = new PlayerInfo()
                     {
                         Name = Name,
                         GameJoltID = GameJoltID,
                         IPAddress = Network.GetPublicIPFromClient()
-                    });
+                    };
+
+                    Core.SQLite.Connection.Insert(PlayerInfo);
                 }
             }
         }
@@ -233,6 +236,14 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
                 foreach (string message in welcomeMessage)
                     Network.SentToPlayer(new Package.Package(PackageTypes.ChatMessage, -1, message, Network));
             }
+
+            if (Core.Settings.Server.Game.Features.AutoRestartTime >= 10)
+            {
+                TimeSpan timeLeft = Core.Listener.StartTime.AddSeconds(Core.Settings.Server.Game.Features.AutoRestartTime) - DateTime.Now;
+                Network.SentToPlayer(new Package.Package(PackageTypes.ChatMessage, -1, token.ToString("SERVER_RESTARTWARNING", timeLeft.ToString()), Network));
+            }
+
+            CheckActivity();
         }
 
         public string GetPlayerBusyType()
@@ -254,6 +265,8 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
 
         public void Update(Package.Package package, bool sentToAllPlayer)
         {
+            LastValidMovement = DateTime.Now;
+
             if (package.IsFullPackageData())
             {
                 GameMode = package.DataItems[0];
@@ -279,45 +292,25 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
                 LastValidGameData = new List<string> { LevelFile, Position, Facing.ToString(), Moving.ToString(), Skin, BusyType.ToString(), PokemonVisible.ToString(), PokemonPosition, PokemonSkin, PokemonFacing.ToString() };
 
                 if (!string.IsNullOrWhiteSpace(package.DataItems[5]) && package.DataItems[5].SplitCount() == 1)
-                {
                     LevelFile = package.DataItems[5];
-                }
                 if (!string.IsNullOrWhiteSpace(package.DataItems[6]) && package.DataItems[6].SplitCount() == 3)
-                {
                     Position = package.DataItems[6];
-                }
                 if (!string.IsNullOrWhiteSpace(package.DataItems[7]) && package.DataItems[7].SplitCount() == 1)
-                {
                     Facing = package.DataItems[7].ToInt();
-                }
                 if (!string.IsNullOrWhiteSpace(package.DataItems[8]) && package.DataItems[8].SplitCount() == 1)
-                {
                     Moving = package.DataItems[8].ToBool();
-                }
                 if (!string.IsNullOrWhiteSpace(package.DataItems[9]) && package.DataItems[9].SplitCount() <= 2)
-                {
                     Skin = package.DataItems[9];
-                }
                 if (!string.IsNullOrWhiteSpace(package.DataItems[10]) && package.DataItems[10].SplitCount() == 1)
-                {
                     BusyType = package.DataItems[10].ToInt();
-                }
                 if (!string.IsNullOrWhiteSpace(package.DataItems[11]) && package.DataItems[11].SplitCount() == 1)
-                {
                     PokemonVisible = package.DataItems[11].ToBool();
-                }
                 if (!string.IsNullOrWhiteSpace(package.DataItems[12]) && package.DataItems[12].SplitCount() == 3)
-                {
                     PokemonPosition = package.DataItems[12];
-                }
                 if (!string.IsNullOrWhiteSpace(package.DataItems[13]) && package.DataItems[13].SplitCount() <= 2)
-                {
                     PokemonSkin = package.DataItems[13];
-                }
                 if (!string.IsNullOrWhiteSpace(package.DataItems[14]) && package.DataItems[14].SplitCount() == 1)
-                {
                     PokemonFacing = package.DataItems[14].ToInt();
-                }
             }
         }
 
@@ -371,9 +364,100 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
             return ReturnList;
         }
 
+        private void CheckActivity()
+        {
+            Thread.Add(() =>
+            {
+                int hours = 0;
+                Tokens token = Core.Settings.Server.Game.Tokens;
+
+                do
+                {
+                    if (Core.Settings.Server.Game.Features.NoPingKickTime >= 10)
+                    {
+                        if ((DateTime.Now - LastValidPing).TotalSeconds >= Core.Settings.Server.Game.Features.NoPingKickTime)
+                        {
+                            InternalKick("SERVER_NOPING");
+                            return;
+                        }
+                    }
+
+                    if (Core.Settings.Server.Game.Features.AFKKickTime >= 10)
+                    {
+                        if ((DateTime.Now - LastValidMovement).TotalSeconds >= Core.Settings.Server.Game.Features.AFKKickTime && BusyType == (int)BusyTypes.Inactive)
+                        {
+                            InternalKick("SERVER_AFK");
+                            return;
+                        }
+                    }
+
+                    if (Core.Settings.Server.Game.Features.AutoRestartTime >= 10)
+                    {
+                        TimeSpan timeLeft = Core.Listener.StartTime.AddSeconds(Core.Settings.Server.Game.Features.AutoRestartTime) - DateTime.Now;
+
+                        if (timeLeft.TotalSeconds <= 10)
+                            Network.SentToPlayer(new Package.Package(PackageTypes.ChatMessage, -1, token.ToString("SERVER_RESTARTWARNING", timeLeft.ToString()), Network));
+                        else if (timeLeft.TotalSeconds <= 0)
+                        {
+                            InternalKick("SERVER_RESTART");
+                            return;
+                        }
+                    }
+
+                    if ((DateTime.Now - JoinTime).TotalHours >= hours + 1)
+                    {
+                        hours++;
+                        Network.SentToPlayer(new Package.Package(PackageTypes.ChatMessage, -1, token.ToString("SERVER_LOGINTIME", hours.ToString()), Network));
+                    }
+
+                    Thread.Sleep(1000);
+                } while (Network.IsActive);
+            });
+        }
+
+        private void InternalKick(string tokenKey, params string[] tokenValue)
+        {
+            Tokens token = Core.Settings.Server.Game.Tokens;
+
+            Network.SentToPlayer(new Package.Package(PackageTypes.Kicked, token.ToString(tokenKey, tokenValue), Network));
+            Core.Logger.Log(IsGameJoltPlayer ?
+                token.ToString("SERVER_GAMEJOLT", Name, GameJoltID, "have been kicked from the server with the following reason: " + token.ToString(tokenKey, tokenValue)) :
+                token.ToString("SERVER_NOGAMEJOLT", Name, "have been kicked from the server with the following reason: " + token.ToString(tokenKey, tokenValue)));
+        }
+
         public override string ToString()
         {
             return $"ID: {ID.ToString()} | {(IsGameJoltPlayer ? $"{Name} ({GameJoltID})" : Name)} {GetPlayerBusyType()}";
+        }
+
+        public void Dispose()
+        {
+            Thread.Dispose();
+
+            List<Networking> activePlayer = Core.TcpClientCollection.ActivePlayer;
+            Tokens token = Core.Settings.Server.Game.Tokens;
+
+            foreach (Networking network in activePlayer)
+            {
+                network.SentToPlayer(new Package.Package(PackageTypes.DestroyPlayer, ID.ToString(), Network));
+                network.SentToPlayer(new Package.Package(PackageTypes.ChatMessage, -1, IsGameJoltPlayer ?
+                    token.ToString("SERVER_GAMEJOLT", Name, GameJoltID, "left the server.") :
+                    token.ToString("SERVER_NOGAMEJOLT", Name, "left the server."), Network));
+            }
+
+            Core.Logger.Log(IsGameJoltPlayer ?
+                token.ToString("SERVER_GAMEJOLT", Name, GameJoltID, "left the server.") :
+                token.ToString("SERVER_NOGAMEJOLT", Name, "left the server."));
+
+            lock (Core.SQLite.Connection)
+            {
+                PlayerInfo.LastActivity = DateTime.Now;
+
+                if (IsGameJoltPlayer)
+                    Core.SQLite.Connection.Update(PlayerInfo);
+                else
+                    Core.SQLite.Connection.Delete(PlayerInfo);
+            }
         }
     }
 }

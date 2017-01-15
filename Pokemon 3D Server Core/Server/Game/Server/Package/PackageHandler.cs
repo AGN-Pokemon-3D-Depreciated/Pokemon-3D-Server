@@ -39,6 +39,10 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
                 case (int)PackageTypes.ServerDataRequest:
                     HandleServerDataRequest();
                     break;
+
+                default:
+                    Core.Logger.Debug("Unknown Package Data. Unable to proceed.", Package.Network);
+                    break;
             }
         }
 
@@ -48,8 +52,9 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
             {
                 if (Package.Network.Player != null)
                 {
-                    // Player exist, just update :)
-                }
+                    HandlePing();
+                    Package.Network.Player.Update(Package, true);
+                } 
                 else
                 {
                     // New Player - Pending to join.
@@ -59,23 +64,40 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
                     Tokens token = Core.Settings.Server.Game.Tokens;
 
                     if (Core.TcpClientCollection.ActivePlayer.Count() >= Core.Settings.Server.Game.Server.MaxPlayers)
+                    {
                         KickUserJoin(player, "SERVER_FULL");
+                        return;
+                    }
                     else if (!Core.Settings.Server.Game.Server.GameModes.GameMode.Contains(player.GameMode, new NonCaseSensitiveHelper()))
+                    {
                         KickUserJoin(player, "SERVER_WRONGGAMEMODE", Core.Settings.Server.Game.Server.GameModes.ToString());
+                        return;
+                    }
                     else if (!Core.Settings.Server.Game.Server.GameModes.OfflineMode && !player.IsGameJoltPlayer)
+                    {
                         KickUserJoin(player, "SERVER_OFFLINEMODE");
-                    else if (Core.Settings.Server.Game.Features.WhiteList)
+                        return;
+                    }
+                    else if (Core.TcpClientCollection.ActivePlayer.Where(a => a.Player.Name == player.Name && a.Player.GameJoltID == player.GameJoltID).Count() > 1)
+                    {
+                        KickUserJoin(player, "SERVER_CLONE");
+                        return;
+                    }
+
+                    if (Core.Settings.Server.Game.Features.WhiteList)
                     {
                         lock (Core.SQLite.Connection)
                         {
                             TableQuery<WhiteList> stm = Core.SQLite.Connection.Table<WhiteList>().Where(a => a.PlayerID == player.PlayerInfo.ID);
                             if (stm.Count() == 0)
+                            {
                                 KickUserJoin(player, "SERVER_DISALLOW");
+                                return;
+                            }
                         }
                     }
-                    else if (Core.TcpClientCollection.ActivePlayer.Where(a => a.Player.Name == player.Name && a.Player.GameJoltID == player.GameJoltID).Count() > 1)
-                        KickUserJoin(player, "SERVER_CLONE");
-                    else if (Core.Settings.Server.Game.Features.BlackList)
+
+                    if (Core.Settings.Server.Game.Features.BlackList)
                     {
                         lock (Core.SQLite.Connection)
                         {
@@ -89,20 +111,26 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
                                     {
                                         TimeSpan duration = blacklist.StartTime.AddSeconds(blacklist.Duration) - DateTime.Now;
                                         KickUserJoin(player, "SERVER_BLACKLISTED", blacklist.Reason, duration.ToString());
+                                        return;
                                     }
                                     else
                                         Core.SQLite.Connection.Delete(blacklist);
                                 }
                                 else
+                                {
                                     KickUserJoin(player, "SERVER_BLACKLISTED", blacklist.Reason, "Permanent");
+                                    return;
+                                }
                             }
                         }
                     }
-                    else if (Core.Settings.Server.Game.Features.IPBlackList)
+
+                    if (Core.Settings.Server.Game.Features.IPBlackList)
                     {
                         lock (Core.SQLite.Connection)
                         {
-                            TableQuery<IPBlackList> stm = Core.SQLite.Connection.Table<IPBlackList>().Where(a => a.IPAddress == Package.Network.GetPublicIPFromClient());
+                            string ipAddress = Package.Network.GetPublicIPFromClient();
+                            TableQuery<IPBlackList> stm = Core.SQLite.Connection.Table<IPBlackList>().Where(a => a.IPAddress == ipAddress);
                             if (stm.Count() > 0)
                             {
                                 IPBlackList blacklist = stm.First();
@@ -112,12 +140,16 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
                                     {
                                         TimeSpan duration = blacklist.StartTime.AddSeconds(blacklist.Duration) - DateTime.Now;
                                         KickUserJoin(player, "SERVER_IPBLACKLISTED", blacklist.Reason, duration.ToString());
+                                        return;
                                     }
                                     else
                                         Core.SQLite.Connection.Delete(blacklist);
                                 }
                                 else
+                                {
                                     KickUserJoin(player, "SERVER_IPBLACKLISTED", blacklist.Reason, "Permanent");
+                                    return;
+                                }
                             }
                         }
                     }
@@ -138,7 +170,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
 
         private void HandlePing()
         {
-            //Core.PlayerCollection.GetPlayer(Package.TcpClient).PingCheck();
+            Package.Network.Player.LastValidPing = DateTime.Now;
         }
 
         private void HandleServerDataRequest()

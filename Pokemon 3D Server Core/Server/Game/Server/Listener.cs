@@ -24,6 +24,8 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
         private TcpListener TcpListener;
         private bool IsActive = false;
 
+        public DateTime StartTime { get; private set; } = DateTime.Now;
+
         public void Start()
         {
             try
@@ -35,6 +37,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
                 }
                 else
                 {
+                    StartTime = DateTime.Now;
                     TcpListener = new TcpListener(new IPEndPoint(IPAddress.Any, Core.Settings.Server.Game.Network.Port));
                     TcpListener.AllowNatTraversal(true);
                     TcpListener.Start();

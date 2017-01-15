@@ -45,9 +45,6 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
-                Stopwatch sw2 = new Stopwatch();
-                sw2.Start();
-
                 do
                 {
                     try
@@ -68,13 +65,9 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
                             Core.Logger.Log(Core.World.ToString());
                             Core.TcpClientCollection.UpdateWorld();
                         }
-                        else
-                        {
-                            sw2.Stop();
-                            if (sw2.ElapsedMilliseconds < 1000)
-                                Thread.Sleep(1000 - sw2.ElapsedMilliseconds.ToInt());
-                            sw2.Restart();
-                        }
+
+                        if (sw.Elapsed.TotalHours < 1)
+                            Thread.Sleep(1000);
                     }
                     catch (Exception) { }
                 } while (IsActive);

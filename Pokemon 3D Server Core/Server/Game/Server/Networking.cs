@@ -93,6 +93,9 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
             IsActive = false;
             ThreadPool2.WaitForIdle();
 
+            if (Player != null)
+                Player.Dispose();
+
             Core.TcpClientCollection.Remove(TcpClient);
 
             if (TcpClient != null) TcpClient.Close();
