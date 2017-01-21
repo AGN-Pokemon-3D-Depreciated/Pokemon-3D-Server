@@ -7,6 +7,7 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.World
     public class World
     {
         private int _Season = (int)SeasonType.DefaultSeason;
+
         public int Season
         {
             get { return _Season; }
@@ -14,6 +15,7 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.World
         }
 
         private int _Weather = (int)WeatherType.DefaultWeather;
+
         public int Weather
         {
             get { return _Weather; }
@@ -32,12 +34,16 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.World
             {
                 case (int)SeasonType.Winter:
                     return "Winter";
+
                 case (int)SeasonType.Spring:
                     return "Spring";
+
                 case (int)SeasonType.Summer:
                     return "Summer";
+
                 case (int)SeasonType.Fall:
                     return "Fall";
+
                 default:
                     return "Winter";
             }
@@ -49,24 +55,34 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.World
             {
                 case (int)WeatherType.Ash:
                     return "Ash";
+
                 case (int)WeatherType.Blizzard:
                     return "Blizzard";
+
                 case (int)WeatherType.Clear:
                     return "Clear";
+
                 case (int)WeatherType.Fog:
                     return "Fog";
+
                 case (int)WeatherType.Rain:
                     return "Rain";
+
                 case (int)WeatherType.Sandstorm:
                     return "Sandstorm";
+
                 case (int)WeatherType.Snow:
                     return "Snow";
+
                 case (int)WeatherType.Sunny:
                     return "Sunny";
+
                 case (int)WeatherType.Thunderstorm:
                     return "Thunderstorm";
+
                 case (int)WeatherType.Underwater:
                     return "Underwater";
+
                 default:
                     return "Clear";
             }

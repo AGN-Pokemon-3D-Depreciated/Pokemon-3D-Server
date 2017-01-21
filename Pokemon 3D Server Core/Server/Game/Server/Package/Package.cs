@@ -23,7 +23,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
 
             /// <summary>
             /// Package Type: Game Data
-            /// <para>Join: {Origin = PlayerID | DataItem[] = FullPackageData[] | To other players}</para>  
+            /// <para>Join: {Origin = PlayerID | DataItem[] = FullPackageData[] | To other players}</para>
             /// <para>Update: {Origin = PlayerID | DataItem[] = PartialPackageData[] | To other players}</para>
             /// </summary>
             GameData = 0,

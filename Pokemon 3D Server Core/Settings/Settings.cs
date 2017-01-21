@@ -12,6 +12,7 @@ namespace Pokemon_3D_Server_Core.Settings
     {
         [YamlIgnore]
         public string Name { get; } = "Application Settings";
+
         [YamlIgnore]
         public string Version { get; } = "0.54";
 

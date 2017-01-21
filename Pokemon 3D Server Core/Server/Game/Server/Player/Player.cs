@@ -6,7 +6,6 @@ using Pokemon_3D_Server_Core.Settings.Server.Game.Tokens;
 using SQLite;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using static Pokemon_3D_Server_Core.Collections.BusyTypeCollection;
 using static Pokemon_3D_Server_Core.Server.Game.Server.Package.Package;
@@ -16,12 +15,14 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
     public partial class Player : IDisposable
     {
         #region Player Data
+
         /// <summary>
         /// Get/Set Player DataItem[0]
         /// </summary>
         public string GameMode { get; set; }
 
         private int _IsGameJoltPlayer;
+
         /// <summary>
         /// Get/Set Player DataItem[1]
         /// </summary>
@@ -89,6 +90,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         public int Facing { get; set; }
 
         private int _Moving;
+
         /// <summary>
         /// Get/Set Player DataItem[8]
         /// </summary>
@@ -109,6 +111,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         public int BusyType { get; set; }
 
         private int _PokemonVisible;
+
         /// <summary>
         /// Get/Set Player DataItem[11]
         /// </summary>
@@ -164,6 +167,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
         /// Get/Set Player Last Valid Game Data
         /// </summary>
         public List<string> LastValidGameData { get; set; } = new List<string>();
+
         #endregion Player Data
 
         public int ID { get; set; }
@@ -174,8 +178,6 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
 
         private ThreadHelper Thread = new ThreadHelper();
         private DateTime JoinTime = DateTime.Now;
-
-        public Player() { }
 
         public Player(int id, Networking network, Package.Package package)
         {
@@ -207,7 +209,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
             Network.SentToPlayer(new Package.Package(PackageTypes.ID, ID.ToString(), Network));
             UpdateWorld();
 
-            List<Networking> activePlayer = Core.TcpClientCollection.ActivePlayer;
+            List<Networking> activePlayer = Core.TcpClientCollection.GameTcpClientCollection.ActivePlayer;
             Tokens token = Core.Settings.Server.Game.Tokens;
 
             foreach (Networking network in activePlayer)
@@ -243,6 +245,9 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
                 Network.SentToPlayer(new Package.Package(PackageTypes.ChatMessage, -1, token.ToString("SERVER_RESTARTWARNING", timeLeft.ToString()), Network));
             }
 
+            if (Core.Settings.Server.Game.Features.Chat.AllowChatChannel)
+                Network.SentToPlayer(new Package.Package(PackageTypes.ChatMessage, -1, token.ToString("SERVER_CURRENTCHATCHANNEL", "Default"), Network));
+
             CheckActivity();
         }
 
@@ -252,12 +257,16 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
             {
                 case (int)BusyTypes.NotBusy:
                     return "";
+
                 case (int)BusyTypes.Battling:
                     return "- Battling";
+
                 case (int)BusyTypes.Chatting:
                     return "- Chatting";
+
                 case (int)BusyTypes.Inactive:
                     return "- Inactive";
+
                 default:
                     return "";
             }
@@ -311,6 +320,11 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
                     PokemonSkin = package.DataItems[13];
                 if (!string.IsNullOrWhiteSpace(package.DataItems[14]) && package.DataItems[14].SplitCount() == 1)
                     PokemonFacing = package.DataItems[14].ToInt();
+            }
+
+            if (sentToAllPlayer)
+            {
+                Core.TcpClientCollection.GameTcpClientCollection.SendToAllPlayer(new Package.Package(PackageTypes.GameData, ID, GenerateGameData(package.IsFullPackageData()), Network));
             }
         }
 
@@ -430,34 +444,48 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
             return $"ID: {ID.ToString()} | {(IsGameJoltPlayer ? $"{Name} ({GameJoltID})" : Name)} {GetPlayerBusyType()}";
         }
 
-        public void Dispose()
+        #region IDisposable Support
+
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
         {
-            Thread.Dispose();
-
-            List<Networking> activePlayer = Core.TcpClientCollection.ActivePlayer;
-            Tokens token = Core.Settings.Server.Game.Tokens;
-
-            foreach (Networking network in activePlayer)
+            if (!disposedValue)
             {
-                network.SentToPlayer(new Package.Package(PackageTypes.DestroyPlayer, ID.ToString(), Network));
-                network.SentToPlayer(new Package.Package(PackageTypes.ChatMessage, -1, IsGameJoltPlayer ?
-                    token.ToString("SERVER_GAMEJOLT", Name, GameJoltID, "left the server.") :
-                    token.ToString("SERVER_NOGAMEJOLT", Name, "left the server."), Network));
-            }
+                if (disposing)
+                {
+                    Thread.Dispose();
+                    Tokens token = Core.Settings.Server.Game.Tokens;
 
-            Core.Logger.Log(IsGameJoltPlayer ?
-                token.ToString("SERVER_GAMEJOLT", Name, GameJoltID, "left the server.") :
-                token.ToString("SERVER_NOGAMEJOLT", Name, "left the server."));
+                    Core.TcpClientCollection.GameTcpClientCollection.SendToAllPlayer(new Package.Package(PackageTypes.DestroyPlayer, ID.ToString(), Network));
+                    Core.TcpClientCollection.GameTcpClientCollection.SendToAllPlayer(new Package.Package(PackageTypes.ChatMessage, -1, IsGameJoltPlayer ?
+                            token.ToString("SERVER_GAMEJOLT", Name, GameJoltID, "left the server.") :
+                            token.ToString("SERVER_NOGAMEJOLT", Name, "left the server."), Network));
 
-            lock (Core.SQLite.Connection)
-            {
-                PlayerInfo.LastActivity = DateTime.Now;
+                    Core.Logger.Log(IsGameJoltPlayer ?
+                        token.ToString("SERVER_GAMEJOLT", Name, GameJoltID, "left the server.") :
+                        token.ToString("SERVER_NOGAMEJOLT", Name, "left the server."));
 
-                if (IsGameJoltPlayer)
-                    Core.SQLite.Connection.Update(PlayerInfo);
-                else
-                    Core.SQLite.Connection.Delete(PlayerInfo);
+                    lock (Core.SQLite.Connection)
+                    {
+                        PlayerInfo.LastActivity = DateTime.Now;
+
+                        if (IsGameJoltPlayer)
+                            Core.SQLite.Connection.Update(PlayerInfo);
+                        else
+                            Core.SQLite.Connection.Delete(PlayerInfo);
+                    }
+                }
+
+                disposedValue = true;
             }
         }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        #endregion IDisposable Support
     }
 }

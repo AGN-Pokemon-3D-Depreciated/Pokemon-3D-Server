@@ -11,10 +11,6 @@ namespace Modules.System.Security.Cryptography
         private const int KEYSIZE = 256;
         private const int DERIVATIONITERATIONS = 1000;
 
-        /// <summary>
-        /// Convert a String to <see cref="MD5"/> checksum.
-        /// </summary>
-        /// <param name="value">String to convert.</param>
         public static string ToMD5(this string value)
         {
             try
@@ -25,13 +21,12 @@ namespace Modules.System.Security.Cryptography
                     return string.Join("", hash.Select(a => a.ToString("X2")).ToArray());
                 }
             }
-            catch (Exception) { return value; }
+            catch (Exception)
+            {
+                return value;
+            }
         }
 
-        /// <summary>
-        /// Convert a <see cref="Stream"/> to <see cref="MD5"/> checksum.
-        /// </summary>
-        /// <param name="stream">Stream to convert.</param>
         public static string ToMD5(this Stream stream)
         {
             try
@@ -43,13 +38,12 @@ namespace Modules.System.Security.Cryptography
                     return string.Join("", hash.Select(a => a.ToString("X2")).ToArray());
                 }
             }
-            catch (Exception) { return null; }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        /// <summary>
-        /// Convert a String to <see cref="SHA1"/> checksum.
-        /// </summary>
-        /// <param name="value">String to convert.</param>
         public static string ToSHA1(this string value)
         {
             try
@@ -60,13 +54,12 @@ namespace Modules.System.Security.Cryptography
                     return string.Join("", hash.Select(a => a.ToString("X2")).ToArray());
                 }
             }
-            catch (Exception) { return value; }
+            catch (Exception)
+            {
+                return value;
+            }
         }
 
-        /// <summary>
-        /// Convert a <see cref="Stream"/> to <see cref="SHA1"/> checksum.
-        /// </summary>
-        /// <param name="stream">Stream to convert.</param>
         public static string ToSHA1(this Stream stream)
         {
             try
@@ -78,13 +71,12 @@ namespace Modules.System.Security.Cryptography
                     return string.Join("", hash.Select(a => a.ToString("X2")).ToArray());
                 }
             }
-            catch (Exception) { return null; }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        /// <summary>
-        /// Convert a String to <see cref="SHA256"/> checksum.
-        /// </summary>
-        /// <param name="value">String to convert.</param>
         public static string ToSHA256(this string value)
         {
             try
@@ -95,13 +87,12 @@ namespace Modules.System.Security.Cryptography
                     return string.Join("", hash.Select(a => a.ToString("X2")).ToArray());
                 }
             }
-            catch (Exception) { return value; }
+            catch (Exception)
+            {
+                return value;
+            }
         }
 
-        /// <summary>
-        /// Convert a <see cref="Stream"/> to <see cref="SHA256"/> checksum.
-        /// </summary>
-        /// <param name="stream">Stream to convert.</param>
         public static string ToSHA256(this Stream stream)
         {
             try
@@ -113,95 +104,100 @@ namespace Modules.System.Security.Cryptography
                     return string.Join("", hash.Select(a => a.ToString("X2")).ToArray());
                 }
             }
-            catch (Exception) { return null; }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        /// <summary>
-        /// Encrypt a String with a password.
-        /// </summary>
-        /// <param name="plainText">String to convert.</param>
-        /// <param name="passPhrase">Password.</param>
         public static string EncryptString(this string plainText, string passPhrase)
         {
             try
             {
-                // Salt and IV is randomly generated each time, but is preprended to encrypted cipher text
-                // so that the same Salt and IV values can be used when decrypting.  
-                var saltStringBytes = Generate256BitsOfRandomEntropy();
-                var ivStringBytes = Generate256BitsOfRandomEntropy();
-                var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
-                var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DERIVATIONITERATIONS);
-                var keyBytes = password.GetBytes(KEYSIZE / 8);
-                using (var symmetricKey = new RijndaelManaged())
+                byte[] saltStringBytes = Generate256BitsOfRandomEntropy();
+                byte[] ivStringBytes = Generate256BitsOfRandomEntropy();
+                byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+
+                using (Rfc2898DeriveBytes password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DERIVATIONITERATIONS))
                 {
-                    symmetricKey.BlockSize = 256;
-                    symmetricKey.Mode = CipherMode.CBC;
-                    symmetricKey.Padding = PaddingMode.PKCS7;
-                    using (var encryptor = symmetricKey.CreateEncryptor(keyBytes, ivStringBytes))
+                    using (RijndaelManaged symmetricKey = new RijndaelManaged())
                     {
-                        using (var memoryStream = new MemoryStream())
+                        byte[] keyBytes = password.GetBytes(KEYSIZE / 8);
+
+                        symmetricKey.BlockSize = 256;
+                        symmetricKey.Mode = CipherMode.CBC;
+                        symmetricKey.Padding = PaddingMode.PKCS7;
+
+                        using (ICryptoTransform encryptor = symmetricKey.CreateEncryptor(keyBytes, ivStringBytes))
                         {
-                            using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
+                            MemoryStream memoryStream;
+                            using (var cryptoStream = new CryptoStream(memoryStream = new MemoryStream(), encryptor, CryptoStreamMode.Write))
                             {
                                 cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
                                 cryptoStream.FlushFinalBlock();
-                                var cipherTextBytes = saltStringBytes;
+
+                                byte[] cipherTextBytes = saltStringBytes;
                                 cipherTextBytes = cipherTextBytes.Concat(ivStringBytes).ToArray();
                                 cipherTextBytes = cipherTextBytes.Concat(memoryStream.ToArray()).ToArray();
+
                                 return Convert.ToBase64String(cipherTextBytes);
                             }
                         }
                     }
                 }
             }
-            catch (Exception) { return null; }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        /// <summary>
-        /// Decrypt a String with a password.
-        /// </summary>
-        /// <param name="cipherText">Encrypted string to convert.</param>
-        /// <param name="passPhrase">Password.</param>
         public static string DecryptString(this string cipherText, string passPhrase)
         {
             try
             {
-                var cipherTextBytesWithSaltAndIv = Convert.FromBase64String(cipherText);
-                var saltStringBytes = cipherTextBytesWithSaltAndIv.Take(KEYSIZE / 8).ToArray();
-                var ivStringBytes = cipherTextBytesWithSaltAndIv.Skip(KEYSIZE / 8).Take(KEYSIZE / 8).ToArray();
-                var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((KEYSIZE / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((KEYSIZE / 8) * 2)).ToArray();
-                var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DERIVATIONITERATIONS);
-                var keyBytes = password.GetBytes(KEYSIZE / 8);
-                using (var symmetricKey = new RijndaelManaged())
+                byte[] cipherTextBytesWithSaltAndIv = Convert.FromBase64String(cipherText);
+                byte[] saltStringBytes = cipherTextBytesWithSaltAndIv.Take(KEYSIZE / 8).ToArray();
+                byte[] ivStringBytes = cipherTextBytesWithSaltAndIv.Skip(KEYSIZE / 8).Take(KEYSIZE / 8).ToArray();
+                byte[] cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((KEYSIZE / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((KEYSIZE / 8) * 2)).ToArray();
+
+                using (Rfc2898DeriveBytes password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DERIVATIONITERATIONS))
                 {
-                    symmetricKey.BlockSize = 256;
-                    symmetricKey.Mode = CipherMode.CBC;
-                    symmetricKey.Padding = PaddingMode.PKCS7;
-                    using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
+                    using (RijndaelManaged symmetricKey = new RijndaelManaged())
                     {
-                        using (var memoryStream = new MemoryStream(cipherTextBytes))
+                        byte[] keyBytes = password.GetBytes(KEYSIZE / 8);
+
+                        symmetricKey.BlockSize = 256;
+                        symmetricKey.Mode = CipherMode.CBC;
+                        symmetricKey.Padding = PaddingMode.PKCS7;
+
+                        using (ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
                         {
-                            using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+                            using (CryptoStream cryptoStream = new CryptoStream(new MemoryStream(cipherTextBytes), decryptor, CryptoStreamMode.Read))
                             {
-                                var plainTextBytes = new byte[cipherTextBytes.Length];
-                                var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-                                memoryStream.Close();
-                                cryptoStream.Close();
+                                byte[] plainTextBytes = new byte[cipherTextBytes.Length];
+                                int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+
                                 return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
                             }
                         }
                     }
                 }
             }
-            catch (Exception) { return null; }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private static byte[] Generate256BitsOfRandomEntropy()
         {
             var randomBytes = new byte[32];
-            var rngCsp = new RNGCryptoServiceProvider();
-            rngCsp.GetBytes(randomBytes);
-            return randomBytes;
+            using (var rngCsp = new RNGCryptoServiceProvider())
+            {
+                rngCsp.GetBytes(randomBytes);
+                return randomBytes;
+            }
         }
     }
 }

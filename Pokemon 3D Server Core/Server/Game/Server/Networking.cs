@@ -88,21 +88,40 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
             });
         }
 
+        #region IDisposable Support
+
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    IsActive = false;
+                    ThreadPool2.WaitForIdle();
+
+                    if (Player != null)
+                        Player.Dispose();
+
+                    Core.TcpClientCollection.GameTcpClientCollection.Remove(TcpClient);
+
+                    if (TcpClient != null) TcpClient.Close();
+                    if (Reader != null) Reader.Dispose();
+                    if (Writer != null) Writer.Dispose();
+
+                    Thread.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
         public void Dispose()
         {
-            IsActive = false;
-            ThreadPool2.WaitForIdle();
-
-            if (Player != null)
-                Player.Dispose();
-
-            Core.TcpClientCollection.Remove(TcpClient);
-
-            if (TcpClient != null) TcpClient.Close();
-            if (Reader != null) Reader.Dispose();
-            if (Writer != null) Writer.Dispose();
-
-            Thread.Dispose();
+            Dispose(true);
         }
+
+        #endregion IDisposable Support
     }
 }

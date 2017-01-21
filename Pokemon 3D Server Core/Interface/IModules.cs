@@ -6,6 +6,7 @@
         string Version { get; }
 
         void Start();
+
         void Stop();
     }
 }

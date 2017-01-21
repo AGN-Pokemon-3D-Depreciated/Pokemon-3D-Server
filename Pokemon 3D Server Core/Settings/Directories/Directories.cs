@@ -1,5 +1,5 @@
-﻿using System;
-using Modules.System.IO;
+﻿using Modules.System.IO;
+using System;
 
 namespace Pokemon_3D_Server_Core.Settings.Directories
 {

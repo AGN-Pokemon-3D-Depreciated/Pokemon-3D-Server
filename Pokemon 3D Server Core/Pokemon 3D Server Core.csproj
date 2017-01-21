@@ -93,7 +93,6 @@
     <Compile Include="Interface\IModules.cs" />
     <Compile Include="Logger\ILogger.cs" />
     <Compile Include="Logger\Logger.cs" />
-    <Compile Include="Modules\System\Collections\Generic\DictionaryHelper.cs" />
     <Compile Include="Modules\System\Collections\Generic\NonCaseSensitiveHelper.cs" />
     <Compile Include="Modules\System\DateTimeHelper.cs" />
     <Compile Include="Modules\System\ExceptionHelper.cs" />
@@ -116,8 +115,10 @@
     <Compile Include="Server\Game\Server\TcpClientCollection.cs" />
     <Compile Include="Server\Game\SQLite\SQLite.cs" />
     <Compile Include="Server\Game\World\World.cs" />
+    <Compile Include="Server\TcpClientCollection.cs" />
     <Compile Include="Settings\Directories\Directories.cs" />
     <Compile Include="Settings\Logger\Logger.cs" />
+    <Compile Include="Settings\Server\Game\Features\Chat\Chat.cs" />
     <Compile Include="Settings\Server\Game\Features\Features.cs" />
     <Compile Include="Settings\Server\Game\Features\SQLite\SQLite.cs" />
     <Compile Include="Settings\Server\Game\Game.cs" />

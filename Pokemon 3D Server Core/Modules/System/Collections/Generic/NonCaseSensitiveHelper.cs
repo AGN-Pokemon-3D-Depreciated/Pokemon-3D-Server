@@ -12,7 +12,7 @@ namespace Pokemon_3D_Server_Core.Modules.System.Collections.Generic
 
         public int GetHashCode(string obj)
         {
-            throw new NotImplementedException();
+            return base.GetHashCode();
         }
     }
 }

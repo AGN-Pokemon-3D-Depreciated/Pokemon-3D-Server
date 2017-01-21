@@ -10,9 +10,13 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.Server
         public GameModes.GameModes GameModes { get; private set; } = new GameModes.GameModes();
 
         private int _MaxPlayers = 20;
+
         public int MaxPlayers
         {
-            get { return _MaxPlayers; }
+            get
+            {
+                return _MaxPlayers;
+            }
             set
             {
                 if (value <= 0)

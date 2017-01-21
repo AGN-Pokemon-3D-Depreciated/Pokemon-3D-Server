@@ -17,7 +17,6 @@ namespace Pokemon_3D_Server_Core.Logger
         public string Version { get; } = "0.54";
         public ILogger instance { get; set; }
 
-        private FileStream FileStream;
         private StreamWriter Writer;
         private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(1);
         private bool IsActive = false;
@@ -38,13 +37,11 @@ namespace Pokemon_3D_Server_Core.Logger
             IsActive = false;
             ThreadPool.WaitForIdle();
             Writer.Dispose();
-            FileStream.Dispose();
         }
 
         private void InitLogger()
         {
-            FileStream = new FileStream($"{Core.Settings.Directories.LoggerDirectory}/Logger_{DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss")}.dat".GetFullPath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
-            Writer = new StreamWriter(FileStream, Encoding.UTF8) { AutoFlush = true };
+            Writer = new StreamWriter(new FileStream($"{Core.Settings.Directories.LoggerDirectory}/Logger_{DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss")}.dat".GetFullPath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite), Encoding.UTF8) { AutoFlush = true };
             IsActive = true;
         }
 
@@ -96,7 +93,7 @@ namespace Pokemon_3D_Server_Core.Logger
                 return true;
             else if (logType == LogTypes.Error && Core.Settings.Logger.LoggerError)
                 return true;
-            else if ((logType == LogTypes.Debug && Core.Settings.Logger.LoggerDebug) || Debugger.IsAttached)
+            else if ((logType == LogTypes.Debug && Core.Settings.Logger.LoggerDebug))
                 return true;
             else if (logType == LogTypes.Chat && Core.Settings.Server.Game.Logger.LoggerChat)
                 return true;

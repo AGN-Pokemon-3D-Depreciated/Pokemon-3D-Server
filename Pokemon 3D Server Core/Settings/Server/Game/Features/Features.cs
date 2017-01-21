@@ -8,13 +8,16 @@
         public bool MuteList { get; set; } = true;
         public bool OperatorList { get; set; } = true;
         public bool WhiteList { get; set; } = false;
-        public bool ChatHistory { get; set; } = true;
         public bool TradeHistory { get; set; } = true;
 
         private int _NoPingKickTime = 30;
+
         public int NoPingKickTime
         {
-            get { return _NoPingKickTime; }
+            get
+            {
+                return _NoPingKickTime;
+            }
             set
             {
                 if (value < 10)
@@ -25,9 +28,13 @@
         }
 
         private int _AFKKickTime = 300;
+
         public int AFKKickTime
         {
-            get { return _AFKKickTime; }
+            get
+            {
+                return _AFKKickTime;
+            }
             set
             {
                 if (value < 10)
@@ -38,9 +45,13 @@
         }
 
         private int _AutoRestartTime = -1;
+
         public int AutoRestartTime
         {
-            get { return _AutoRestartTime; }
+            get
+            {
+                return _AutoRestartTime;
+            }
             set
             {
                 if (value < 10)
@@ -50,6 +61,7 @@
             }
         }
 
+        public Chat.Chat Chat { get; private set; } = new Chat.Chat();
         public SQLite.SQLite SQLite { get; private set; } = new SQLite.SQLite();
     }
 }

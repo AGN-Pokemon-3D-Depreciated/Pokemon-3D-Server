@@ -9,9 +9,6 @@ namespace Modules.System.Net
 {
     public static class IPAddressHelper
     {
-        /// <summary>
-        /// Get the public IP of the hosting computer.
-        /// </summary>
         public static string GetPublicIP()
         {
             using (WebClient Client = new WebClient())
@@ -28,18 +25,14 @@ namespace Modules.System.Net
             }
         }
 
-        /// <summary>
-        /// Get the public IP of the client.
-        /// </summary>
-        /// <param name="network">Network.</param>
         public static string GetPublicIPFromClient(this Networking network)
         {
-            return ((IPEndPoint)network.TcpClient.Client.RemoteEndPoint).Address.ToString();
+            if (network != null)
+                return ((IPEndPoint)network.TcpClient.Client.RemoteEndPoint).Address.ToString();
+            else
+                return null;
         }
 
-        /// <summary>
-        /// Get the private IP of the hosting computer.
-        /// </summary>
         public static string GetPrivateIP()
         {
             try

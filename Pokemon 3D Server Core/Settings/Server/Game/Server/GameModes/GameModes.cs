@@ -82,6 +82,7 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.Server.GameModes
         public List<string> Others { get; private set; } = new List<string>();
 
         private bool _OfflineMode = false;
+
         public bool OfflineMode
         {
             get
@@ -91,7 +92,10 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.Server.GameModes
                 else
                     return _OfflineMode;
             }
-            set { _OfflineMode = value; }
+            set
+            {
+                _OfflineMode = value;
+            }
         }
 
         public override string ToString()

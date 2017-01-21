@@ -42,7 +42,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Player
                                     Season = Core.World.GenerateSeason((int)PlayerInfo.Season);
 
                                 if (PlayerInfo.Weather == WeatherType.Nothing)
-                                    Weather = Core.World.Season;
+                                    Weather = Core.World.Weather;
                                 else
                                     Weather = Core.World.GenerateWeather(Season, (int)PlayerInfo.Weather);
 

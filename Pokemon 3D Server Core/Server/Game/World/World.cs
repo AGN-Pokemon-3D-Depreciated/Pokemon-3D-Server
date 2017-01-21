@@ -11,12 +11,13 @@ using static Pokemon_3D_Server_Core.Collections.WeatherTypeCollection;
 
 namespace Pokemon_3D_Server_Core.Server.Game.World
 {
-    public class World : IModules
+    public class World : IModules, IDisposable
     {
         public string Name { get; } = "Game World";
         public string Version { get; } = "0.54";
 
         private int _Season;
+
         public int Season
         {
             get { return _Season; }
@@ -24,13 +25,14 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
         }
 
         private int _Weather;
+
         public int Weather
         {
             get { return _Weather; }
             set { _Weather = value.RollOver(0, 9); }
         }
 
-        public int TimeOffset { get; set; } = 0;
+        public int TimeOffset { get; set; }
         public bool DoDayCycle { get; set; }
 
         private int WeekOfYear { get { return ((DateTime.Now.DayOfYear - (DateTime.Now.DayOfWeek - DayOfWeek.Monday)) / 7.0 + 1.0).Floor().ToInt(); } }
@@ -63,7 +65,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
                             }
 
                             Core.Logger.Log(Core.World.ToString());
-                            Core.TcpClientCollection.UpdateWorld();
+                            Core.TcpClientCollection.GameTcpClientCollection.UpdateWorld();
                         }
 
                         if (sw.Elapsed.TotalHours < 1)
@@ -88,12 +90,16 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
                     {
                         case 0:
                             return (int)SeasonType.Fall;
+
                         case 1:
                             return (int)SeasonType.Winter;
+
                         case 2:
                             return (int)SeasonType.Spring;
+
                         case 3:
                             return (int)SeasonType.Summer;
+
                         default:
                             return (int)SeasonType.Summer;
                     }
@@ -305,5 +311,29 @@ namespace Pokemon_3D_Server_Core.Server.Game.World
         {
             return $"Current Season: {Core.Settings.Server.Game.World.GetSeasonName(Season)} | Current Weather: {Core.Settings.Server.Game.World.GetWeatherName(Weather)} | Current Time: {DateTime.Now.AddSeconds(TimeOffset).ToString("dd/MM/yyyy hh:mm:ss tt")}";
         }
+
+        #region IDisposable Support
+
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    Thread.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        #endregion IDisposable Support
     }
 }

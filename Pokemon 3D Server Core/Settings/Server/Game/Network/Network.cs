@@ -13,9 +13,13 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.Network
         public bool GeneratePublicIP { get; set; } = true;
 
         private IPAddress _IPAddress;
+
         public string IPAddress
         {
-            get { return _IPAddress == null ? "" : _IPAddress.ToString(); }
+            get
+            {
+                return _IPAddress == null ? "" : _IPAddress.ToString();
+            }
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -29,6 +33,7 @@ namespace Pokemon_3D_Server_Core.Settings.Server.Game.Network
         }
 
         private int _Port = 15124;
+
         public int Port
         {
             get { return _Port; }

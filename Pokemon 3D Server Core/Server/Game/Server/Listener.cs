@@ -14,7 +14,7 @@ using static Pokemon_3D_Server_Core.Server.Game.Server.Package.Package;
 
 namespace Pokemon_3D_Server_Core.Server.Game.Server
 {
-    public class Listener : IModules
+    public class Listener : IModules, IDisposable
     {
         public string Name { get; } = "Game Server Listener";
         public string Version { get; } = "0.54";
@@ -74,7 +74,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
 
             if (TcpListener != null) TcpListener.Stop();
             if (Thread.Count > 0) Thread.Dispose();
-            if (Core.TcpClientCollection.Count > 0) Core.TcpClientCollection.Dispose();
+            if (Core.TcpClientCollection.GameTcpClientCollection.Count > 0) Core.TcpClientCollection.GameTcpClientCollection.Dispose();
         }
 
         private void StartListening()
@@ -93,7 +93,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
                         ThreadPool.QueueWorkItem(() =>
                         {
                             if (client != null)
-                                Core.TcpClientCollection.Add(client);
+                                Core.TcpClientCollection.GameTcpClientCollection.Add(client);
                         });
                     }
                     catch (ThreadAbortException) { return; }
@@ -171,5 +171,29 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server
                 }
             }
         }
+
+        #region IDisposable Support
+
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    Thread.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        #endregion IDisposable Support
     }
 }

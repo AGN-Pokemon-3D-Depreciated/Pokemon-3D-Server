@@ -8,20 +8,27 @@ using System.Collections.Generic;
 
 namespace Pokemon_3D_Server_Core
 {
-    public class Core
+    public class Core : IDisposable
     {
         #region Core
+
         public static Settings.Settings Settings { get; internal set; }
         public static Logger.Logger Logger { get; private set; }
+
         #endregion Core
 
         #region Server
+
+        public static Server.TcpClientCollection TcpClientCollection { get; private set; }
+
         #region Game
+
         public static Server.Game.SQLite.SQLite SQLite { get; private set; }
         public static World World { get; private set; }
-        public static TcpClientCollection TcpClientCollection { get; private set; }
         public static Listener Listener { get; private set; }
+
         #endregion Game
+
         #endregion Server
 
         private List<IModules> IModules = new List<IModules>();
@@ -36,7 +43,7 @@ namespace Pokemon_3D_Server_Core
 
                 SQLite = new Server.Game.SQLite.SQLite();
                 World = new World();
-                TcpClientCollection = new TcpClientCollection();
+                TcpClientCollection = new Server.TcpClientCollection();
                 Listener = new Listener();
 
                 IModules.AddRange(new List<IModules> { Settings, SQLite, World, Listener, Logger });
@@ -81,5 +88,29 @@ namespace Pokemon_3D_Server_Core
                 }
             }
         }
+
+        #region IDisposable Support
+
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    Thread.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        #endregion IDisposable Support
     }
 }
