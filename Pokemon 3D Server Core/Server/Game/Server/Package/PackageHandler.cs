@@ -2,7 +2,6 @@
 using Pokemon_3D_Server_Core.Modules.System.Collections.Generic;
 using Pokemon_3D_Server_Core.Server.Game.SQLite.Tables;
 using Pokemon_3D_Server_Core.Settings.Server.Game.Tokens;
-using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,7 +91,7 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
 
                     if (Core.Settings.Server.Game.Features.WhiteList)
                     {
-                        if (!WhiteList.Exists(playerID))
+                        if (Core.SQLite.Query<WhiteList>(a => a.PlayerID == playerID).Count == 0)
                         {
                             KickUserJoin(player, "SERVER_DISALLOW");
                             return;
@@ -101,19 +100,27 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
 
                     if (Core.Settings.Server.Game.Features.BlackList)
                     {
-                        if (BlackList.IsBanned(playerID))
+                        List<BlackList> item = Core.SQLite.Query<BlackList>(a => a.PlayerID == playerID);
+                        if (item.Count > 0)
                         {
-                            KickUserJoin(player, "SERVER_BLACKLISTED", BlackList.GetReason(playerID), BlackList.GetDuration(playerID));
-                            return;
+                            if (DateTime.Now < (item[0].Duration > 0 ? item[0].StartTime.AddSeconds(item[0].Duration) : DateTime.MaxValue))
+                            {
+                                KickUserJoin(player, "SERVER_BLACKLISTED", item[0].Reason, ((item[0].Duration > 0 ? item[0].StartTime.AddSeconds(item[0].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss"));
+                                return;
+                            }
                         }
                     }
 
                     if (Core.Settings.Server.Game.Features.IPBlackList)
                     {
-                        if (IPBlackList.IsBanned(ipAddress))
+                        List<IPBlackList> item = Core.SQLite.Query<IPBlackList>(a => a.IPAddress == ipAddress);
+                        if (item.Count > 0)
                         {
-                            KickUserJoin(player, "SERVER_IPBLACKLISTED", IPBlackList.GetReason(ipAddress), IPBlackList.GetDuration(ipAddress));
-                            return;
+                            if (DateTime.Now < (item[0].Duration > 0 ? item[0].StartTime.AddSeconds(item[0].Duration) : DateTime.MaxValue))
+                            {
+                                KickUserJoin(player, "SERVER_IPBLACKLISTED", item[0].Reason, ((item[0].Duration > 0 ? item[0].StartTime.AddSeconds(item[0].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss"));
+                                return;
+                            }
                         }
                     }
 
@@ -134,34 +141,29 @@ namespace Pokemon_3D_Server_Core.Server.Game.Server.Package
         {
             if (Core.Settings.Server.Game.Features.Chat.AllowChatInServer)
             {
+                Player.Player player = Package.Network.Player;
+                int playerID = Package.Network.Player.PlayerInfo.ID;
+
                 // Check if you are muted
-                if (Core.Settings.Server.Game.Features.PlayerInfo && Core.Settings.Server.Game.Features.MuteList)
+                if (Core.Settings.Server.Game.Features.MuteList)
                 {
-                    lock (Core.SQLite.Connection)
+                    List<MuteList> item = Core.SQLite.Query<MuteList>(a => a.MuteID == playerID);
+                    if (item.Count > 0)
                     {
-                        TableQuery<MuteList> stm = Core.SQLite.Connection.Table<MuteList>().Where(a => a.PlayerID == Package.Network.Player.PlayerInfo.ID);
-                        if (stm.Count() > 0)
+                        for (int i = 0; i < item.Count; i++)
                         {
-                            MuteList mutelist = stm.First();
-                            if (mutelist.Duration != -1)
+                            if (DateTime.Now < (item[i].Duration > 0 ? item[i].StartTime.AddSeconds(item[i].Duration) : DateTime.MaxValue))
                             {
-                                if (DateTime.Now < mutelist.StartTime.AddSeconds(mutelist.Duration))
-                                {
-                                    TimeSpan duration = mutelist.StartTime.AddSeconds(mutelist.Duration) - DateTime.Now;
-                                    //KickUserJoin(player, "SERVER_BLACKLISTED", blacklist.Reason, duration.ToString());
-                                    return;
-                                }
-                                else
-                                    Core.SQLite.Connection.Delete(mutelist);
-                            }
-                            else
-                            {
-                                //KickUserJoin(player, "SERVER_BLACKLISTED", blacklist.Reason, "Permanent");
-                                return;
+                                Package.Network.SentToPlayer(new Package(PackageTypes.ChatMessage, -1, Token.ToString(item[i].PlayerID == -1 ? "SERVER_MUTED" : "SERVER_MUTEDTEMP", item[i].Reason, ((item[i].Duration > 0 ? item[i].StartTime.AddSeconds(item[i].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss")), Package.Network));
+                                Core.Logger.Log(player.IsGameJoltPlayer ?
+                                    Token.ToString("SERVER_GAMEJOLT", player.Name, player.GameJoltID, "is unable to chat in the server with the following reason: " + Token.ToString(item[i].PlayerID == -1 ? "SERVER_MUTED" : "SERVER_MUTEDTEMP", item[i].Reason, ((item[i].Duration > 0 ? item[i].StartTime.AddSeconds(item[i].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss"))) :
+                                    Token.ToString("SERVER_NOGAMEJOLT", player.Name, "is unable to chat in the server with the following reason: " + Token.ToString(item[i].PlayerID == -1 ? "SERVER_MUTED" : "SERVER_MUTEDTEMP", item[i].Reason, ((item[i].Duration > 0 ? item[i].StartTime.AddSeconds(item[i].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss"))));
                             }
                         }
                     }
                 }
+
+
             }
             else
             {

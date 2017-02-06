@@ -4,5 +4,6 @@
     {
         public bool AllowChatInServer { get; set; } = true;
         public bool AllowChatChannel { get; set; } = true;
+        public int FloodTime { get; set; } = 0;
     }
 }

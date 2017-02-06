@@ -110,6 +110,7 @@
     <Compile Include="Server\Game\Server\Networking.cs" />
     <Compile Include="Server\Game\Server\Package\Package.cs" />
     <Compile Include="Server\Game\Server\Package\PackageHandler.cs" />
+    <Compile Include="Server\Game\Server\Player\Chat.cs" />
     <Compile Include="Server\Game\Server\Player\Player.cs" />
     <Compile Include="Server\Game\Server\Player\World.cs" />
     <Compile Include="Server\Game\Server\TcpClientCollection.cs" />

@@ -2,7 +2,6 @@
 {
     public class Features
     {
-        public bool PlayerInfo { get; set; } = true;
         public bool BlackList { get; set; } = true;
         public bool IPBlackList { get; set; } = true;
         public bool MuteList { get; set; } = true;
