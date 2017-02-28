@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B30F1771-0AB9-486F-89C9-F64C7DEFBA41}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Pokemon_3D_Server_Launcher_Core</RootNamespace>
+    <AssemblyName>Core Module</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\Pokemon 3D Server Launcher\bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>..\Pokemon 3D Server Launcher\bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="SystemInfoLibrary, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SystemInfoLibrary.1.4.0\lib\net45\SystemInfoLibrary.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="YamlDotNet, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.4.1.0\lib\net35\YamlDotNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core.cs" />
+    <Compile Include="Interfaces\ICore.cs" />
+    <Compile Include="Interfaces\Logger\ILogger.cs" />
+    <Compile Include="Interfaces\Settings\ISettings.cs" />
+    <Compile Include="Logger\BaseLogger.cs" />
+    <Compile Include="Logger\Logger.cs" />
+    <Compile Include="Logger\LoggerEventArgs.cs" />
+    <Compile Include="Modules\System\Collections\Generic\NonCaseSensitiveHelper.cs" />
+    <Compile Include="Modules\System\DateTimeHelper.cs" />
+    <Compile Include="Modules\System\ExceptionHelper.cs" />
+    <Compile Include="Modules\System\IO\DirectoryHelper.cs" />
+    <Compile Include="Modules\System\IO\PathHelper.cs" />
+    <Compile Include="Modules\System\MathHelper.cs" />
+    <Compile Include="Modules\System\Net\IPAddressHelper.cs" />
+    <Compile Include="Modules\System\Security\Cryptography\CryptographyHelper.cs" />
+    <Compile Include="Modules\System\StringHelper.cs" />
+    <Compile Include="Modules\YamlDotNet\Serialization\DeserializerHelper.cs" />
+    <Compile Include="Modules\YamlDotNet\Serialization\SerializerHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\Application\Application.cs" />
+    <Compile Include="Settings\BaseSettings.cs" />
+    <Compile Include="Settings\Directories\Directories.cs" />
+    <Compile Include="Settings\Settings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

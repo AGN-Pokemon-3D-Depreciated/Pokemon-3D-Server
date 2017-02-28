@@ -1,0 +1,6 @@
+﻿LogTypes:
+  Info: true
+  Warning: true
+  Error: true
+  Debug: false
+ModulesToLoad: []

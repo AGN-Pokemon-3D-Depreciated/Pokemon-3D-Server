@@ -1,0 +1,34 @@
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\libe_sqlite3.dylib
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\libe_sqlite3.so
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\Pokemon 3D Server Launcher.exe
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\Pokemon 3D Server Core.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\SystemInfoLibrary.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\YamlDotNet.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\SQLite-net.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\SmartThreadPool.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\SQLitePCLRaw.core.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\SQLitePCLRaw.batteries_v2.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\SQLitePCLRaw.provider.e_sqlite3.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\SystemInfoLibrary.xml
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\YamlDotNet.pdb
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\YamlDotNet.xml
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\SQLite-net.xml
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\SmartThreadPool.pdb
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\obj\x86\Release\Pokemon 3D Server Launcher.csprojResolveAssemblyReference.cache
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\obj\x86\Release\Pokemon_3D_Server_Launcher.View.Main.resources
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\obj\x86\Release\Pokemon 3D Server Launcher.csproj.GenerateResource.Cache
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\obj\x86\Release\Pokemon 3D Server Launcher.exe
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\x86\e_sqlite3.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\x64\e_sqlite3.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\Pokemon 3D Server Launcher.exe.CodeAnalysisLog.xml
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x86\Release\Pokemon 3D Server Launcher.exe.lastcodeanalysissucceeded
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Release\Pokemon 3D Server Launcher.exe
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\obj\x86\Release\Pokemon 3D Server Launcher.csprojResolveAssemblyReference.cache
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\obj\x86\Release\Pokemon_3D_Server_Launcher.View.Main.resources
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\obj\x86\Release\Pokemon 3D Server Launcher.csproj.GenerateResource.Cache
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\obj\x86\Release\Pokemon 3D Server Launcher.exe
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Release\SystemInfoLibrary.dll
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Release\YamlDotNet.dll
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Release\SystemInfoLibrary.xml
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Release\YamlDotNet.pdb
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Release\YamlDotNet.xml

@@ -1,0 +1,11 @@
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Core\obj\x86\Debug\.NETFramework,Version=v4.5.AssemblyAttribute.cs
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Debug\Pokemon 3D Server Launcher Core.dll.mdb
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Debug\Pokemon 3D Server Launcher Core.pdb
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Debug\Pokemon 3D Server Launcher Core.dll
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Core\obj\x86\Debug\Pokemon 3D Server Launcher Core.dll
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Core\obj\x86\Debug\Pokemon 3D Server Launcher Core.dll.mdb
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Core\obj\x86\Debug\Pokemon 3D Server Launcher Core.pdb
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Debug\Core Module.pdb
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Debug\Core Module.dll
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Core\obj\x86\Debug\Core Module.dll
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Core\obj\x86\Debug\Core Module.pdb

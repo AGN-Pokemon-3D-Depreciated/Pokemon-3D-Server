@@ -1,0 +1,24 @@
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\x86\e_sqlite3.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\x64\e_sqlite3.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\Pokemon 3D Server Launcher.exe
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\Pokemon 3D Server Launcher.pdb
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\Pokemon 3D Server Core.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\YamlDotNet.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\SystemInfoLibrary.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\SmartThreadPool.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\SQLite-net.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\SQLitePCLRaw.core.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\SQLitePCLRaw.batteries_v2.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\SQLitePCLRaw.provider.e_sqlite3.dll
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\Pokemon 3D Server Core.pdb
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\YamlDotNet.pdb
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\YamlDotNet.xml
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\SystemInfoLibrary.xml
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\SmartThreadPool.pdb
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\bin\x64\Debug\SQLite-net.xml
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\obj\x64\Debug\Pokemon 3D Server Launcher.csprojResolveAssemblyReference.cache
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\obj\x64\Debug\Pokemon_3D_Server_Launcher.Properties.Resources.resources
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\obj\x64\Debug\Pokemon_3D_Server_Launcher.View.Main.resources
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\obj\x64\Debug\Pokemon 3D Server Launcher.csproj.GenerateResource.Cache
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\obj\x64\Debug\Pokemon 3D Server Launcher.exe
+C:\Users\jianmingyong\Documents\GitHub\Pokemon 3D\Pokemon 3D Patch Version\Pokemon-3D-Server\Pokemon 3D Server Launcher\obj\x64\Debug\Pokemon 3D Server Launcher.pdb

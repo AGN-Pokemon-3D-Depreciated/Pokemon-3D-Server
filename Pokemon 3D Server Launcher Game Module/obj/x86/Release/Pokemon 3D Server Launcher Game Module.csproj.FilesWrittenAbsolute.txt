@@ -1,0 +1,6 @@
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Game Module\obj\x86\Release\.NETFramework,Version=v4.5.AssemblyAttribute.cs
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Game Module\bin\x86\Release\Game.dll
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Game Module\obj\x86\Release\Game.dll
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Game Module\bin\x86\Release\Game Module.dll
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Game Module\obj\x86\Release\Game Module.dll
+C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Release\Modules\Game Module.dll
