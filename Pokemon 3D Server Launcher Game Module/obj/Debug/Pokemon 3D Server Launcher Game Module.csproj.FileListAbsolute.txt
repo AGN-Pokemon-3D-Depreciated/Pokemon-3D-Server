@@ -1,5 +1,0 @@
-C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Debug\Modules\Pokemon 3D Server Launcher Game Module.dll
-C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher\bin\x86\Debug\Modules\Pokemon 3D Server Launcher Game Module.pdb
-C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Game Module\obj\Debug\Pokemon 3D Server Launcher Game Module.csprojResolveAssemblyReference.cache
-C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Game Module\obj\Debug\Pokemon 3D Server Launcher Game Module.dll
-C:\Users\jianmingyong\Documents\Visual Studio 2015\Projects\Pokemon 3D Server Launcher\Pokemon 3D Server Launcher Game Module\obj\Debug\Pokemon 3D Server Launcher Game Module.pdb
