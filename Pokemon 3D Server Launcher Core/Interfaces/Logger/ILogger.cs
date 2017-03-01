@@ -9,8 +9,6 @@ namespace Pokemon_3D_Server_Launcher_Core.Interfaces.Logger
 
         void Log(string message, string type, bool printToConsole = true, bool writeToLog = true);
 
-        void Debug(string message, bool printToConsole = true, bool writeToLog = true);
-
         bool CanLog(string type);
     }
 }

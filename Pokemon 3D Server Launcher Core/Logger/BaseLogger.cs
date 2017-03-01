@@ -2,6 +2,7 @@
 using Pokemon_3D_Server_Launcher_Core.Interfaces.Logger;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Pokemon_3D_Server_Launcher_Core.Logger
 {
@@ -17,8 +18,6 @@ namespace Pokemon_3D_Server_Launcher_Core.Logger
         }
 
         public abstract void Log(string message, string type, bool printToConsole = true, bool writeToLog = true);
-
-        public abstract void Debug(string message, bool printToConsole = true, bool writeToLog = true);
 
         public virtual bool CanLog(string type)
         {

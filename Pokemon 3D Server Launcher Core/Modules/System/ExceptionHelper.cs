@@ -1,5 +1,5 @@
 ﻿using Modules.System.IO;
-using Pokemon_3D_Server_Launcher_Core;
+using Pokemon_3D_Server_Launcher_Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,13 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using SystemInfoLibrary.OperatingSystem;
-using static Pokemon_3D_Server_Launcher_Core.Logger.Logger;
 
 namespace Modules.System
 {
     public static class ExceptionHelper
     {
-        public static Core Core { get; set; }
+        public static ICore Core { get; set; }
 
         public static void CatchError(this Exception ex)
         {
@@ -22,7 +21,7 @@ namespace Modules.System
                 OperatingSystemInfo osInfo = OperatingSystemInfo.GetOperatingSystemInfo();
 
                 string errorLog = $@"[CODE]
-Pokemon 3D Server Application Crash Log
+Pokemon 3D Server Application Crash Log v{Core.ModuleVersion.ToString()}
 --------------------------------------------------
 
 System specifications:
@@ -77,19 +76,19 @@ Go To: <INSERTURL> to report this crash.
 
                 DateTime errorTime = DateTime.Now;
                 int randomIndetifier = MathHelper.Random(0, int.MaxValue);
-                //string Path = $"{Core.Settings.Directories.CrashLogDirectory}/Crash_{errorTime.ToString("yyyy-MM-dd_HH.mm.ss")}.{randomIndetifier.ToString("0000000000")}.dat".GetFullPath();
+                string Path = $"{Core.Settings.GetSettings<string>("Directories.CrashLogDirectory")}/Crash_{errorTime.ToString("yyyy-MM-dd_HH.mm.ss")}.{randomIndetifier.ToString("0000000000")}.dat".GetFullPath();
 
-                //using (StreamWriter writer = new StreamWriter(new FileStream(Path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), Encoding.UTF8))
-                //{
-                //    writer.WriteLine(errorLog);
-                //    writer.Flush();
-                //}
+                using (StreamWriter writer = new StreamWriter(new FileStream(Path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), Encoding.UTF8))
+                {
+                    writer.WriteLine(errorLog);
+                    writer.Flush();
+                }
 
-                //Core.Logger.Log(ex.Message + Environment.NewLine + $"Error Log saved at: {Path}", LogType.Error);
+                Core.Logger.Log(ex.Message + Environment.NewLine + $"Error Log saved at: {Path}", "Error");
             }
             catch (Exception ex2)
             {
-                //Core.Logger.Log(ex2.Message + Environment.NewLine + GenerateInnerExceptionStackTrace(ex2), LogType.Error);
+                Core.Logger.Log(ex2.Message + Environment.NewLine + GenerateInnerExceptionStackTrace(ex2), "Error");
             }
         }
 

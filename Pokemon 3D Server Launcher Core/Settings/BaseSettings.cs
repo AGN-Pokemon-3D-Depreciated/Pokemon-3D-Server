@@ -65,9 +65,7 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
                 else
                 {
                     if (i + 1 == propertyName.Length)
-                    {
                         properites[0].SetValue(result, value);
-                    }
                     else
                         result = properites[0].GetValue(result);
                 }

@@ -9,8 +9,10 @@ namespace Pokemon_3D_Server_Launcher_Core.Interfaces
         string ModuleName { get; }
         Version ModuleVersion { get; }
 
-        ILogger Logger { get; }
         ISettings Settings { get; set; }
+        ILogger Logger { get; }
+
+        ICore BaseInstance { get; }
 
         void Start(ICore instance);
 

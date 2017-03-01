@@ -1,5 +1,7 @@
 ﻿using Modules.System;
 using Pokemon_3D_Server_Launcher_Core;
+using Pokemon_3D_Server_Launcher_Core.Interfaces;
+using Pokemon_3D_Server_Launcher_Core.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,22 +11,17 @@ namespace Pokemon_3D_Server_Launcher.View
 {
     public partial class Main : Form
     {
-        private Core Core;
+        private ICore Core;
         private List<string> LoggerLog = new List<string>();
         private bool ScrollTextBox = true;
-
-        private delegate void LogMessageHandler(string Message);
 
         public Main()
         {
             InitializeComponent();
 
-            Application.ThreadException += (sender2, ex) => { ex.Exception.CatchError(); };
-            AppDomain.CurrentDomain.UnhandledException += (sender2, ex) => { ((Exception)ex.ExceptionObject).CatchError(); };
-
             Core = new Core();
-            Core.Logger.OnLogMessageReceived += (sender, e) => LogMessage(e.Message);
-            Core.Start(null);
+            Core.Logger.OnLogMessageReceived += (sender, e) => Main_Logger.BeginInvoke(new EventHandler<LoggerEventArgs>(LogMessage), sender, e);
+            Core.Start(Core);
         }
 
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
@@ -32,36 +29,24 @@ namespace Pokemon_3D_Server_Launcher.View
             Core.Stop(1);
         }
 
-        public void LogMessage(string Message)
+        public void LogMessage(object sender, LoggerEventArgs e)
         {
-            try
+            if (ScrollTextBox)
             {
-                if (Main_Logger.InvokeRequired)
-                    Main_Logger.BeginInvoke(new LogMessageHandler(LogMessage), Message);
-                else
-                {
-                    if (ScrollTextBox)
-                    {
-                        if (!string.IsNullOrWhiteSpace(Main_Logger.Text))
-                            Main_Logger.AppendText(Environment.NewLine);
+                if (!string.IsNullOrWhiteSpace(Main_Logger.Text))
+                    Main_Logger.AppendText(Environment.NewLine);
 
-                        Main_Logger.AppendText(Message);
+                Main_Logger.AppendText(e.Message);
 
-                        if (Main_Logger.Lines.Length > 1000)
-                            Main_Logger.Lines = Main_Logger.Lines.Skip(Main_Logger.Lines.Length - 1000).ToArray();
-                    }
-                    else
-                    {
-                        if (LoggerLog.Count > 1000)
-                            LoggerLog.RemoveRange(0, 1000 - LoggerLog.Count);
-
-                        LoggerLog.Add(Message);
-                    }
-                }
+                if (Main_Logger.Lines.Length > 1000)
+                    Main_Logger.Lines = Main_Logger.Lines.Skip(Main_Logger.Lines.Length - 1000).ToArray();
             }
-            catch (Exception ex)
+            else
             {
-                ex.CatchError();
+                if (LoggerLog.Count > 1000)
+                    LoggerLog.RemoveRange(0, 1000 - LoggerLog.Count);
+
+                LoggerLog.Add(e.Message);
             }
         }
 

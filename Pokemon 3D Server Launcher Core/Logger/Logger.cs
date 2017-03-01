@@ -2,7 +2,6 @@
 using Modules.System.IO;
 using Pokemon_3D_Server_Launcher_Core.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,11 +20,6 @@ namespace Pokemon_3D_Server_Launcher_Core.Logger
         {
             Writer = new StreamWriter(new FileStream($"{Core.Settings.GetSettings<string>("Directories.LoggerDirectory")}/Logger_{DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss")}.dat".GetFullPath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite), Encoding.UTF8);
             IsActive = true;
-
-            List<ICore> LoadedInstances = Core.Settings.GetSettings<List<ICore>>("LoadedInstances");
-
-            foreach (ICore Instance in LoadedInstances)
-                Instance.Logger.OnLogMessageReceived += (sender, e) => EventLog(sender, e);
         }
 
         public override void Log(string message, string type, bool printToConsole = true, bool writeToLog = true)
@@ -33,46 +27,33 @@ namespace Pokemon_3D_Server_Launcher_Core.Logger
             Task.Run(() =>
             {
                 if (CanLog(type))
-                    InternalLog($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt")} [{type}] {message}", printToConsole, writeToLog);
-            }).ContinueWith(task => task.Exception?.CatchError());
-        }
-
-        public override void Debug(string message, bool printToConsole = true, bool writeToLog = true)
-        {
-            Task.Run(() =>
-            {
-                if (CanLog("Debug"))
-                    InternalLog($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt")} [Debug] {message}", printToConsole, writeToLog);
+                    InternalLog($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt")} [{Core.ModuleName}|{type}] {message}", printToConsole, writeToLog);
             }).ContinueWith(task => task.Exception?.CatchError());
         }
 
         public void EventLog(object sender, LoggerEventArgs e)
         {
-            InternalLog(e.Message, e.PrintToConsole, e.WriteToLog);
+            Task.Run(() =>
+            {
+                InternalLog(e.Message, e.PrintToConsole, e.WriteToLog);
+            }).ContinueWith(task => task.Exception?.CatchError());
         }
 
-        public void InternalLog(string message, bool printToConsole = true, bool writeToLog = true)
+        private void InternalLog(string message, bool printToConsole = true, bool writeToLog = true)
         {
-            try
+            if (IsActive)
             {
-                if (IsActive)
-                {
-                    if (printToConsole)
-                        OnLogMessageReceived.Invoke(this, new LoggerEventArgs(message));
+                if (printToConsole)
+                    OnLogMessageReceived.BeginInvoke(this, new LoggerEventArgs(message), null, null);
 
-                    if (writeToLog)
+                if (writeToLog)
+                {
+                    lock (WriterLock)
                     {
-                        lock (WriterLock)
-                        {
-                            Writer?.WriteLine(message);
-                            Writer?.Flush();
-                        }
+                        Writer?.WriteLine(message);
+                        Writer?.Flush();
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                ex.CatchError();
             }
         }
     }
