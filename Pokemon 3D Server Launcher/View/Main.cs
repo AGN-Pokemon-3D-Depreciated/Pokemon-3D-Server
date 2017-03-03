@@ -11,7 +11,7 @@ namespace Pokemon_3D_Server_Launcher.View
 {
     public partial class Main : Form
     {
-        private ICore Core;
+        private Core Core;
         private List<string> LoggerLog = new List<string>();
         private bool ScrollTextBox = true;
 
@@ -21,7 +21,7 @@ namespace Pokemon_3D_Server_Launcher.View
 
             Core = new Core();
             Core.Logger.OnLogMessageReceived += (sender, e) => Main_Logger.BeginInvoke(new EventHandler<LoggerEventArgs>(LogMessage), sender, e);
-            Core.Start(Core);
+            Core.Start();
         }
 
         private void Main_FormClosing(object sender, FormClosingEventArgs e)

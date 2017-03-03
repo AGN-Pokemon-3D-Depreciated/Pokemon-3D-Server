@@ -1,5 +1,4 @@
-﻿using Pokemon_3D_Server_Launcher_Core.Interfaces;
-using Pokemon_3D_Server_Launcher_Core.Interfaces.Settings;
+﻿using Pokemon_3D_Server_Launcher_Core.Interfaces.Settings;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,18 +7,7 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
 {
     public abstract class BaseSettings : ISettings
     {
-        protected ICore Core;
-
         public abstract Dictionary<string, bool> LogTypes { get; set; }
-
-        protected BaseSettings()
-        {
-        }
-
-        protected BaseSettings(ICore core)
-        {
-            Core = core;
-        }
 
         public abstract void Load();
 

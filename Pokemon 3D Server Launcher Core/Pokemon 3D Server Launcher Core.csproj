@@ -37,6 +37,10 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SmartThreadPool, Version=2.2.4.0, Culture=neutral, PublicKeyToken=1126fe8b671e8a79, processorArchitecture=MSIL">
+      <HintPath>..\packages\SmartThreadPool.dll.2.2.4\lib\net45\SmartThreadPool.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -57,9 +61,7 @@
   <ItemGroup>
     <Compile Include="Core.cs" />
     <Compile Include="Interfaces\ICore.cs" />
-    <Compile Include="Interfaces\Logger\ILogger.cs" />
     <Compile Include="Interfaces\Settings\ISettings.cs" />
-    <Compile Include="Logger\BaseLogger.cs" />
     <Compile Include="Logger\Logger.cs" />
     <Compile Include="Logger\LoggerEventArgs.cs" />
     <Compile Include="Modules\System\Collections\Generic\NonCaseSensitiveHelper.cs" />

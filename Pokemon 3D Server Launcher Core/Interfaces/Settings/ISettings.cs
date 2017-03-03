@@ -4,7 +4,7 @@ namespace Pokemon_3D_Server_Launcher_Core.Interfaces.Settings
 {
     public interface ISettings
     {
-        Dictionary<string, bool> LogTypes { get; set; }
+        Dictionary<string, bool> LogTypes { get; }
 
         void Load();
 

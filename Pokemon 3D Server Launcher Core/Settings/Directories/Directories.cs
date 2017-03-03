@@ -3,7 +3,7 @@ using System;
 
 namespace Pokemon_3D_Server_Launcher_Core.Settings.Directories
 {
-    internal class Directories
+    public sealed class Directories
     {
         public string ApplicationDirectory { get; } = AppDomain.CurrentDomain.BaseDirectory.GetFullPath();
 

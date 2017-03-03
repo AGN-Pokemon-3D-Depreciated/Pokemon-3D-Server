@@ -1,5 +1,4 @@
-﻿using Pokemon_3D_Server_Launcher_Core.Interfaces.Logger;
-using Pokemon_3D_Server_Launcher_Core.Interfaces.Settings;
+﻿using Pokemon_3D_Server_Launcher_Core.Interfaces.Settings;
 using System;
 
 namespace Pokemon_3D_Server_Launcher_Core.Interfaces
@@ -9,15 +8,13 @@ namespace Pokemon_3D_Server_Launcher_Core.Interfaces
         string ModuleName { get; }
         Version ModuleVersion { get; }
 
-        ISettings Settings { get; set; }
-        ILogger Logger { get; }
+        ISettings Settings { get; }
+        Core BaseInstance { get; }
 
-        ICore BaseInstance { get; }
-
-        void Start(ICore instance);
+        void Start(Core instance);
 
         void Stop(int exitCode);
 
-        void Invoke(string method, object[] param);
+        object Invoke(string method, params object[] param);
     }
 }

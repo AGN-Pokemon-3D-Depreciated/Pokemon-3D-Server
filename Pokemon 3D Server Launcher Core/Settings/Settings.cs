@@ -1,7 +1,6 @@
 ﻿using Modules.System.IO;
 using Modules.YamlDotNet.Serialization;
 using Pokemon_3D_Server_Launcher_Core.Interfaces;
-using Pokemon_3D_Server_Launcher_Core.Interfaces.Settings;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,26 +9,25 @@ using YamlDotNet.Serialization;
 
 namespace Pokemon_3D_Server_Launcher_Core.Settings
 {
-    internal class Settings : BaseSettings
+    public sealed class Settings
     {
+        private Core Core;
+
         [YamlIgnore]
         public Application.Application Application { get; private set; } = new Application.Application();
 
         [YamlIgnore]
         public Directories.Directories Directories { get; private set; } = new Directories.Directories();
 
-        public override Dictionary<string, bool> LogTypes { get; set; }
+        public Dictionary<string, bool> LogTypes { get; set; }
 
         public List<string> ModulesToLoad { get; private set; } = new List<string>();
 
-        [YamlIgnore]
-        public List<ICore> LoadedInstances { get; private set; } = new List<ICore>();
-
-        public Settings()
+        internal Settings()
         {
         }
 
-        public Settings(ICore core, bool load = true) : base(core)
+        internal Settings(Core core)
         {
             LogTypes = new Dictionary<string, bool>() { { "Info", true }, { "Warning", true }, { "Error", true }, { "Debug", false } };
 
@@ -41,22 +39,16 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
                     ModulesToLoad.Add(module.Replace(Directories.ModulesDirectory.NormalizeFilePath(), "").TrimStart('/', '\\'));
             }
 
-            if (load == true)
-                Load();
+            Load();
         }
 
-        public Settings(ICore core, ISettings settings) : base(core)
-        {
-            if (settings == null)
-                Core.Settings = new Settings(Core, false);
-            else
-                Core.Settings = settings;
-        }
-
-        public override void Load()
+        internal void Load()
         {
             if (File.Exists($"{Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath()))
-                Core.Settings = new Settings(Core, DeserializerHelper.Deserialize<Settings>($"{Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath()));
+            {
+                Core.Settings = DeserializerHelper.Deserialize<Settings>($"{Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath()) ?? new Settings();
+                Core.Settings.Core = Core;
+            }
             else
             {
                 Save();
@@ -64,9 +56,10 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
             }
         }
 
-        public override void Save()
+        internal void Save()
         {
             this.Serialize($"{Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath());
+            Core.Logger.Log("Settings Saved", "Info");
         }
     }
 }

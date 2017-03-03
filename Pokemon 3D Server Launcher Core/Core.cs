@@ -1,8 +1,6 @@
 ﻿using Modules.System;
 using Modules.System.IO;
 using Pokemon_3D_Server_Launcher_Core.Interfaces;
-using Pokemon_3D_Server_Launcher_Core.Interfaces.Logger;
-using Pokemon_3D_Server_Launcher_Core.Interfaces.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,50 +8,39 @@ using System.Reflection;
 
 namespace Pokemon_3D_Server_Launcher_Core
 {
-    public sealed class Core : ICore
+    public sealed class Core
     {
-        public string ModuleName { get; } = "Core";
-        public Version ModuleVersion { get; } = new Version(0, 54, 1, 0);
+        public Settings.Settings Settings { get; internal set; }
+        public Logger.Logger Logger { get; private set; }
 
-        public ISettings Settings { get; set; }
-        public ILogger Logger { get; }
-
-        public ICore BaseInstance { get; private set; }
-
-        private Settings.Settings SettingsInstance;
-        private Logger.Logger LoggerInstance;
+        public List<ICore> LoadedInstances { get; private set; } = new List<ICore>();
 
         private bool Stopping = false;
 
         public Core()
         {
             ExceptionHelper.Core = this;
-            SettingsInstance = new Settings.Settings(this);
-            Settings = SettingsInstance;
-            LoggerInstance = new Logger.Logger(this);
-            Logger = LoggerInstance;
+            Settings = new Settings.Settings(this);
+            Logger = new Logger.Logger(this);
         }
 
-        public void Start(ICore instance)
+        public void Start()
         {
-            BaseInstance = instance;
-
-            foreach (string dll in SettingsInstance.ModulesToLoad)
+            foreach (string dll in Settings.ModulesToLoad)
             {
                 try
                 {
-                    Assembly assembly = Assembly.LoadFrom($"{SettingsInstance.Directories.ModulesDirectory}/{dll}".GetFullPath());
+                    Assembly assembly = Assembly.LoadFrom($"{Settings.Directories.ModulesDirectory}/{dll}".GetFullPath());
                     List<TypeInfo> classImplmeneted = assembly.DefinedTypes.ToList();
 
                     foreach (TypeInfo @class in classImplmeneted)
                     {
                         if (@class.ImplementedInterfaces.Where(a => a.FullName == typeof(ICore).FullName).Count() > 0)
                         {
-                            ICore newInstance = assembly.CreateInstance(@class.FullName) as ICore;
+                            ICore newInstance = Activator.CreateInstance(@class.AsType(), null) as ICore;
                             newInstance.Start(this);
-                            newInstance.Logger.OnLogMessageReceived += (sender, e) => LoggerInstance.EventLog(sender, e);
                             Logger.Log($"{newInstance.ModuleName} v{newInstance.ModuleVersion} have loaded.", "Info");
-                            SettingsInstance.LoadedInstances.Add(newInstance);
+                            LoadedInstances.Add(newInstance);
                             break;
                         }
                     }
@@ -71,15 +58,39 @@ namespace Pokemon_3D_Server_Launcher_Core
             {
                 Stopping = true;
 
-                foreach (ICore loadedInstances in SettingsInstance.LoadedInstances)
-                    loadedInstances.Stop(exitCode);
-
+                foreach (ICore loadedInstances in LoadedInstances)
+                {
+                    try
+                    {
+                        loadedInstances.Stop(exitCode);
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.CatchError();
+                    }
+                }
+                
+                Settings.Save();
+                Logger.Dispose();
                 Environment.Exit(exitCode);
             }
         }
 
-        public void Invoke(string method, object[] param)
+        public object Invoke(string method, params object[] param)
         {
+            foreach (ICore loadedInstances in LoadedInstances)
+            {
+                try
+                {
+                    return loadedInstances.Invoke(method, param);
+                }
+                catch (Exception ex)
+                {
+                    ex.CatchError();
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Modules.System
 {
     public static class ExceptionHelper
     {
-        public static ICore Core { get; set; }
+        public static Pokemon_3D_Server_Launcher_Core.Core Core { get; set; }
 
         public static void CatchError(this Exception ex)
         {
@@ -21,7 +21,7 @@ namespace Modules.System
                 OperatingSystemInfo osInfo = OperatingSystemInfo.GetOperatingSystemInfo();
 
                 string errorLog = $@"[CODE]
-Pokemon 3D Server Application Crash Log v{Core.ModuleVersion.ToString()}
+Pokemon 3D Server Application Crash Log v{Core.Settings.Application.Version.ToString()}
 --------------------------------------------------
 
 System specifications:
@@ -76,7 +76,7 @@ Go To: <INSERTURL> to report this crash.
 
                 DateTime errorTime = DateTime.Now;
                 int randomIndetifier = MathHelper.Random(0, int.MaxValue);
-                string Path = $"{Core.Settings.GetSettings<string>("Directories.CrashLogDirectory")}/Crash_{errorTime.ToString("yyyy-MM-dd_HH.mm.ss")}.{randomIndetifier.ToString("0000000000")}.dat".GetFullPath();
+                string Path = $"{Core.Settings.Directories.CrashLogDirectory}/Crash_{errorTime.ToString("yyyy-MM-dd_HH.mm.ss")}.{randomIndetifier.ToString("0000000000")}.dat".GetFullPath();
 
                 using (StreamWriter writer = new StreamWriter(new FileStream(Path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite), Encoding.UTF8))
                 {
