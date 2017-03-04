@@ -7,7 +7,7 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
 {
     public abstract class BaseSettings : ISettings
     {
-        public abstract Dictionary<string, bool> LogTypes { get; set; }
+        public abstract Dictionary<string, bool> LogTypes { get; protected set; }
 
         public abstract void Load();
 

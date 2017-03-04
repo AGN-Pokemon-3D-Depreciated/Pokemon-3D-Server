@@ -712,6 +712,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Pokémon 3D Server Client";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
+            this.Load += new System.EventHandler(this.Main_Load);
             this.Main_CurrentPlayerOnlineRC.ResumeLayout(false);
             this.Main_LoggerRC.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);

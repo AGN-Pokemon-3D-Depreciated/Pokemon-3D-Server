@@ -20,12 +20,23 @@ namespace Pokemon_3D_Server_Launcher_Core
         public Core()
         {
             ExceptionHelper.Core = this;
-            Settings = new Settings.Settings(this);
+            AppDomain.CurrentDomain.UnhandledException += (sender, ex) => { ((Exception)ex.ExceptionObject).CatchError(); };
             Logger = new Logger.Logger(this);
+            Settings = new Settings.Settings(this);
         }
 
         public void Start()
         {
+            try
+            {
+                Settings.Start();
+                Logger.Start();
+            }
+            catch (Exception ex)
+            {
+                ex.CatchError();
+            }
+
             foreach (string dll in Settings.ModulesToLoad)
             {
                 try
@@ -69,9 +80,17 @@ namespace Pokemon_3D_Server_Launcher_Core
                         ex.CatchError();
                     }
                 }
-                
-                Settings.Save();
-                Logger.Dispose();
+
+                try
+                {
+                    Settings.Save();
+                    Logger.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    ex.CatchError();
+                }
+
                 Environment.Exit(exitCode);
             }
         }

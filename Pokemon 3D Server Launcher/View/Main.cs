@@ -1,6 +1,5 @@
 ﻿using Modules.System;
 using Pokemon_3D_Server_Launcher_Core;
-using Pokemon_3D_Server_Launcher_Core.Interfaces;
 using Pokemon_3D_Server_Launcher_Core.Logger;
 using System;
 using System.Collections.Generic;
@@ -20,13 +19,30 @@ namespace Pokemon_3D_Server_Launcher.View
             InitializeComponent();
 
             Core = new Core();
-            Core.Logger.OnLogMessageReceived += (sender, e) => Main_Logger.BeginInvoke(new EventHandler<LoggerEventArgs>(LogMessage), sender, e);
+            Application.ThreadException += (sender, ex) => { ex.Exception.CatchError(); };
+            AppDomain.CurrentDomain.UnhandledException += (sender, ex) => { ((Exception)ex.ExceptionObject).CatchError(); };
+        }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
+            Core.Logger.OnLogMessageReceived += (sender2, e2) =>
+            {
+                try
+                {
+                    Main_Logger.BeginInvoke(new EventHandler<LoggerEventArgs>(LogMessage), sender2, e2);
+                }
+                catch (Exception ex)
+                {
+                    ex.CatchError();
+                }
+            };
+
             Core.Start();
         }
 
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Core.Stop(1);
+            Core.Stop(0);
         }
 
         public void LogMessage(object sender, LoggerEventArgs e)

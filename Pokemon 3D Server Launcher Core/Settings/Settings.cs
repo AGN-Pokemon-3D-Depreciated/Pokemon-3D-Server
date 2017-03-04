@@ -19,18 +19,22 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
         [YamlIgnore]
         public Directories.Directories Directories { get; private set; } = new Directories.Directories();
 
-        public Dictionary<string, bool> LogTypes { get; set; }
+        public Dictionary<string, bool> LogTypes { get; private set; } = new Dictionary<string, bool>() { { "Info", true }, { "Warning", true }, { "Error", true }, { "Debug", false } };
 
         public List<string> ModulesToLoad { get; private set; } = new List<string>();
 
-        internal Settings()
+        public Settings()
         {
         }
 
         internal Settings(Core core)
         {
-            LogTypes = new Dictionary<string, bool>() { { "Info", true }, { "Warning", true }, { "Error", true }, { "Debug", false } };
+            Core = core;
+            Core.Logger.Log("Settings Initialized.", "Info");
+        }
 
+        internal void Start()
+        {
             foreach (string module in Directory.GetFiles(Directories.ModulesDirectory, "*.dll", SearchOption.AllDirectories))
             {
                 Assembly assembly = Assembly.LoadFrom(module);
@@ -48,18 +52,18 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
             {
                 Core.Settings = DeserializerHelper.Deserialize<Settings>($"{Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath()) ?? new Settings();
                 Core.Settings.Core = Core;
+                Core.Settings.ModulesToLoad = ModulesToLoad;
             }
             else
             {
                 Save();
-                Core.Stop(0);
+                Core.Stop(1);
             }
         }
 
         internal void Save()
         {
             this.Serialize($"{Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath());
-            Core.Logger.Log("Settings Saved", "Info");
         }
     }
 }

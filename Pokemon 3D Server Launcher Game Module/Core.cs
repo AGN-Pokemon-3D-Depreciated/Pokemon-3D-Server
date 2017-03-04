@@ -1,4 +1,5 @@
-﻿using Pokemon_3D_Server_Launcher_Core.Interfaces;
+﻿using Modules.System;
+using Pokemon_3D_Server_Launcher_Core.Interfaces;
 using Pokemon_3D_Server_Launcher_Core.Interfaces.Settings;
 using System;
 
@@ -18,9 +19,12 @@ namespace Pokemon_3D_Server_Launcher_Game_Module
 
         public void Start(Pokemon_3D_Server_Launcher_Core.Core instance)
         {
+            AppDomain.CurrentDomain.UnhandledException += (sender, ex) => { ((Exception)ex.ExceptionObject).CatchError(); };
+
             BaseInstance = instance;
-            Settings = new Settings.Settings(this);
             Logger = new Logger.Logger(this);
+            InternalSettings = new Settings.Settings(this);
+            Settings = InternalSettings;
         }
 
         public void Stop(int exitCode)

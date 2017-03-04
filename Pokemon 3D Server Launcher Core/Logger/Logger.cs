@@ -11,20 +11,23 @@ namespace Pokemon_3D_Server_Launcher_Core.Logger
     {
         private Core Core;
         private StreamWriter Writer;
+        private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(1, new WIGStartInfo() { StartSuspended = true });
         private bool IsActive = false;
-        private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(1);
 
         public event EventHandler<LoggerEventArgs> OnLogMessageReceived;
-
-        internal Logger()
-        {
-        }
 
         internal Logger(Core core)
         {
             Core = core;
+            IsActive = false;
+            Log("Logger Initialized.", "Info");
+        }
+
+        internal void Start()
+        {
             Writer = new StreamWriter(new FileStream($"{Core.Settings.Directories.LoggerDirectory}/Logger_{DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss")}.dat".GetFullPath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite), Encoding.UTF8);
             IsActive = true;
+            ThreadPool.Start();
         }
 
         internal void Log(string message, string type, bool printToConsole = true, bool writeToLog = true)
@@ -81,9 +84,12 @@ namespace Pokemon_3D_Server_Launcher_Core.Logger
 
         internal void Dispose()
         {
-            IsActive = false;
-            ThreadPool.WaitForIdle();
-            Writer.Dispose();
+            if (IsActive)
+            {
+                IsActive = false;
+                ThreadPool.WaitForIdle();
+                Writer.Dispose();
+            }
         }
     }
 }

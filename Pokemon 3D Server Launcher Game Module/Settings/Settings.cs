@@ -3,7 +3,6 @@ using Modules.YamlDotNet.Serialization;
 using Pokemon_3D_Server_Launcher_Core.Settings;
 using System.Collections.Generic;
 using System.IO;
-using YamlDotNet.Serialization;
 
 namespace Pokemon_3D_Server_Launcher_Game_Module.Settings
 {
@@ -11,8 +10,9 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Settings
     {
         private Core Core;
 
-        [YamlIgnore]
-        public override Dictionary<string, bool> LogTypes { get; set; }
+        public override Dictionary<string, bool> LogTypes { get; protected set; } = new Dictionary<string, bool>() { { "Info", true }, { "Warning", true }, { "Error", true }, { "Debug", false } };
+
+        public Network.Network Network { get; private set; } = new Network.Network();
 
         public Settings()
         {
@@ -21,7 +21,6 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Settings
         public Settings(Core core)
         {
             Core = core;
-            LogTypes = new Dictionary<string, bool>() { { "Info", true }, { "Warning", true }, { "Error", true }, { "Debug", false } };
             Load();
         }
 
