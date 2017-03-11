@@ -12,7 +12,10 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Settings
 
         public override Dictionary<string, bool> LogTypes { get; protected set; } = new Dictionary<string, bool>() { { "Info", true }, { "Warning", true }, { "Error", true }, { "Debug", false } };
 
-        public Network.Network Network { get; private set; } = new Network.Network();
+        public Server.Server Server { get; private set; } = new Server.Server();
+        public Tokens.Tokens Tokens { get; private set; } = new Tokens.Tokens();
+        public World.World World { get; private set; } = new World.World();
+        public Features.Features Features { get; set; } = new Features.Features();
 
         public Settings()
         {
@@ -28,9 +31,8 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Settings
         {
             if (File.Exists($"{Core.BaseInstance.Settings.Directories.DataDirectory}/GameServerSetting.yml".GetFullPath()))
             {
-                Core.InternalSettings = DeserializerHelper.Deserialize<Settings>($"{Core.BaseInstance.Settings.Directories.DataDirectory}/GameServerSetting.yml".GetFullPath());
-                Core.InternalSettings.Core = Core;
-                Core.Settings = Core.InternalSettings;
+                Core.Settings = DeserializerHelper.Deserialize<Settings>($"{Core.BaseInstance.Settings.Directories.DataDirectory}/GameServerSetting.yml".GetFullPath()) ?? new Settings();
+                Core.Settings.Core = Core;
             }
             else
                 Save();
@@ -38,7 +40,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Settings
 
         public override void Save()
         {
-            this.Serialize($"{Core.BaseInstance.Settings.Directories.DataDirectory}/GameServerSetting.yml".GetFullPath());
+            Core.Settings.Serialize($"{Core.BaseInstance.Settings.Directories.DataDirectory}/GameServerSetting.yml".GetFullPath());
         }
     }
 }

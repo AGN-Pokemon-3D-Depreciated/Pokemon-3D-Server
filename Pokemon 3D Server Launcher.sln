@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pokemon 3D Server Launcher Core", "Pokemon 3D Server Launcher Core\Pokemon 3D Server Launcher Core.csproj", "{B30F1771-0AB9-486F-89C9-F64C7DEFBA41}"
 EndProject
@@ -11,28 +11,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pokemon 3D Server Launcher 
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
-		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B30F1771-0AB9-486F-89C9-F64C7DEFBA41}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{B30F1771-0AB9-486F-89C9-F64C7DEFBA41}.Debug|x86.ActiveCfg = Debug|x86
 		{B30F1771-0AB9-486F-89C9-F64C7DEFBA41}.Debug|x86.Build.0 = Debug|x86
-		{B30F1771-0AB9-486F-89C9-F64C7DEFBA41}.Release|Any CPU.ActiveCfg = Release|x86
 		{B30F1771-0AB9-486F-89C9-F64C7DEFBA41}.Release|x86.ActiveCfg = Release|x86
 		{B30F1771-0AB9-486F-89C9-F64C7DEFBA41}.Release|x86.Build.0 = Release|x86
-		{06EBAC3A-CA51-4706-A61C-5E3A0E652C42}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{06EBAC3A-CA51-4706-A61C-5E3A0E652C42}.Debug|x86.ActiveCfg = Debug|x86
 		{06EBAC3A-CA51-4706-A61C-5E3A0E652C42}.Debug|x86.Build.0 = Debug|x86
-		{06EBAC3A-CA51-4706-A61C-5E3A0E652C42}.Release|Any CPU.ActiveCfg = Release|x86
 		{06EBAC3A-CA51-4706-A61C-5E3A0E652C42}.Release|x86.ActiveCfg = Release|x86
 		{06EBAC3A-CA51-4706-A61C-5E3A0E652C42}.Release|x86.Build.0 = Release|x86
-		{6EEA9BC2-C320-4007-AD32-85197A25E02B}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{6EEA9BC2-C320-4007-AD32-85197A25E02B}.Debug|x86.ActiveCfg = Debug|x86
 		{6EEA9BC2-C320-4007-AD32-85197A25E02B}.Debug|x86.Build.0 = Debug|x86
-		{6EEA9BC2-C320-4007-AD32-85197A25E02B}.Release|Any CPU.ActiveCfg = Release|x86
 		{6EEA9BC2-C320-4007-AD32-85197A25E02B}.Release|x86.ActiveCfg = Release|x86
 		{6EEA9BC2-C320-4007-AD32-85197A25E02B}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection

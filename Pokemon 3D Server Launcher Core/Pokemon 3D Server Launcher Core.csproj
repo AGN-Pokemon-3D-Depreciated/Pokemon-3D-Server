@@ -21,6 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>..\Pokemon 3D Server Launcher\bin\x86\Release\</OutputPath>
@@ -32,6 +33,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -60,6 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core.cs" />
+    <Compile Include="Modules\System\Threading\ThreadHelper.cs" />
+    <Compile Include="PlayerList\PlayerList.cs" />
+    <Compile Include="PlayerList\PlayerListEventArgs.cs" />
     <Compile Include="Interfaces\ICore.cs" />
     <Compile Include="Interfaces\Settings\ISettings.cs" />
     <Compile Include="Logger\Logger.cs" />

@@ -1,4 +1,5 @@
 ﻿using Amib.Threading;
+using Modules.System;
 using Modules.System.IO;
 using Pokemon_3D_Server_Launcher_Core.Interfaces;
 using System;
@@ -25,7 +26,15 @@ namespace Pokemon_3D_Server_Launcher_Core.Logger
 
         internal void Start()
         {
-            Writer = new StreamWriter(new FileStream($"{Core.Settings.Directories.LoggerDirectory}/Logger_{DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss")}.dat".GetFullPath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite), Encoding.UTF8);
+            try
+            {
+                Writer = new StreamWriter(new FileStream($"{Core.Settings.Directories.LoggerDirectory}/Logger_{DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss")}.dat".GetFullPath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite), Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                ex.CatchError();
+            }
+
             IsActive = true;
             ThreadPool.Start();
         }
@@ -75,7 +84,7 @@ namespace Pokemon_3D_Server_Launcher_Core.Logger
             if (printToConsole)
                 OnLogMessageReceived.BeginInvoke(this, new LoggerEventArgs(message), null, null);
 
-            if (writeToLog)
+            if (writeToLog && Writer != null)
             {
                 Writer.WriteLine(message);
                 Writer.Flush();
@@ -88,7 +97,9 @@ namespace Pokemon_3D_Server_Launcher_Core.Logger
             {
                 IsActive = false;
                 ThreadPool.WaitForIdle();
-                Writer.Dispose();
+
+                if (Writer != null)
+                    Writer.Dispose();
             }
         }
     }

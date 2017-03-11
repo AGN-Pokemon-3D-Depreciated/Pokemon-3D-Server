@@ -11,7 +11,7 @@
 
         public void Log(string message, string type, bool printToConsole = true, bool writeToLog = true)
         {
-            Core.BaseInstance.Logger.Log(Core, message, type, printToConsole, writeToLog);
+            Core.BaseInstance.Logger.Log(Core.BaseCore, message, type, printToConsole, writeToLog);
         }
     }
 }

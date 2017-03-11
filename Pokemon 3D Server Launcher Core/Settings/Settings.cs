@@ -1,6 +1,7 @@
 ﻿using Modules.System.IO;
 using Modules.YamlDotNet.Serialization;
 using Pokemon_3D_Server_Launcher_Core.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,12 +36,18 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
 
         internal void Start()
         {
-            foreach (string module in Directory.GetFiles(Directories.ModulesDirectory, "*.dll", SearchOption.AllDirectories))
+            foreach (string module in Directory.GetFiles(Core.Settings.Directories.ModulesDirectory, "*.dll", SearchOption.AllDirectories))
             {
-                Assembly assembly = Assembly.LoadFrom(module);
+                try
+                {
+                    Assembly assembly = Assembly.LoadFrom(module);
 
-                if (assembly.DefinedTypes.Select(a => a.ImplementedInterfaces).Where(b => b.Where(c => c.FullName == typeof(ICore).FullName).Count() > 0).Count() > 0)
-                    ModulesToLoad.Add(module.Replace(Directories.ModulesDirectory.NormalizeFilePath(), "").TrimStart('/', '\\'));
+                    if (assembly.DefinedTypes.Select(a => a.ImplementedInterfaces).Where(b => b.Where(c => c.FullName == typeof(ICore).FullName).Count() > 0).Count() > 0)
+                        ModulesToLoad.Add(module.Replace(Core.Settings.Directories.ModulesDirectory.NormalizeFilePath(), "").TrimStart('/', '\\'));
+                }
+                catch (Exception)
+                {
+                }
             }
 
             Load();
@@ -48,9 +55,9 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
 
         internal void Load()
         {
-            if (File.Exists($"{Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath()))
+            if (File.Exists($"{Core.Settings.Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath()))
             {
-                Core.Settings = DeserializerHelper.Deserialize<Settings>($"{Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath()) ?? new Settings();
+                Core.Settings = DeserializerHelper.Deserialize<Settings>($"{Core.Settings.Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath()) ?? new Settings();
                 Core.Settings.Core = Core;
                 Core.Settings.ModulesToLoad = ModulesToLoad;
             }
@@ -63,7 +70,7 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
 
         internal void Save()
         {
-            this.Serialize($"{Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath());
+            Core.Settings.Serialize($"{Core.Settings.Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath());
         }
     }
 }

@@ -78,7 +78,7 @@
             this.Main_Logger = new System.Windows.Forms.TextBox();
             this.Main_Command = new System.Windows.Forms.TextBox();
             this.Main_PlayerOnline = new System.Windows.Forms.GroupBox();
-            this.Main_CurrentPlayerOnline = new System.Windows.Forms.ListBox();
+            this.Main_PlayerList = new System.Windows.Forms.ListBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -495,7 +495,7 @@
             // 
             // Main_PlayerOnline
             // 
-            this.Main_PlayerOnline.Controls.Add(this.Main_CurrentPlayerOnline);
+            this.Main_PlayerOnline.Controls.Add(this.Main_PlayerList);
             this.Main_PlayerOnline.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Main_PlayerOnline.Location = new System.Drawing.Point(0, 0);
             this.Main_PlayerOnline.Name = "Main_PlayerOnline";
@@ -504,17 +504,17 @@
             this.Main_PlayerOnline.TabStop = false;
             this.Main_PlayerOnline.Text = "Player Online";
             // 
-            // Main_CurrentPlayerOnline
+            // Main_PlayerList
             // 
-            this.Main_CurrentPlayerOnline.ContextMenuStrip = this.Main_CurrentPlayerOnlineRC;
-            this.Main_CurrentPlayerOnline.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Main_CurrentPlayerOnline.FormattingEnabled = true;
-            this.Main_CurrentPlayerOnline.ItemHeight = 16;
-            this.Main_CurrentPlayerOnline.Location = new System.Drawing.Point(3, 18);
-            this.Main_CurrentPlayerOnline.Name = "Main_CurrentPlayerOnline";
-            this.Main_CurrentPlayerOnline.ScrollAlwaysVisible = true;
-            this.Main_CurrentPlayerOnline.Size = new System.Drawing.Size(272, 534);
-            this.Main_CurrentPlayerOnline.TabIndex = 0;
+            this.Main_PlayerList.ContextMenuStrip = this.Main_CurrentPlayerOnlineRC;
+            this.Main_PlayerList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Main_PlayerList.FormattingEnabled = true;
+            this.Main_PlayerList.ItemHeight = 16;
+            this.Main_PlayerList.Location = new System.Drawing.Point(3, 18);
+            this.Main_PlayerList.Name = "Main_PlayerList";
+            this.Main_PlayerList.ScrollAlwaysVisible = true;
+            this.Main_PlayerList.Size = new System.Drawing.Size(272, 534);
+            this.Main_PlayerList.TabIndex = 0;
             // 
             // splitContainer1
             // 
@@ -783,7 +783,7 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TextBox Main_Command;
         private System.Windows.Forms.GroupBox Main_PlayerOnline;
-        private System.Windows.Forms.ListBox Main_CurrentPlayerOnline;
+        private System.Windows.Forms.ListBox Main_PlayerList;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
