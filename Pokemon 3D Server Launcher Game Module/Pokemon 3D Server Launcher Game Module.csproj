@@ -92,6 +92,7 @@
     <Compile Include="Settings\World\WeatherSeason\Weather.cs" />
     <Compile Include="Settings\World\WeatherSeason\WeatherSeason.cs" />
     <Compile Include="Settings\World\World.cs" />
+    <Compile Include="World\World.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pokemon 3D Server Launcher Core\Pokemon 3D Server Launcher Core.csproj">

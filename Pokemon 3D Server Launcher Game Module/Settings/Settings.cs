@@ -24,6 +24,11 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Settings
         public Settings(Core core)
         {
             Core = core;
+            Core.Logger.Log("Settings Initialized.", "Info");
+        }
+
+        public void Start()
+        {
             Load();
         }
 
