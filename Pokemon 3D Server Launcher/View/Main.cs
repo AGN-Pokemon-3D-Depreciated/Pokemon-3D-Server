@@ -117,6 +117,7 @@ namespace Pokemon_3D_Server_Launcher.View
                 {
                     PlayerListEventArgs currentValue = PlayerList.Where(a => a.Id == e.Id).First();
                     currentValue = e;
+                    PlayerList.ResetBindings();
                 }
             }
         }

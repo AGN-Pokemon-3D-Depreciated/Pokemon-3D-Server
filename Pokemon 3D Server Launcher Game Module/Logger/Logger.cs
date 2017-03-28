@@ -1,4 +1,8 @@
-﻿namespace Pokemon_3D_Server_Launcher_Game_Module.Logger
+﻿using Pokemon_3D_Server_Launcher_Game_Module.Server;
+using System;
+using System.Net;
+
+namespace Pokemon_3D_Server_Launcher_Game_Module.Logger
 {
     public class Logger
     {
@@ -9,9 +13,34 @@
             Core = core;
         }
 
-        public void Log(string message, string type, bool printToConsole = true, bool writeToLog = true)
+        public void Log(string message, string type = "Info", Networking network = null, bool printToConsole = true, bool writeToLog = true)
         {
-            Core.BaseInstance.Logger.Log(Core.BaseCore, message, type, printToConsole, writeToLog);
+            if (network != null)
+            {
+                string publicAddress = network.GetPublicIPFromClient();
+
+                if (publicAddress != null)
+                    Core.BaseInstance.Logger.Log(Core.BaseCore, $"{publicAddress} {message}", type, printToConsole, writeToLog);
+                else
+                    Core.BaseInstance.Logger.Log(Core.BaseCore, message, type, printToConsole, writeToLog);
+            }
+            else
+                Core.BaseInstance.Logger.Log(Core.BaseCore, message, type, printToConsole, writeToLog);
+        }
+
+        public void Debug(string message, Networking network = null, bool printToConsole = true, bool writeToLog = true)
+        {
+            if (network != null)
+            {
+                string publicAddress = network.GetPublicIPFromClient();
+
+                if (publicAddress != null)
+                    Core.BaseInstance.Logger.Log(Core.BaseCore, $"{publicAddress} {message}", "Debug", printToConsole, writeToLog);
+                else
+                    Core.BaseInstance.Logger.Log(Core.BaseCore, message, "Debug", printToConsole, writeToLog);
+            }
+            else
+                Core.BaseInstance.Logger.Log(Core.BaseCore, message, "Debug", printToConsole, writeToLog);
         }
     }
 }

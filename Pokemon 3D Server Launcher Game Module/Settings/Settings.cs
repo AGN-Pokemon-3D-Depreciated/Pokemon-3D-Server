@@ -10,7 +10,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Settings
     {
         private Core Core;
 
-        public override Dictionary<string, bool> LogTypes { get; protected set; } = new Dictionary<string, bool>() { { "Info", true }, { "Warning", true }, { "Error", true }, { "Debug", false } };
+        public override Dictionary<string, bool> LogTypes { get; protected set; } = new Dictionary<string, bool>() { { "Info", true }, { "Warning", true }, { "Error", true }, { "Debug", false }, { "Chat", true }, { "PM", true }, { "Server", true }, { "Trade", true }, { "PvP", true }, { "Command", true } };
 
         public Server.Server Server { get; private set; } = new Server.Server();
         public Tokens.Tokens Tokens { get; private set; } = new Tokens.Tokens();
@@ -24,7 +24,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Settings
         public Settings(Core core)
         {
             Core = core;
-            Core.Logger.Log("Settings Initialized.", "Info");
+            Core.Logger.Log("Settings Initialized.");
         }
 
         public void Start()
@@ -38,6 +38,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Settings
             {
                 Core.Settings = DeserializerHelper.Deserialize<Settings>($"{Core.BaseInstance.Settings.Directories.DataDirectory}/GameServerSetting.yml".GetFullPath()) ?? new Settings();
                 Core.Settings.Core = Core;
+                Core.Logger.Log("Settings Loaded.");
             }
             else
                 Save();
@@ -46,6 +47,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Settings
         public override void Save()
         {
             Core.Settings.Serialize($"{Core.BaseInstance.Settings.Directories.DataDirectory}/GameServerSetting.yml".GetFullPath());
+            Core.Logger.Log("Settings Saved.");
         }
     }
 }

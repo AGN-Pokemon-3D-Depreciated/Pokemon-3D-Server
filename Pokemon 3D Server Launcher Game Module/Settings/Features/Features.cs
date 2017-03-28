@@ -8,6 +8,7 @@
         public bool OperatorList { get; set; } = true;
         public bool WhiteList { get; set; } = false;
         public bool TradeHistory { get; set; } = true;
+        public bool PlayerInfo { get; set; } = true;
 
         private int _NoPingKickTime = 30;
 

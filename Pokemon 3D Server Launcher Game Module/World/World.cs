@@ -9,7 +9,7 @@ using static Pokemon_3D_Server_Launcher_Game_Module.Settings.World.World;
 
 namespace Pokemon_3D_Server_Launcher_Game_Module.World
 {
-    public class World
+    public class World : IDisposable
     {
         private Core Core;
 
@@ -33,6 +33,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.World
         public bool DoDayCycle { get; set; }
 
         private int WeekOfYear { get { return ((DateTime.Now.DayOfYear - (DateTime.Now.DayOfWeek - DayOfWeek.Monday)) / 7.0 + 1.0).Floor().ToInt(); } }
+
         private bool CanUpdate = true;
         private bool IsActive = false;
         private ThreadHelper Thread = new ThreadHelper();
@@ -40,7 +41,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.World
         public World(Core core)
         {
             Core = core;
-            Core.Logger.Log("Global World Initialized.", "Info");
+            Core.Logger.Log("Global World Initialized.");
         }
 
         public void Start()
@@ -67,8 +68,8 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.World
                                 DoDayCycle = Core.Settings.World.DoDayCycle;
                             }
 
-                            Core.Logger.Log(Core.World.ToString(), "Info");
-                            //Core.TcpClientCollection.GameTcpClientCollection.UpdateWorld();
+                            Core.Logger.Log(Core.World.ToString());
+                            Core.TcpClientCollection.UpdateWorld();
                         }
 
                         if (sw.Elapsed.TotalHours < 1)
@@ -318,6 +319,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.World
         public void Dispose()
         {
             Thread.Dispose();
+            Core.Logger.Log("Global World Disposed.");
         }
     }
 }
