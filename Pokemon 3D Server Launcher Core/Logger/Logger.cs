@@ -21,7 +21,7 @@ namespace Pokemon_3D_Server_Launcher_Core.Logger
         {
             Core = core;
             IsActive = false;
-            Log("Logger Initialized.", "Info");
+            Log("Logger Initialized.");
         }
 
         internal void Start()
@@ -39,7 +39,7 @@ namespace Pokemon_3D_Server_Launcher_Core.Logger
             ThreadPool.Start();
         }
 
-        internal void Log(string message, string type, bool printToConsole = true, bool writeToLog = true)
+        internal void Log(string message, string type = "Info", bool printToConsole = true, bool writeToLog = true)
         {
             ThreadPool.QueueWorkItem(() =>
             {

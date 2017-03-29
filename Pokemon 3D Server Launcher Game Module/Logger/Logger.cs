@@ -1,6 +1,4 @@
 ﻿using Pokemon_3D_Server_Launcher_Game_Module.Server;
-using System;
-using System.Net;
 
 namespace Pokemon_3D_Server_Launcher_Game_Module.Logger
 {

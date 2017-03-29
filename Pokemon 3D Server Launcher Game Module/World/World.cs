@@ -41,7 +41,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.World
         public World(Core core)
         {
             Core = core;
-            Core.Logger.Log("Global World Initialized.");
+            Core.Logger.Log("World Initialized.");
         }
 
         public void Start()
@@ -319,7 +319,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.World
         public void Dispose()
         {
             Thread.Dispose();
-            Core.Logger.Log("Global World Disposed.");
+            Core.Logger.Log("World Disposed.");
         }
     }
 }

@@ -17,6 +17,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Server.Package
         public int Origin { get; private set; } = -1;
         public int DataItemsCount { get { return DataItems.Count; } }
         public List<string> DataItems { get; private set; } = new List<string>();
+
         public bool IsValid { get; private set; }
         public Networking Network { get; private set; }
 
@@ -345,6 +346,14 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Server.Package
             IsValid = true;
         }
 
+        public bool IsFullPackageData()
+        {
+            if (DataItems.Count == 15 && !string.IsNullOrWhiteSpace(DataItems[4]))
+                return true;
+            else
+                return false;
+        }
+
         public void Handle()
         {
             try
@@ -380,33 +389,6 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Server.Package
             {
                 ex.CatchError();
             }
-        }
-
-        public bool IsFullPackageData()
-        {
-            if (DataItems.Count == 15 && !string.IsNullOrWhiteSpace(DataItems[4]))
-                return true;
-            else
-                return false;
-        }
-
-        public override string ToString()
-        {
-            string outputStr = Core.Settings.Server.ProtocolVersion + "|" + PackageType.ToString() + "|" + Origin.ToString() + "|" + DataItemsCount.ToString();
-
-            int currentIndex = 0;
-            string data = null;
-
-            foreach (string dataItem in DataItems)
-            {
-                outputStr += "|" + currentIndex.ToString();
-                data += dataItem;
-                currentIndex += dataItem.Length;
-            }
-
-            outputStr += "|" + data;
-
-            return outputStr;
         }
 
         private void HandleGameData()
@@ -464,7 +446,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Server.Package
                         List<BlackList> item = Core.SQLite.Query<BlackList>(a => a.PlayerID == playerID);
                         if (item.Count > 0)
                         {
-                            if (DateTime.Now < (item[0].Duration > 0 ? item[0].StartTime.AddSeconds(item[0].Duration) : DateTime.MaxValue))
+                            if (item[0].Duration == -1 || DateTime.Now < item[0].StartTime.AddSeconds(item[0].Duration))
                             {
                                 KickUserJoin(player, "SERVER_BLACKLISTED", item[0].Reason, ((item[0].Duration > 0 ? item[0].StartTime.AddSeconds(item[0].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss"));
                                 return;
@@ -477,7 +459,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Server.Package
                         List<IPBlackList> item = Core.SQLite.Query<IPBlackList>(a => a.IPAddress == ipAddress);
                         if (item.Count > 0)
                         {
-                            if (DateTime.Now < (item[0].Duration > 0 ? item[0].StartTime.AddSeconds(item[0].Duration) : DateTime.MaxValue))
+                            if (item[0].Duration == -1 || DateTime.Now < item[0].StartTime.AddSeconds(item[0].Duration))
                             {
                                 KickUserJoin(player, "SERVER_IPBLACKLISTED", item[0].Reason, ((item[0].Duration > 0 ? item[0].StartTime.AddSeconds(item[0].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss"));
                                 return;
@@ -495,41 +477,74 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Server.Package
             player.Network.SentToPlayer(new Package(Core, PackageTypes.Kicked, Core.Settings.Tokens.ToString(tokenKey, tokenValue), Network));
             Core.Logger.Log(player.IsGameJoltPlayer ?
                 Core.Settings.Tokens.ToString("SERVER_GAMEJOLT", player.Name, player.GameJoltID, "is unable to join the server with the following reason: " + Core.Settings.Tokens.ToString(tokenKey, tokenValue)) :
-                Core.Settings.Tokens.ToString("SERVER_NOGAMEJOLT", player.Name, "is unable to join the server with the following reason: " + Core.Settings.Tokens.ToString(tokenKey, tokenValue)));
+                Core.Settings.Tokens.ToString("SERVER_NOGAMEJOLT", player.Name, "is unable to join the server with the following reason: " + Core.Settings.Tokens.ToString(tokenKey, tokenValue)),
+            network: Network);
         }
 
         private void HandleChatMessage()
         {
             if (Core.Settings.Features.Chat.AllowChatInServer)
             {
-                Player.Player player = Network.Player;
-                int playerID = Network.Player.PlayerInfo.ID;
-
                 // Check if you are muted
                 if (Core.Settings.Features.MuteList)
                 {
-                    List<MuteList> item = Core.SQLite.Query<MuteList>(a => a.MuteID == playerID);
+                    List<MuteList> item = Core.SQLite.Query<MuteList>(a => a.MuteID == Network.Player.PlayerInfo.ID);
                     if (item.Count > 0)
                     {
-                        for (int i = 0; i < item.Count; i++)
+                        if (item.Where(a => a.PlayerID == -1).Count() > 0)
                         {
-                            if (DateTime.Now < (item[i].Duration > 0 ? item[i].StartTime.AddSeconds(item[i].Duration) : DateTime.MaxValue))
+                            MuteList mute = item.Where(a => a.PlayerID == -1).First();
+                            if (mute.Duration == -1 || DateTime.Now < mute.StartTime.AddSeconds(mute.Duration))
                             {
-                                Network.SentToPlayer(new Package(Core, PackageTypes.ChatMessage, -1, Core.Settings.Tokens.ToString(item[i].PlayerID == -1 ? "SERVER_MUTED" : "SERVER_MUTEDTEMP", item[i].Reason, ((item[i].Duration > 0 ? item[i].StartTime.AddSeconds(item[i].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss")), Network));
-                                Core.Logger.Log(player.IsGameJoltPlayer ?
-                                    Core.Settings.Tokens.ToString("SERVER_GAMEJOLT", player.Name, player.GameJoltID, "is unable to chat in the server with the following reason: " + Core.Settings.Tokens.ToString(item[i].PlayerID == -1 ? "SERVER_MUTED" : "SERVER_MUTEDTEMP", item[i].Reason, ((item[i].Duration > 0 ? item[i].StartTime.AddSeconds(item[i].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss"))) :
-                                    Core.Settings.Tokens.ToString("SERVER_NOGAMEJOLT", player.Name, "is unable to chat in the server with the following reason: " + Core.Settings.Tokens.ToString(item[i].PlayerID == -1 ? "SERVER_MUTED" : "SERVER_MUTEDTEMP", item[i].Reason, ((item[i].Duration > 0 ? item[i].StartTime.AddSeconds(item[i].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss"))));
+                                Network.SentToPlayer(new Package(Core, PackageTypes.ChatMessage, -1, Core.Settings.Tokens.ToString("SERVER_MUTED", item[0].Reason, ((item[0].Duration > 0 ? item[0].StartTime.AddSeconds(item[0].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss")), Network));
+                                Core.Logger.Log(Network.Player.IsGameJoltPlayer ?
+                                    Core.Settings.Tokens.ToString("SERVER_GAMEJOLT", Network.Player.Name, Network.Player.GameJoltID, "is unable to chat in the server with the following reason: " + Core.Settings.Tokens.ToString("SERVER_MUTED", item[0].Reason, ((item[0].Duration > 0 ? item[0].StartTime.AddSeconds(item[0].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss"))) :
+                                    Core.Settings.Tokens.ToString("SERVER_NOGAMEJOLT", Network.Player.Name, "is unable to chat in the server with the following reason: " + Core.Settings.Tokens.ToString("SERVER_MUTED", item[0].Reason, ((item[0].Duration > 0 ? item[0].StartTime.AddSeconds(item[0].Duration) : DateTime.MaxValue) - DateTime.Now).ToString("d\\:hh\\:mm\\:ss"))),
+                                "Chat", Network);
+                                return;
                             }
                         }
+
+                        if (item.Where(a => a.PlayerID != -1).Count() > 0)
+                        {
+                            foreach (Networking network in Core.TcpClientCollection.ActivePlayer.SkipWhile(a =>
+                            {
+                                foreach (MuteList mute in item)
+                                {
+                                    if (mute.PlayerID == a.Player.PlayerInfo.ID)
+                                    {
+                                        if (mute.Duration == -1 || DateTime.Now < mute.StartTime.AddSeconds(mute.Duration))
+                                            return true;
+                                    }
+                                }
+
+                                return false;
+                            }))
+                                network.SentToPlayer(new Package(Core, PackageTypes.ChatMessage, Network.Player.ID, DataItems[0], Network));
+
+                            Core.Logger.Log(Network.Player.IsGameJoltPlayer ?
+                                Core.Settings.Tokens.ToString("SERVER_CHATGAMEJOLT", Network.Player.Name, Network.Player.GameJoltID, DataItems[0]) :
+                                Core.Settings.Tokens.ToString("SERVER_CHATNOGAMEJOLT", Network.Player.Name, DataItems[0]),
+                            "Chat", Network);
+                        }
+                        else
+                            InternalHandleChatMessage();
                     }
                 }
-
-
+                else
+                    InternalHandleChatMessage();
             }
             else
-            {
                 Network.SentToPlayer(new Package(Core, PackageTypes.ChatMessage, -1, Core.Settings.Tokens.ToString("SERVER_NOCHAT"), Network));
-            }
+        }
+
+        private void InternalHandleChatMessage()
+        {
+            Core.TcpClientCollection.SendToAllPlayer(new Package(Core, PackageTypes.ChatMessage, Network.Player.ID, DataItems[0], Network));
+            Core.Logger.Log(Network.Player.IsGameJoltPlayer ?
+                Core.Settings.Tokens.ToString("SERVER_CHATGAMEJOLT", Network.Player.Name, Network.Player.GameJoltID, DataItems[0]) :
+                Core.Settings.Tokens.ToString("SERVER_CHATNOGAMEJOLT", Network.Player.Name, DataItems[0]),
+            "Chat", Network);
         }
 
         private void HandlePing()
@@ -557,6 +572,25 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Server.Package
 
             Network.SentToPlayer(new Package(Core, PackageTypes.ServerInfoData, DataItems, Network));
             Network.Dispose();
+        }
+
+        public override string ToString()
+        {
+            string outputStr = Core.Settings.Server.ProtocolVersion + "|" + PackageType.ToString() + "|" + Origin.ToString() + "|" + DataItemsCount.ToString();
+
+            int currentIndex = 0;
+            string data = null;
+
+            foreach (string dataItem in DataItems)
+            {
+                outputStr += "|" + currentIndex.ToString();
+                data += dataItem;
+                currentIndex += dataItem.Length;
+            }
+
+            outputStr += "|" + data;
+
+            return outputStr;
         }
     }
 }

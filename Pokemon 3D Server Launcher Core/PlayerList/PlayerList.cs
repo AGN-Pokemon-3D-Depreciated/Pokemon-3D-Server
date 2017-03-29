@@ -1,12 +1,10 @@
-﻿using Amib.Threading;
-using System;
+﻿using System;
 
 namespace Pokemon_3D_Server_Launcher_Core.PlayerList
 {
     public sealed class PlayerList
     {
         private Core Core;
-        private IWorkItemsGroup ThreadPool = new SmartThreadPool().CreateWorkItemsGroup(1, new WIGStartInfo() { StartSuspended = true });
         private bool IsActive = false;
 
         public event EventHandler<PlayerListEventArgs> OnPlayerListUpdate;
@@ -15,27 +13,18 @@ namespace Pokemon_3D_Server_Launcher_Core.PlayerList
         {
             Core = core;
             IsActive = false;
-            Core.Logger.Log("PlayerList Initialized.", "Info");
+            Core.Logger.Log("PlayerList Initialized.");
         }
 
         internal void Start()
         {
             IsActive = true;
-            ThreadPool.Start();
         }
 
         public void Update(PlayerListEventArgs playerListEventArgs)
         {
-            ThreadPool.QueueWorkItem(() =>
-            {
-                if (IsActive)
-                    InternalUpdate(playerListEventArgs);
-            });
-        }
-
-        private void InternalUpdate(PlayerListEventArgs playerListEventArgs)
-        {
-            OnPlayerListUpdate.BeginInvoke(this, playerListEventArgs, null, null);
+            if (IsActive)
+                OnPlayerListUpdate.BeginInvoke(this, playerListEventArgs, null, null);
         }
 
         internal void Dispose()
@@ -43,7 +32,7 @@ namespace Pokemon_3D_Server_Launcher_Core.PlayerList
             if (IsActive)
             {
                 IsActive = false;
-                ThreadPool.WaitForIdle();
+                Core.Logger.Log("PlayerList Disposed.");
             }
         }
     }

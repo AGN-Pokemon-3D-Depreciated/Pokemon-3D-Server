@@ -11,7 +11,6 @@ namespace Pokemon_3D_Server_Launcher_Game_Module
         public World.World World { get; private set; }
         public Server.TcpListener Listener { get; private set; }
         
-
         public ICore BaseCore { get; private set; }
         public Pokemon_3D_Server_Launcher_Core.Core BaseInstance { get { return BaseCore.BaseInstance; } }
 

@@ -15,7 +15,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Server
         {
             Core = core;
             Collection = this;
-            Core.Logger.Log("TcpClient Collection Initialized.");
+            Core.Logger.Log("TcpClientCollection Initialized.");
         }
 
         public void Add(TcpClient tcpClient)
@@ -106,7 +106,7 @@ namespace Pokemon_3D_Server_Launcher_Game_Module.Server
 
             Clear();
 
-            Core.Logger.Log("TcpClient Collection Disposed.");
+            Core.Logger.Log("TcpClientCollection Disposed.");
         }
     }
 }

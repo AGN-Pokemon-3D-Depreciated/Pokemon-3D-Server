@@ -57,7 +57,6 @@ Error information:
 
 Message: {ex.Message}
 InnerException: {GenerateInnerExceptionMessage(ex)}
-HelpLink: {(string.IsNullOrEmpty(ex.HelpLink) ? "Empty" : ex.HelpLink)}
 Source: {ex.Source}
 
 --------------------------------------------------
@@ -70,7 +69,7 @@ CallStack:
 
 You should report this error if it is reproduceable or you could not solve it by yourself.
 
-Go To: <INSERTURL> to report this crash.
+Go to: <INSERTURL> to report this crash.
 [/CODE]";
 
                 DateTime errorTime = DateTime.Now;

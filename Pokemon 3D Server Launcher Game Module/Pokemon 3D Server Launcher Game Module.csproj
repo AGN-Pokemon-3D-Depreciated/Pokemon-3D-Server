@@ -11,6 +11,12 @@
     <AssemblyName>Game Module</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>6</LangVersion>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -19,21 +25,11 @@
     <OutputPath>..\Pokemon 3D Server Launcher\bin\x86\Debug\Modules\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>..\Pokemon 3D Server Launcher\bin\x86\Release\Modules\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SmartThreadPool, Version=2.2.4.0, Culture=neutral, PublicKeyToken=1126fe8b671e8a79, processorArchitecture=MSIL">
@@ -59,16 +55,14 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Numerics" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="YamlDotNet, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\YamlDotNet.4.1.0\lib\net35\YamlDotNet.dll</HintPath>
       <Private>False</Private>
@@ -107,6 +101,7 @@
     <Compile Include="SQLite\Tables\TradeHistoryList.cs" />
     <Compile Include="SQLite\Tables\WhiteList.cs" />
     <Compile Include="World\World.cs" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pokemon 3D Server Launcher Core\Pokemon 3D Server Launcher Core.csproj">
@@ -115,11 +110,25 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xbuild "$(ProjectPath)" /p:Configuration=$(ConfigurationName) /p:Platform=$(PlatformName)</PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="AfterBuild">
+    <MakeDir Condition="!Exists('$(OutputPath)\..\x64')" Directories="$(OutputPath)\..\x64" />
+    <MakeDir Condition="!Exists('$(OutputPath)\..\x86')" Directories="$(OutputPath)\..\x86" />
+    <Copy Condition="Exists('$(OutputPath)\SQLite-net.dll')" SourceFiles="$(OutputPath)\SQLite-net.dll;$(OutputPath)\SQLitePCLRaw.batteries_green.dll;$(OutputPath)\SQLitePCLRaw.batteries_v2.dll;$(OutputPath)\SQLitePCLRaw.core.dll;$(OutputPath)\SQLitePCLRaw.provider.e_sqlite3.dll;$(OutputPath)\System.Runtime.InteropServices.RuntimeInformation.dll" DestinationFolder="..\Pokemon 3D Server Launcher\bin\x86\Debug\" />
+    <Delete Condition="Exists('$(OutputPath)\SQLite-net.dll')" Files="$(OutputPath)\SQLite-net.dll;$(OutputPath)\SQLitePCLRaw.batteries_green.dll;$(OutputPath)\SQLitePCLRaw.batteries_v2.dll;$(OutputPath)\SQLitePCLRaw.core.dll;$(OutputPath)\SQLitePCLRaw.provider.e_sqlite3.dll;$(OutputPath)\System.Runtime.InteropServices.RuntimeInformation.dll" />
+    <Delete Condition="Exists('$(OutputPath)\SQLite-net.xml')" Files="$(OutputPath)\SQLite-net.xml" />
+    <Copy Condition="Exists('$(OutputPath)\x64\e_sqlite3.dll')" SourceFiles="$(OutputPath)\x64\e_sqlite3.dll" DestinationFolder="..\Pokemon 3D Server Launcher\bin\x86\Debug\x64\" />
+    <Delete Condition="Exists('$(OutputPath)\x64\e_sqlite3.dll')" Files="$(OutputPath)\x64\e_sqlite3.dll" />
+    <RemoveDir Condition="Exists('$(OutputPath)\x64\')" Directories="$(OutputPath)\x64\" />
+    <Copy Condition="Exists('$(OutputPath)\x86\e_sqlite3.dll')" SourceFiles="$(OutputPath)\x86\e_sqlite3.dll" DestinationFolder="..\Pokemon 3D Server Launcher\bin\x86\Debug\x86\" />
+    <Delete Condition="Exists('$(OutputPath)\x86\e_sqlite3.dll')" Files="$(OutputPath)\x86\e_sqlite3.dll" />
+    <RemoveDir Condition="Exists('$(OutputPath)\x86\')" Directories="$(OutputPath)\x86\" />
+    <Copy SourceFiles="$(OutputPath)\..\..\..\..\..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.2\runtimes\linux-x64\native\libe_sqlite3.so" DestinationFolder="..\Pokemon 3D Server Launcher\bin\x86\Debug\x86\" />
+    <Copy SourceFiles="$(OutputPath)\..\..\..\..\..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.2\runtimes\osx-x64\native\libe_sqlite3.dylib" DestinationFolder="..\Pokemon 3D Server Launcher\bin\x86\Debug\x86\" />
+  </Target>
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.2\build\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.2\build\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -131,11 +140,4 @@
   </Target>
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.2\build\SQLitePCLRaw.lib.e_sqlite3.osx.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.2\build\SQLitePCLRaw.lib.e_sqlite3.osx.targets')" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.v110_xp.1.1.2\build\SQLitePCLRaw.lib.e_sqlite3.v110_xp.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.v110_xp.1.1.2\build\SQLitePCLRaw.lib.e_sqlite3.v110_xp.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

@@ -65,28 +65,31 @@ namespace Pokemon_3D_Server_Launcher_Core
 
         public void Stop(int exitCode)
         {
-            if (!Stopping)
+            Task.Run(() =>
             {
-                Stopping = true;
-
-                foreach (ICore loadedInstances in LoadedInstances)
+                if (!Stopping)
                 {
-                    try
+                    Stopping = true;
+
+                    foreach (ICore loadedInstances in LoadedInstances)
                     {
-                        loadedInstances.Stop(exitCode);
+                        try
+                        {
+                            loadedInstances.Stop(exitCode);
+                        }
+                        catch (Exception ex)
+                        {
+                            ex.CatchError();
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        ex.CatchError();
-                    }
+
+                    Settings.Save();
+                    Logger.Dispose();
+                    PlayerList.Dispose();
+
+                    Environment.Exit(exitCode);
                 }
-
-                Settings.Save();
-                Logger.Dispose();
-                PlayerList.Dispose();
-
-                Environment.Exit(exitCode);
-            }
+            }).Wait();
         }
 
         public object Invoke(string method, params object[] param)

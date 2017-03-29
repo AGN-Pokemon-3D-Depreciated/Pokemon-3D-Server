@@ -31,7 +31,7 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
         internal Settings(Core core)
         {
             Core = core;
-            Core.Logger.Log("Settings Initialized.", "Info");
+            Core.Logger.Log("Settings Initialized.");
         }
 
         internal void Start()
@@ -60,6 +60,7 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
                 Core.Settings = DeserializerHelper.Deserialize<Settings>($"{Core.Settings.Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath()) ?? new Settings();
                 Core.Settings.Core = Core;
                 Core.Settings.ModulesToLoad = ModulesToLoad;
+                Core.Logger.Log("Settings Loaded.");
             }
             else
             {
@@ -71,6 +72,7 @@ namespace Pokemon_3D_Server_Launcher_Core.Settings
         internal void Save()
         {
             Core.Settings.Serialize($"{Core.Settings.Directories.DataDirectory}/ApplicationSetting.yml".GetFullPath());
+            Core.Logger.Log("Settings Saved.");
         }
     }
 }
